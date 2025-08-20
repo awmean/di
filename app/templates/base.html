@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Luce di Villa - Уникальная мебель для вашего пространства{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prata&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+          rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-brown': '#7E7670',
+                        'brand-dark': '#111111',
+                        'brand-gray': '#909090',
+                        'brand-light-gray': '#F4F4F4',
+                        'brand-accent': '#FFBAA0'
+                    },
+                    fontFamily: {
+                        'raleway': ['Raleway', 'system-ui', 'sans-serif'],
+                        'prata': ['Prata', 'serif'],
+                        'sans': ['Raleway', 'system-ui', 'sans-serif'], // Make Raleway the default sans font
+                        'serif': ['Prata', 'serif'] // Make Prata the default serif font
+                    },
+                    animation: {
+                        'slide-in': 'slideIn 0.4s ease-out',
+                        'fade-in': 'fadeIn 0.6s ease-out',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out',
+                    },
+                    keyframes: {
+                        slideIn: {
+                            '0%': { transform: 'translateX(100%)' },
+                            '100%': { transform: 'translateX(0)' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    {% block extra_styles %}{% endblock %}
+</head>
+<body class="font-raleway text-gray-900 bg-white">
+{% include 'partials/header.html' %}
+
+{% block content %}{% endblock %}
+
+{% include 'partials/footer.html' %}
+
+{% block scripts %}
+<script>
+    // Mobile menu functionality
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
+    const closeMenu = document.getElementById('close-menu');
+
+    function openMenu() {
+        mobileMenu.classList.add('active');
+        menuOverlay.classList.add('active');
+        menuToggle.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenuFunc() {
+        mobileMenu.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        menuToggle.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    if(menuToggle) menuToggle.addEventListener('click', openMenu);
+    if(closeMenu) closeMenu.addEventListener('click', closeMenuFunc);
+    if(menuOverlay) menuOverlay.addEventListener('click', closeMenuFunc);
+
+    // Header scroll effect
+    window.addEventListener('scroll', function() {
+        const header = document.getElementById('main-header');
+        if (window.scrollY > 100) {
+            header.classList.add('sticky-header');
+        } else {
+            header.classList.remove('sticky-header');
+        }
+    });
+</script>
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,23 @@
+<div id="products-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
+    {% for product in products %}
+    <div class="furniture-card cursor-pointer" data-category="{{ product.category }}">
+        <a href="" class="block">
+            <div class="h-80 bg-brand-light-gray mb-6 overflow-hidden relative">
+                {% if product.image %}
+                    <img src="{{ product.image }}" alt="{{ product.name }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                {% endif %}
+                <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                    <span class="text-white opacity-0 hover:opacity-100 transition-opacity duration-300 text-sm uppercase tracking-wider">Подробнее</span>
+                </div>
+            </div>
+        </a>
+        <div class="space-y-3">
+            <h3 class="font-medium text-lg text-brand-dark">{{ product.name }}</h3>
+            <p class="text-sm text-brand-gray">{{ product.description }}</p>
+            <div class="flex items-center justify-between">
+                <p class="font-medium text-brand-dark">{{ "{:,}".format(product.price).replace(",", " ") }} ₽</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>

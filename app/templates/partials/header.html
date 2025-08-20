@@ -1,0 +1,139 @@
+<style>
+    .sticky-header {
+        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.85);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .mobile-menu {
+        transform: translateX(100%);
+        transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .mobile-menu.active {
+        transform: translateX(0);
+    }
+    .menu-overlay {
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    .menu-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    .hamburger-line {
+        transition: all 0.3s ease;
+    }
+    .hamburger.active .hamburger-line:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+    }
+    .hamburger.active .hamburger-line:nth-child(2) {
+        opacity: 0;
+    }
+    .hamburger.active .hamburger-line:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+    }
+</style>
+
+<!-- Top Header Bar -->
+<div class="bg-brand-dark text-white text-xs py-2 w-full hidden lg:block">
+    <div class="w-full px-8 flex justify-between items-center">
+        <div class="flex space-x-8">
+            <span class="uppercase tracking-wider">ПРОИЗВОДСТВО И ПОСТАВКА МЕБЕЛИ</span>
+        </div>
+        <div class="flex space-x-8 items-center">
+            <span class="uppercase tracking-wider hover:text-brand-accent cursor-pointer transition-colors">НАПИСАТЬ В WHATSAPP</span>
+            <span class="uppercase tracking-wider hover:text-brand-accent cursor-pointer transition-colors">НАПИСАТЬ В TELEGRAM</span>
+            <span class="font-medium">+7 (966) 872-12-02</span>
+        </div>
+    </div>
+</div>
+
+<!-- Mobile Menu Overlay -->
+<div id="menu-overlay" class="menu-overlay fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"></div>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-80 bg-white z-50 shadow-2xl lg:hidden">
+    <div class="p-8 h-full flex flex-col">
+        <!-- Mobile Menu Header -->
+        <div class="flex justify-between items-center mb-12">
+            <h2 class="text-2xl font-bold text-brand-dark">Luce di Villa</h2>
+            <button id="close-menu" class="text-gray-600 hover:text-brand-brown transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <nav class="flex-1">
+            <div class="space-y-8">
+                <a href="/"
+                   class="block text-lg font-medium text-gray-800 hover:text-brand-brown transition-colors uppercase tracking-wider">ГЛАВНАЯ</a>
+                <a href="/catalog"
+                   class="block text-lg font-medium text-gray-800 hover:text-brand-brown transition-colors uppercase tracking-wider">КАТАЛОГ</a>
+                <a href="/about"
+                   class="block text-lg font-medium text-gray-800 hover:text-brand-brown transition-colors uppercase tracking-wider">О
+                    БРЕНДЕ</a>
+                <a href="/contacts"
+                   class="block text-lg font-medium text-gray-800 hover:text-brand-brown transition-colors uppercase tracking-wider">КОНТАКТЫ</a>
+            </div>
+        </nav>
+
+        <!-- Mobile Contact -->
+        <div class="border-t border-gray-200 pt-8">
+            <div class="text-2xl font-light mb-4 text-brand-dark">+7 (966) 872-12-02</div>
+            <div class="space-y-2 text-sm text-gray-600">
+                <div class="uppercase tracking-wider">НАПИСАТЬ В WHATSAPP</div>
+                <div class="uppercase tracking-wider">НАПИСАТЬ В TELEGRAM</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Header -->
+<header id="main-header" class="bg-white transition-all duration-300 sticky top-0 z-30 w-full">
+    <div class="w-full px-4 lg:px-8">
+        <div class="flex items-center justify-between h-16 lg:h-20">
+            <!-- Logo -->
+            <div class="flex-shrink-0">
+                <a href="/">
+                    <h1 class="text-2xl lg:text-3xl font-bold text-brand-dark tracking-tight">Luce di Villa</h1>
+                </a>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden lg:flex space-x-12">
+                <a href="/"
+                   class="text-gray-800 hover:text-brand-brown transition-colors uppercase text-sm font-medium tracking-wider">ГЛАВНАЯ</a>
+                <a href="/catalog"
+                   class="text-gray-800 hover:text-brand-brown transition-colors uppercase text-sm font-medium tracking-wider">КАТАЛОГ</a>
+                <a href="/about"
+                   class="text-gray-800 hover:text-brand-brown transition-colors uppercase text-sm font-medium tracking-wider">О
+                    БРЕНДЕ</a>
+                <a href="/contacts"
+                   class="text-gray-800 hover:text-brand-brown transition-colors uppercase text-sm font-medium tracking-wider">КОНТАКТЫ</a>
+            </nav>
+
+            <!-- Desktop Search -->
+            <div class="hidden lg:flex items-center space-x-6">
+                <button class="text-gray-800 hover:text-brand-brown transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="flex lg:hidden items-center space-x-4">
+                <!-- Hamburger Menu Button -->
+                <button id="menu-toggle" class="hamburger flex flex-col justify-center items-center w-8 h-8 space-y-1">
+                    <span class="hamburger-line w-6 h-0.5 bg-gray-800"></span>
+                    <span class="hamburger-line w-6 h-0.5 bg-gray-800"></span>
+                    <span class="hamburger-line w-6 h-0.5 bg-gray-800"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
