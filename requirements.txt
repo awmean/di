@@ -1,0 +1,16 @@
+# Web Framework
+fastapi
+uvicorn[standard]
+
+# Database
+sqlalchemy
+psycopg2-binary
+
+# Password Hashing
+passlib[bcrypt]
+
+# Templating
+jinja2
+
+# Environment Variables (optional but recommended)
+python-dotenv
