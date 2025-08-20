@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
-from app.core.auth import create_session, delete_session, require_auth
+from app.core.auth import create_session, delete_session, require_auth, get_session
 from app.core.database import get_db
 from app.repositories.admin_user_repository import AdminUserRepository
 
@@ -17,6 +17,10 @@ templates = Jinja2Templates(directory="templates/admin")
 
 @router.get("/login", response_class=HTMLResponse)
 def login_page(request: Request):
+    session_id = request.cookies.get("session_id")
+    if session_id and get_session(session_id):
+        return RedirectResponse(url="/admin/home", status_code=302)
+
     return templates.TemplateResponse("login.html", {"request": request})
 
 
