@@ -86,15 +86,22 @@ class Product(Base):
     @property
     def main_image(self) -> Optional["Media"]:
         """Get the main image for this product (lowest sort_order)"""
-        photos = [media_item for media_item in self.media if media_item.type == 'photo']
-        if not photos:
-            return None
-        # Return the photo with the lowest sort_order
-        return min(photos, key=lambda x: x.sort_order)
+        return self.images[0]
 
     @property
     def main_image_url(self) -> Optional[str]:
         main_img = self.main_image
+        return f'/{main_img.file_path}' if main_img else None
+
+    @property
+    def secondary_image(self) -> Optional["Media"]:
+        """Get the main image for this product (lowest sort_order)"""
+        images = self.images
+        return images[1] if len(images) > 1 else None
+
+    @property
+    def secondary_image_url(self) -> Optional[str]:
+        main_img = self.secondary_image
         return f'/{main_img.file_path}' if main_img else None
 
     @property
