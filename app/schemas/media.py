@@ -12,8 +12,6 @@ class MediaBase(BaseModel):
     file_size: Optional[int] = Field(None, ge=0, description="File size in bytes")
     mime_type: Optional[str] = Field(None, max_length=100, description="MIME type")
     alt_text: Optional[str] = Field(None, max_length=200, description="Alt text for accessibility")
-    sort_order: int = Field(default=0, description="Sort order")
-    is_main: bool = Field(default=False, description="Whether this is the main media")
 
 class MediaCreate(MediaBase):
     product_id: int = Field(..., description="Product ID")
@@ -27,14 +25,13 @@ class MediaUpdate(BaseModel):
     file_size: Optional[int] = Field(None, ge=0)
     mime_type: Optional[str] = Field(None, max_length=100)
     alt_text: Optional[str] = Field(None, max_length=200)
-    sort_order: Optional[int] = None
-    is_main: Optional[bool] = None
 
 
 class MediaResponse(MediaBase):
     id: int
     product_id: int
     created_at: datetime
+    sort_order: int
 
     class Config:
         from_attributes = True

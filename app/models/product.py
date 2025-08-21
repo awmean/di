@@ -81,33 +81,33 @@ class Product(Base):
 
     @property
     def main_image(self) -> Optional["Media"]:
-        """Get the main image for this product"""
-        for media_item in self.media:
-            if media_item.type == 'photo' and media_item.is_main:
-                return media_item
-        # If no main image is set, return the first photo
-        for media_item in self.media:
-            if media_item.type == 'photo':
-                return media_item
-        return None
+        """Get the main image for this product (lowest sort_order)"""
+        photos = [media_item for media_item in self.media if media_item.type == 'photo']
+        if not photos:
+            return None
+        # Return the photo with the lowest sort_order
+        return min(photos, key=lambda x: x.sort_order)
 
     @property
     def main_image_url(self) -> Optional[str]:
-        return f'/{self.main_image.file_path}'
+        main_img = self.main_image
+        return f'/{main_img.file_path}' if main_img else None
 
     @property
     def images(self) -> List["Media"]:
         """Get all images for this product, sorted by sort_order"""
-        return [media_item for media_item in self.media if media_item.type == 'photo']
+        photos = [media_item for media_item in self.media if media_item.type == 'photo']
+        return sorted(photos, key=lambda x: x.sort_order)
 
     @property
-    def image_urls(self):
-        return [f'/{url.file_path}' for url in self.images]
+    def image_urls(self) -> List[str]:
+        return [f'/{img.file_path}' for img in self.images]
 
     @property
     def videos(self) -> List["Media"]:
         """Get all videos for this product, sorted by sort_order"""
-        return [media_item for media_item in self.media if media_item.type == 'video']
+        videos = [media_item for media_item in self.media if media_item.type == 'video']
+        return sorted(videos, key=lambda x: x.sort_order)
 
     @property
     def is_set(self) -> bool:

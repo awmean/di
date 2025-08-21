@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File,
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.models import Media
 from app.repositories.media_repository import MediaRepository
 from app.repositories.product_repository import ProductRepository
 from app.schemas.common import MessageResponse
@@ -76,8 +77,6 @@ async def upload_media(
         product_id: int = Form(...),
         media_type: str = Form(..., regex="^(photo|video)$"),
         alt_text: str = Form(None),
-        sort_order: int = Form(0),
-        is_main: bool = Form(False),
         file: UploadFile = File(...),
         db: Session = Depends(get_db)
 ):
@@ -110,14 +109,9 @@ async def upload_media(
             file_path=file_path,
             file_size=file.size,
             mime_type=file.content_type,
-            alt_text=alt_text,
-            sort_order=sort_order,
-            is_main=is_main
+            alt_text=alt_text
         )
 
-        # If this is set as main image, update other images
-        if is_main and media_type == "photo":
-            MediaRepository.set_main_image(db, product_id, media.id)
 
         return media
 
@@ -178,8 +172,6 @@ async def upload_multiple_media(
                 file_path=file_path,
                 file_size=file.size,
                 mime_type=file.content_type,
-                sort_order=i,  # Auto-increment sort order
-                is_main=False  # Don't auto-set main for batch uploads
             )
             created_media.append(media)
 
@@ -202,6 +194,8 @@ async def upload_multiple_media(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to upload files: {str(e)}"
         )
+
+
 @router.post("/", response_model=MediaResponse, status_code=status.HTTP_201_CREATED)
 def create_media(
         media_data: MediaCreate,
@@ -273,10 +267,9 @@ def update_media(
     return media
 
 
-@router.put("/{media_id}/set-order", response_model=MediaResponse)
-def update_media_sort_order(
+@router.patch("/{media_id}/move-up", response_model=MediaResponse)
+def move_order_up(
         media_id: int,
-        sort_order: int,
         db: Session = Depends(get_db)
 ):
     """Update media sort order"""
@@ -286,38 +279,65 @@ def update_media_sort_order(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Media not found"
         )
-    media = MediaRepository.update(db, media_id, sort_order=sort_order)
-    return media
+
+    previous_media = db.query(Media).filter(
+        Media.product_id == existing_media.product_id,
+        Media.sort_order < existing_media.sort_order
+    ).order_by(Media.sort_order.desc()).first()
+
+    if not previous_media:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Media is already at the top position"
+        )
+
+    current_sort_order = existing_media.sort_order
+    previous_sort_order = previous_media.sort_order
+
+    existing_media.sort_order = previous_sort_order
+    previous_media.sort_order = current_sort_order
+
+    db.commit()
+    db.refresh(existing_media)
+    return existing_media
 
 
-@router.put("/{media_id}/set-main", response_model=MessageResponse)
-def set_main_media(
+@router.patch("/{media_id}/move-down", response_model=MediaResponse)
+def move_order_down(
         media_id: int,
         db: Session = Depends(get_db)
 ):
-    """Set media as main for its product"""
-    media = MediaRepository.get_by_id(db, media_id)
-    if not media:
+    """Move media sort order down (increase sort_order value)"""
+    existing_media = MediaRepository.get_by_id(db, media_id)
+    if not existing_media:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Media not found"
         )
 
-    if media.type != 'photo':
+    # Find the media item with the next higher sort_order (same product and type)
+    next_media = db.query(Media).filter(
+        Media.product_id == existing_media.product_id,
+        Media.sort_order > existing_media.sort_order
+    ).order_by(Media.sort_order.asc()).first()
+
+    # If no next media found, this is already at the bottom
+    if not next_media:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Only photos can be set as main"
+            detail="Media is already at the bottom position"
         )
 
-    success = MediaRepository.set_main_image(db, media.product_id, media_id)
-    if not success:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Failed to set main image"
-        )
+    # Swap sort_order values
+    current_sort_order = existing_media.sort_order
+    next_sort_order = next_media.sort_order
 
-    return MessageResponse(message="Main image set successfully")
+    existing_media.sort_order = next_sort_order
+    next_media.sort_order = current_sort_order
 
+    db.commit()
+    db.refresh(existing_media)
+    return existing_media
 
 @router.delete("/{media_id}", response_model=MessageResponse)
 def delete_media(

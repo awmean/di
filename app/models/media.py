@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Integer, String, Boolean, DateTime, ForeignKey, CheckConstraint
+from sqlalchemy import Integer, String, DateTime, ForeignKey, CheckConstraint, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
@@ -20,8 +20,7 @@ class Media(Base):
     file_size: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     mime_type: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     alt_text: Mapped[Optional[str]] = mapped_column(String(200), nullable=True)
-    sort_order: Mapped[int] = mapped_column(Integer, default=0)
-    is_main: Mapped[bool] = mapped_column(Boolean, default=False)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     __table_args__ = (
