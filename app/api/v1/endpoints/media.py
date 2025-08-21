@@ -1,10 +1,12 @@
-# app/api/routers/media.py
+import os
+import uuid
+from pathlib import Path
 from typing import List
 
-from app.core.database import get_db
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
 from sqlalchemy.orm import Session
 
+from app.core.database import get_db
 from app.repositories.media_repository import MediaRepository
 from app.repositories.product_repository import ProductRepository
 from app.schemas.common import MessageResponse
@@ -12,7 +14,194 @@ from app.schemas.media import MediaCreate, MediaUpdate, MediaResponse
 
 router = APIRouter(prefix="/media", tags=["Media"])
 
+# Configuration - you might want to put these in your settings
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"}
+ALLOWED_VIDEO_TYPES = {"video/mp4", "video/avi", "video/mov", "video/wmv", "video/webm"}
+MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
+UPLOAD_DIR = "uploads/media"
 
+# Ensure upload directory exists
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+
+def validate_file(file: UploadFile, file_type: str) -> None:
+    """Validate uploaded file"""
+    if not file.filename:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No file provided"
+        )
+
+    # Check file size
+    if file.size and file.size > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"File size too large. Maximum allowed: {MAX_FILE_SIZE // (1024 * 1024)}MB"
+        )
+
+    # Check file type
+    allowed_types = ALLOWED_IMAGE_TYPES if file_type == "photo" else ALLOWED_VIDEO_TYPES
+    if file.content_type not in allowed_types:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid file type. Allowed types: {', '.join(allowed_types)}"
+        )
+
+
+def generate_filename(original_filename: str) -> str:
+    """Generate unique filename"""
+    file_extension = Path(original_filename).suffix.lower()
+    unique_filename = f"{uuid.uuid4()}{file_extension}"
+    return unique_filename
+
+
+async def save_file(file: UploadFile, filename: str) -> str:
+    """Save uploaded file and return file path"""
+    file_path = os.path.join(UPLOAD_DIR, filename)
+
+    try:
+        with open(file_path, "wb") as buffer:
+            content = await file.read()
+            buffer.write(content)
+        return file_path
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to save file: {str(e)}"
+        )
+
+
+@router.post("/upload", response_model=MediaResponse, status_code=status.HTTP_201_CREATED)
+async def upload_media(
+        product_id: int = Form(...),
+        media_type: str = Form(..., regex="^(photo|video)$"),
+        alt_text: str = Form(None),
+        sort_order: int = Form(0),
+        is_main: bool = Form(False),
+        file: UploadFile = File(...),
+        db: Session = Depends(get_db)
+):
+    """Upload media file for a product"""
+    # Validate product exists
+    product = ProductRepository.get_by_id(db, product_id)
+    if not product:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Product not found"
+        )
+
+    # Validate file
+    validate_file(file, media_type)
+
+    # Generate unique filename
+    filename = generate_filename(file.filename)
+
+    # Save file
+    file_path = await save_file(file, filename)
+
+    try:
+        # Create media record
+        media = MediaRepository.create(
+            db=db,
+            product_id=product_id,
+            type=media_type,
+            filename=filename,
+            original_filename=file.filename,
+            file_path=file_path,
+            file_size=file.size,
+            mime_type=file.content_type,
+            alt_text=alt_text,
+            sort_order=sort_order,
+            is_main=is_main
+        )
+
+        # If this is set as main image, update other images
+        if is_main and media_type == "photo":
+            MediaRepository.set_main_image(db, product_id, media.id)
+
+        return media
+
+    except Exception as e:
+        # Clean up file if database operation fails
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to create media record: {str(e)}"
+        )
+
+
+@router.post("/upload/multiple", response_model=List[MediaResponse], status_code=status.HTTP_201_CREATED)
+async def upload_multiple_media(
+        product_id: int = Form(...),
+        media_type: str = Form(..., regex="^(photo|video)$"),
+        files: List[UploadFile] = File(...),
+        db: Session = Depends(get_db)
+):
+    """Upload multiple media files for a product"""
+    # Validate product exists
+    product = ProductRepository.get_by_id(db, product_id)
+    if not product:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Product not found"
+        )
+
+    if len(files) > 10:  # Limit number of files
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Maximum 10 files allowed per upload"
+        )
+
+    created_media = []
+    created_files = []  # Track created files for cleanup on error
+
+    try:
+        for i, file in enumerate(files):
+            # Validate file
+            validate_file(file, media_type)
+
+            # Generate unique filename
+            filename = generate_filename(file.filename)
+
+            # Save file
+            file_path = await save_file(file, filename)
+            created_files.append(file_path)
+
+            # Create media record
+            media = MediaRepository.create(
+                db=db,
+                product_id=product_id,
+                type=media_type,
+                filename=filename,
+                original_filename=file.filename,
+                file_path=file_path,
+                file_size=file.size,
+                mime_type=file.content_type,
+                sort_order=i,  # Auto-increment sort order
+                is_main=False  # Don't auto-set main for batch uploads
+            )
+            created_media.append(media)
+
+        return created_media
+
+    except Exception as e:
+        # Clean up all created files on error
+        for file_path in created_files:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+        # Clean up any created database records
+        for media in created_media:
+            try:
+                MediaRepository.delete(db, media.id)
+            except:
+                pass
+
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to upload files: {str(e)}"
+        )
 @router.post("/", response_model=MediaResponse, status_code=status.HTTP_201_CREATED)
 def create_media(
         media_data: MediaCreate,

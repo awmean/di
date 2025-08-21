@@ -15,6 +15,7 @@ def create_app() -> FastAPI:
     app = FastAPI(title="Luce di Villa")
 
     app.mount("/static", StaticFiles(directory="static"), name="static")
+    app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
     app.include_router(web_router)
     app.include_router(admin_auth_router, prefix="/admin")  # Add this

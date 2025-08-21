@@ -18,9 +18,11 @@ class Settings(BaseSettings):
 
     # File uploads
     UPLOAD_DIR: str = "uploads"
-    MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
-    ALLOWED_IMAGE_TYPES: List[str] = ["image/jpeg", "image/png", "image/webp"]
-    ALLOWED_VIDEO_TYPES: List[str] = ["video/mp4", "video/webm"]
+
+    MEDIA_UPLOAD_DIR: str = "uploads/media"
+    MAX_FILE_SIZE: int = 50 * 1024 * 1024  # 50MB
+    ALLOWED_IMAGE_TYPES: set = {"image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"}
+    ALLOWED_VIDEO_TYPES: set = {"video/mp4", "video/avi", "video/mov", "video/wmv", "video/webm"}
 
     class Config:
         env_file = ".env"
