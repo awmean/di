@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -28,6 +28,9 @@ async def catalog(request: Request, db: Session = Depends(get_db)):
     """Catalog page with filtering and pagination"""
     products = ProductRepository.get_all(db=db)
     categories = CategoryRepository.get_all(db=db)
+
+    for product in products:
+        print(product.main_image.file_path)
 
     return templates.TemplateResponse(
         "catalog.html",

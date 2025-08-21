@@ -1,25 +1,27 @@
-# First, install jinja2 and python-multipart:
-# pip install jinja2 python-multipart
-
-# app/web/admin/auth_routes.py
-from fastapi import APIRouter, Depends, Response, Request, Form
+from fastapi import Depends, Response, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
-from app.core.auth import create_session, delete_session, require_auth, get_session
+from app.core.auth import create_session, delete_session, get_session
 from app.core.database import get_db
 from app.repositories.admin_user_repository import AdminUserRepository
+from app.web.admin import router, templates
 
-router = APIRouter()
-templates = Jinja2Templates(directory="templates/admin")
+
+@router.get('/', response_class=RedirectResponse)
+def root(request: Request):
+    session_id = request.cookies.get("session_id")
+    if session_id and get_session(session_id):
+        return RedirectResponse(url="/admin/dashboard", status_code=302)
+    else:
+        return RedirectResponse(url="/admin/login", status_code=302)
 
 
 @router.get("/login", response_class=HTMLResponse)
 def login_page(request: Request):
     session_id = request.cookies.get("session_id")
     if session_id and get_session(session_id):
-        return RedirectResponse(url="/admin/home", status_code=302)
+        return RedirectResponse(url="/admin/dashboard", status_code=302)
 
     return templates.TemplateResponse("login.html", {"request": request})
 
@@ -42,7 +44,7 @@ def login(
 
     session_id = create_session(user.id, user.username)
 
-    response = RedirectResponse(url="/admin/home", status_code=302)
+    response = RedirectResponse(url="/admin/dashboard", status_code=302)
     response.set_cookie(
         key="session_id",
         value=session_id,
@@ -51,15 +53,6 @@ def login(
     )
 
     return response
-
-
-@router.get("/home", response_class=HTMLResponse)
-def admin_home(request: Request, session=Depends(require_auth), db: Session = Depends(get_db)):
-    user = AdminUserRepository.get_by_id(db, session['user_id'])
-    return templates.TemplateResponse(
-        "home.html",
-        {"request": request, "user": user}
-    )
 
 
 @router.post("/logout")

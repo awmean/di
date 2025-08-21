@@ -80,6 +80,36 @@ class Product(Base):
     order_items: Mapped[List["OrderItem"]] = relationship("OrderItem", back_populates="product")
 
     @property
+    def main_image(self) -> Optional["Media"]:
+        """Get the main image for this product"""
+        for media_item in self.media:
+            if media_item.type == 'photo' and media_item.is_main:
+                return media_item
+        # If no main image is set, return the first photo
+        for media_item in self.media:
+            if media_item.type == 'photo':
+                return media_item
+        return None
+
+    @property
+    def main_image_url(self) -> Optional[str]:
+        return f'/{self.main_image.file_path}'
+
+    @property
+    def images(self) -> List["Media"]:
+        """Get all images for this product, sorted by sort_order"""
+        return [media_item for media_item in self.media if media_item.type == 'photo']
+
+    @property
+    def image_urls(self):
+        return [f'/{url.file_path}' for url in self.images]
+
+    @property
+    def videos(self) -> List["Media"]:
+        """Get all videos for this product, sorted by sort_order"""
+        return [media_item for media_item in self.media if media_item.type == 'video']
+
+    @property
     def is_set(self) -> bool:
         """Check if this product is a furniture set (has child products)"""
         return self.parent_id is None and len(self.children) > 0

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Dashboard{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen">
+    {% include 'partials/navbar.html' %}
+
+    <main class="max-w-7xl mx-auto py-6 px-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
