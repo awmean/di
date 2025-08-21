@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block title %}Categories - Admin{% endblock %}
+
+{% block extra_head %}
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex justify-between items-center">
+    <h2 class="text-2xl font-bold text-gray-900">Categories</h2>
+    <a href="/admin/categories/create"
+       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+        Add New Category
+    </a>
+</div>
+
+<!-- Categories Table -->
+<div class="bg-white shadow-sm rounded-lg overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    ID
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Name
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Slug
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Parent
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Products
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Sort Order
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Created
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                </th>
+            </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+            {% for category in categories %}
+            <tr id="category-row-{{ category.id }}" class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ category.id }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                        {% if category.get_icon() %}
+                        <img class="h-6 w-6 rounded mr-2" src="{{ category.get_icon().file_path }}" alt="{{ category.name }} icon">
+                        {% endif %}
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">{{ category.name }}</div>
+                            {% if category.description %}
+                            <div class="text-sm text-gray-500">{{ category.description[:50] }}{% if
+                                category.description|length > 50 %}...{% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <code class="bg-gray-100 px-2 py-1 rounded text-xs">{{ category.slug }}</code>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {% if category.parent %}
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        {{ category.parent.name }}
+                    </span>
+                    {% else %}
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        Root
+                    </span>
+                    {% endif %}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        {{ category.products|length }} products
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ category.sort_order }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    {% if category.is_active %}
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Active
+                    </span>
+                    {% else %}
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        Inactive
+                    </span>
+                    {% endif %}
+                    {% if category.children|length > 0 %}
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 ml-1">
+                        {{ category.children|length }} sub
+                    </span>
+                    {% endif %}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ category.created_at.strftime('%Y-%m-%d') }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div class="flex items-center justify-end space-x-2">
+                        <a href="/admin/categories/{{ category.id }}/edit"
+                           class="text-indigo-600 hover:text-indigo-900 text-sm">
+                            Edit
+                        </a>
+                        <button
+                                hx-delete="/api/v1/categories/{{ category.id }}"
+                                hx-confirm="Are you sure you want to delete this category?"
+                                hx-target="#category-row-{{ category.id }}"
+                                hx-swap="delete"
+                                class="text-red-600 hover:text-red-900 text-sm">
+                            Delete
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if not categories %}
+    <div class="text-center py-8">
+        <div class="text-gray-500 text-lg">No categories found</div>
+        <p class="text-gray-400 mt-2">Get started by creating your first category</p>
+        <a href="/admin/categories/create"
+           class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            Add First Category
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Summary Stats -->
+{% if categories %}
+<div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="text-sm font-medium text-gray-500">Total Categories</div>
+        <div class="mt-2 text-3xl font-semibold text-gray-900">{{ categories|length }}</div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="text-sm font-medium text-gray-500">Active Categories</div>
+        <div class="mt-2 text-3xl font-semibold text-green-600">
+            {{ categories|selectattr('is_active')|list|length }}
+        </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="text-sm font-medium text-gray-500">Root Categories</div>
+        <div class="mt-2 text-3xl font-semibold text-blue-600">
+            {{ categories|rejectattr('parent')|list|length }}
+        </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="text-sm font-medium text-gray-500">With Subcategories</div>
+        <div class="mt-2 text-3xl font-semibold text-purple-600">
+            {{ categories|selectattr('children')|list|length }}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

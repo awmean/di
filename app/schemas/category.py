@@ -67,7 +67,7 @@ class CategoryResponse(CategoryBase):
     updated_at: datetime
     media: List[CategoryMediaResponse] = []
     children: List['CategoryResponse'] = []
-    parent: Optional['CategoryResponse'] = None
+    parent_id: Optional[int] = None
 
     class Config:
         from_attributes = True

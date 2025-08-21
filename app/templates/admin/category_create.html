@@ -1,0 +1,526 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Category - Admin{% endblock %}
+
+{% block extra_head %}
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+<style>
+    .file-drop-zone {
+        border: 2px dashed #d1d5db;
+        transition: all 0.3s ease;
+    }
+    .file-drop-zone.drag-over {
+        border-color: #3b82f6;
+        background-color: #eff6ff;
+    }
+    .media-preview img {
+        max-width: 150px;
+        max-height: 150px;
+        object-fit: cover;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex items-center justify-between">
+    <div>
+        <h2 class="text-2xl font-bold text-gray-900">Create New Category</h2>
+        <p class="mt-1 text-sm text-gray-500">Add a new category to organize your products</p>
+    </div>
+    <a href="/admin/categories"
+       class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+        Back to Categories
+    </a>
+</div>
+
+<!-- Form Response Area -->
+<div id="form-response" class="mb-4"></div>
+
+<form id="category-form"
+      hx-post="/api/v1/categories/"
+      hx-headers='{"Content-Type": "application/json"}'
+      hx-target="#form-response"
+      hx-swap="innerHTML"
+      class="space-y-8">
+    <!-- Basic Information -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Basic Information</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700">Category Name *</label>
+                <input type="text"
+                       id="name"
+                       name="name"
+                       required
+                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div>
+                <label for="slug" class="block text-sm font-medium text-gray-700">Slug *</label>
+                <input type="text"
+                       id="slug"
+                       name="slug"
+                       required
+                       placeholder="auto-generated-from-name"
+                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea id="description"
+                      name="description"
+                      rows="4"
+                      placeholder="Brief description of this category and what products it contains..."
+                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
+        </div>
+    </div>
+
+    <!-- Hierarchy & Organization -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Hierarchy & Organization</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="parent_id" class="block text-sm font-medium text-gray-700">Parent Category</label>
+                <select id="parent_id"
+                        name="parent_id"
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">None (Root Category)</option>
+                    {% for category in categories %}
+                    {% if category.is_active %}
+                    <option value="{{ category.id }}">
+                        {% if category.parent %}{{ category.parent.name }} → {% endif %}{{ category.name }}
+                        {% if category.children|length > 0 %} ({{ category.children|length }} sub){% endif %}
+                    </option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                <p class="mt-1 text-sm text-gray-500">Select a parent category to create a subcategory</p>
+            </div>
+
+            <div>
+                <label for="sort_order" class="block text-sm font-medium text-gray-700">Sort Order</label>
+                <input type="number"
+                       id="sort_order"
+                       name="sort_order"
+                       value="0"
+                       min="0"
+                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                <p class="mt-1 text-sm text-gray-500">Lower numbers appear first (0 = highest priority)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Settings</h3>
+
+        <div class="flex items-center space-x-6">
+            <div class="flex items-center">
+                <input type="checkbox"
+                       id="is_active"
+                       name="is_active"
+                       value="true"
+                       checked
+                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                <label for="is_active" class="ml-2 block text-sm text-gray-900">Active</label>
+                <p class="ml-2 text-xs text-gray-500">Allow products to be assigned to this category</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="flex justify-end space-x-4">
+        <a href="/admin/categories"
+           class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-md text-sm font-medium">
+            Cancel
+        </a>
+        <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-sm font-medium">
+            Create Category
+        </button>
+    </div>
+</form>
+
+<!-- Media Upload Section (Shown after category creation) -->
+<div id="media-upload-section" class="mt-8" style="display: none;">
+    <div class="bg-white shadow rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Category Media</h3>
+
+        <!-- Media Upload Form -->
+        <div class="mb-6">
+            <form id="media-upload-form"
+                  hx-post="/api/v1/media/upload/multiple"
+                  hx-encoding="multipart/form-data"
+                  hx-target="#upload-status"
+                  hx-swap="innerHTML"
+                  hx-indicator="#upload-spinner"
+                  class="space-y-4">
+
+                <input type="hidden" id="upload-category-id" name="category_id" value="">
+                <input type="hidden" name="media_type" value="photo">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Category Photo Upload -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Category Photo</label>
+                        <div class="file-drop-zone rounded-lg p-6 text-center">
+                            <input type="file"
+                                   name="photo_files"
+                                   id="photo-files"
+                                   multiple
+                                   accept="image/*"
+                                   class="hidden">
+                            <div class="cursor-pointer" onclick="document.getElementById('photo-files').click()">
+                                <svg class="mx-auto h-10 w-10 text-gray-400" stroke="currentColor" fill="none"
+                                     viewBox="0 0 48 48">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <p class="mt-2 text-xs text-gray-600">
+                                    <span class="font-medium text-blue-600">Upload Photo</span>
+                                </p>
+                                <p class="text-xs text-gray-500">PNG, JPG, JPEG up to 5MB</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category Icon Upload -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Category Icon</label>
+                        <div class="file-drop-zone rounded-lg p-6 text-center">
+                            <input type="file"
+                                   name="icon_files"
+                                   id="icon-files"
+                                   accept="image/*"
+                                   class="hidden">
+                            <div class="cursor-pointer" onclick="document.getElementById('icon-files').click()">
+                                <svg class="mx-auto h-10 w-10 text-gray-400" stroke="currentColor" fill="none"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 110 2h-1v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6H3a1 1 0 110-2h4zM9 6v13h6V6H9z"/>
+                                </svg>
+                                <p class="mt-2 text-xs text-gray-600">
+                                    <span class="font-medium text-blue-600">Upload Icon</span>
+                                </p>
+                                <p class="text-xs text-gray-500">SVG, PNG preferred (square format)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit"
+                        id="upload-button"
+                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:opacity-50">
+                    <span id="upload-spinner" class="htmx-indicator hidden">
+                        <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white inline"
+                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Uploading...
+                    </span>
+                    <span id="upload-text">Upload Media</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Media Preview -->
+        <div id="media-preview" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <!-- Uploaded media will appear here -->
+        </div>
+
+        <!-- Upload Status -->
+        <div id="upload-status" class="mt-4"></div>
+
+        <!-- Final Actions -->
+        <div class="mt-6 flex justify-end space-x-4">
+            <a href="/admin/categories"
+               class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-md text-sm font-medium">
+                Finish & Go to Categories
+            </a>
+            <a href="/admin/categories/create"
+               class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-sm font-medium">
+                Create Another Category
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Handle media upload responses
+    document.body.addEventListener('htmx:beforeRequest', function(event) {
+        if (event.target.id === 'media-upload-form') {
+            // Show loading state
+            const uploadButton = document.getElementById('upload-button');
+            const uploadText = document.getElementById('upload-text');
+            const uploadSpinner = document.getElementById('upload-spinner');
+
+            uploadButton.disabled = true;
+            uploadText.style.display = 'none';
+            uploadSpinner.classList.remove('hidden');
+        }
+    });
+
+    document.body.addEventListener('htmx:afterRequest', function(event) {
+        if (event.target.id === 'media-upload-form') {
+            // Reset button state
+            const uploadButton = document.getElementById('upload-button');
+            const uploadText = document.getElementById('upload-text');
+            const uploadSpinner = document.getElementById('upload-spinner');
+
+            uploadButton.disabled = false;
+            uploadText.style.display = 'inline';
+            uploadSpinner.classList.add('hidden');
+
+            const statusDiv = document.getElementById('upload-status');
+
+            if (event.detail.xhr.status === 201) {
+                // Success
+                try {
+                    const response = JSON.parse(event.detail.xhr.response);
+                    statusDiv.innerHTML = `
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                            <strong>Success!</strong> Uploaded ${response.length} file(s).
+                        </div>
+                    `;
+
+                    // Add media previews
+                    const mediaPreview = document.getElementById('media-preview');
+                    response.forEach(media => {
+                        const mediaDiv = document.createElement('div');
+                        mediaDiv.className = 'relative bg-gray-100 rounded-lg overflow-hidden';
+                        mediaDiv.innerHTML = `
+                            <img src="/uploads/media/${media.filename}" alt="${media.original_filename}"
+                                 class="w-full h-32 object-cover">
+                            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2 truncate">
+                                ${media.type === 'icon' ? '📱 Icon' : '🖼️ Photo'}: ${media.original_filename}
+                            </div>
+                            <div class="absolute top-2 right-2">
+                                <button onclick="removeMedia(${media.id})"
+                                        class="bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                                    ×
+                                </button>
+                            </div>
+                        `;
+                        mediaPreview.appendChild(mediaDiv);
+                    });
+
+                    // Reset form
+                    document.getElementById('media-upload-form').reset();
+
+                } catch (e) {
+                    console.error('Error parsing response:', e);
+                    statusDiv.innerHTML = `
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                            <strong>Error:</strong> Could not parse upload response.
+                        </div>
+                    `;
+                }
+            } else {
+                // Error
+                let errorMessage = 'Upload failed';
+                try {
+                    const errorResponse = JSON.parse(event.detail.xhr.response);
+                    errorMessage = errorResponse.detail || errorMessage;
+                } catch (e) {
+                    errorMessage = `Upload failed with status: ${event.detail.xhr.status}`;
+                }
+
+                statusDiv.innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        <strong>Error:</strong> ${errorMessage}
+                    </div>
+                `;
+            }
+
+            // Clear status after 5 seconds
+            setTimeout(() => {
+                const currentStatus = statusDiv.innerHTML;
+                if (currentStatus.includes('Success!') || currentStatus.includes('Error:')) {
+                    statusDiv.innerHTML = '';
+                }
+            }, 5000);
+        }
+    });
+
+    // Function to remove media
+    function removeMedia(mediaId) {
+        if (confirm('Are you sure you want to delete this media?')) {
+            fetch(`/api/v1/media/${mediaId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Remove the media element from DOM
+                    event.target.closest('.relative').remove();
+                } else {
+                    alert('Failed to delete media');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to delete media');
+            });
+        }
+    }
+
+    // Show file names when selected
+    document.getElementById('photo-files').addEventListener('change', function() {
+        updateFileInfo(this, 'photo-file-info');
+    });
+
+    document.getElementById('icon-files').addEventListener('change', function() {
+        updateFileInfo(this, 'icon-file-info');
+    });
+
+    function updateFileInfo(input, infoId) {
+        const files = input.files;
+        let fileInfo = document.getElementById(infoId);
+
+        if (!fileInfo) {
+            fileInfo = document.createElement('div');
+            fileInfo.id = infoId;
+            fileInfo.className = 'mt-2 text-sm text-gray-600';
+            input.parentNode.appendChild(fileInfo);
+        }
+
+        if (files.length > 0) {
+            const fileNames = Array.from(files).map(file => file.name).join(', ');
+            fileInfo.innerHTML = `Selected: ${fileNames} (${files.length} file${files.length > 1 ? 's' : ''})`;
+        } else {
+            fileInfo.remove();
+        }
+    }
+
+    // Convert form data to JSON and handle submission
+    document.getElementById('category-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const jsonData = {};
+
+        // Convert form data to JSON
+        for (let [key, value] of formData.entries()) {
+            // Handle numeric fields
+            if (['sort_order', 'parent_id'].includes(key) && value) {
+                jsonData[key] = parseInt(value);
+            } else if (['is_active'].includes(key)) {
+                jsonData[key] = true; // Checkbox is only present if checked
+            } else if (value) {
+                jsonData[key] = value;
+            }
+        }
+
+        // Set default values for checkboxes if not checked
+        if (!jsonData.is_active) jsonData.is_active = false;
+
+        // Make the API call
+        fetch('/api/v1/categories/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                // Success - show media upload section
+                document.getElementById('upload-category-id').value = data.id;
+                document.getElementById('media-upload-section').style.display = 'block';
+                document.getElementById('category-form').style.display = 'none';
+
+                // Show success message
+                document.getElementById('form-response').innerHTML = `
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                        <strong>Category created successfully!</strong> Category ID: ${data.id}. Now you can upload media files.
+                    </div>
+                `;
+            } else {
+                throw new Error('Category creation failed');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('form-response').innerHTML = `
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    <strong>Error:</strong> Failed to create category. Please check the form data and try again.
+                </div>
+            `;
+        });
+    });
+
+    // Handle file drop for both upload zones
+    const photoDropZone = document.querySelector('.file-drop-zone:first-of-type');
+    const iconDropZone = document.querySelector('.file-drop-zone:last-of-type');
+
+    [photoDropZone, iconDropZone].forEach(dropZone => {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    function highlight(e) {
+        e.currentTarget.classList.add('drag-over');
+    }
+
+    function unhighlight(e) {
+        e.currentTarget.classList.remove('drag-over');
+    }
+
+    photoDropZone.addEventListener('drop', function(e) {
+        handleDrop(e, 'photo-files');
+    }, false);
+
+    iconDropZone.addEventListener('drop', function(e) {
+        handleDrop(e, 'icon-files');
+    }, false);
+
+    function handleDrop(e, inputId) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        document.getElementById(inputId).files = files;
+
+        // Trigger change event to update file info
+        const changeEvent = new Event('change', { bubbles: true });
+        document.getElementById(inputId).dispatchEvent(changeEvent);
+    }
+
+    // Auto-generate slug from name
+    document.getElementById('name').addEventListener('input', function() {
+        const name = this.value;
+        const slug = name.toLowerCase()
+                         .replace(/[^a-z0-9]+/g, '-')
+                         .replace(/(^-|-$)/g, '');
+        document.getElementById('slug').value = slug;
+    });
+
+    // Show/hide parent category help text based on selection
+    document.getElementById('parent_id').addEventListener('change', function() {
+        const helpText = this.parentNode.querySelector('.text-gray-500');
+        if (this.value) {
+            helpText.textContent = 'This category will be a subcategory of the selected parent';
+        } else {
+            helpText.textContent = 'Select a parent category to create a subcategory';
+        }
+    });
+</script>
+{% endblock %}
