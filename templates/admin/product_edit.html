@@ -410,7 +410,6 @@
         <h4 class="text-md font-medium text-gray-700 mb-4">Current Media ({{ product.media|length }} files)</h4>
         <div id="existing-media" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {% for media in product.media %}
-            <!-- Alternative approach using JavaScript function -->
             <div id="media-{{ media.id }}" class="relative bg-gray-100 rounded-lg overflow-hidden">
                 {% if media.type == 'photo' %}
                 <img src="/uploads/media/{{ media.filename }}" alt="{{ media.original_filename }}"
@@ -429,20 +428,29 @@
                     {{ media.original_filename }}
                 </div>
 
-                <div class="absolute top-2 right-2 flex space-x-1">
-                    {% if not media.is_main %}
-                    <button onclick="setMainMedia({{ media.id }})"
-                            class="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                            title="Set as main">
-                        ★
-                    </button>
-                    {% else %}
-                    <span class="bg-yellow-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                          title="Main image">
-            ★
-        </span>
-                    {% endif %}
+                <!-- Sort order indicator -->
+                <div class="absolute top-2 left-2">
+                    <span class="bg-black bg-opacity-60 text-white text-xs px-1.5 py-0.5 rounded backdrop-blur-sm"
+                          title="Sort order">
+                        {{ media.sort_order }}
+                    </span>
+                </div>
 
+                <!-- Order control buttons - always visible -->
+                <div class="absolute left-2 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1">
+                    <button onclick="moveMedia({{ media.id }}, 'up')"
+                            class="bg-blue-500 hover:bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md"
+                            title="Move up">
+                        ↑
+                    </button>
+                    <button onclick="moveMedia({{ media.id }}, 'down')"
+                            class="bg-blue-500 hover:bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md"
+                            title="Move down">
+                        ↓
+                    </button>
+                </div>
+
+                <div class="absolute top-2 right-2 flex space-x-1">
                     <button onclick="removeExistingMedia({{ media.id }})"
                             class="bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
                             title="Delete">
@@ -450,50 +458,33 @@
                     </button>
                 </div>
 
-                <div class="absolute top-2 left-2">
-                    <input type="number"
-                           id="sort-order-{{ media.id }}"
-                           value="{{ media.sort_order }}"
-                           class="bg-blue-500 text-white text-xs px-1 rounded w-12 text-center border-none focus:ring-1 focus:ring-blue-300"
-                           min="0"
-                           onchange="updateSortOrder({{ media.id }}, this.value)"
-                           title="Sort order">
-                </div>
             </div>
-
-            <script>
-                function updateSortOrder(mediaId, sortOrder) {
-                    htmx.ajax('PUT', `/api/v1/media/${mediaId}/set-order?sort_order=${sortOrder}`, {
-                        swap: 'none'
-                    });
-                }
-            </script>
             {% endfor %}
         </div>
     </div>
     {% endif %}
-    
+
     <!-- Media Upload Form -->
     <div>
         <h4 class="text-md font-medium text-gray-700 mb-4">Add New Media</h4>
-        <form id="media-upload-form" 
+        <form id="media-upload-form"
               hx-post="/api/v1/media/upload/multiple"
               hx-encoding="multipart/form-data"
               hx-target="#upload-status"
               hx-swap="innerHTML"
               hx-indicator="#upload-spinner"
               class="space-y-4">
-            
+
             <input type="hidden" name="product_id" value="{{ product.id }}">
             <input type="hidden" name="media_type" value="photo">
-            
+
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Upload Photos</label>
                 <div class="file-drop-zone rounded-lg p-8 text-center">
-                    <input type="file" 
-                           name="files" 
+                    <input type="file"
+                           name="files"
                            id="media-files"
-                           multiple 
+                           multiple
                            accept="image/*"
                            class="hidden">
                     <div class="cursor-pointer" onclick="document.getElementById('media-files').click()">
@@ -507,8 +498,8 @@
                     </div>
                 </div>
             </div>
-            
-            <button type="submit" 
+
+            <button type="submit"
                     id="upload-button"
                     class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:opacity-50">
                 <span id="upload-spinner" class="htmx-indicator hidden">
@@ -528,259 +519,247 @@
 </div>
 
 <script>
+    function updateSortOrder(mediaId, sortOrder) {
+       htmx.ajax('PATCH', `/api/v1/media/${mediaId}/set-order?sort_order=${sortOrder}`, {
+           swap: 'none'
+       });
+   }
+
+   function moveMedia(mediaId, direction) {
+       htmx.ajax('PATCH', `/api/v1/media/${mediaId}/move-${direction}`, {
+           swap: 'none'
+       }).then(() => {
+           // Optionally reload the media section or update the UI
+           // You might want to refresh the media grid after reordering
+           location.reload(); // Simple approach - you might want something more sophisticated
+       });
+   }
 // Update product form submission
 document.getElementById('product-edit-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    const jsonData = {};
-    
-    // Convert form data to JSON
-    for (let [key, value] of formData.entries()) {
-        // Handle numeric fields
-        if (['price', 'old_price', 'weight'].includes(key) && value) {
-            jsonData[key] = parseFloat(value);
-        } else if (['width', 'height', 'depth', 'fabric_density', 'set_piece_count', 'piece_quantity', 'sort_order', 'category_id', 'parent_id'].includes(key) && value) {
-            jsonData[key] = parseInt(value);
-        } else if (['is_active', 'is_featured'].includes(key)) {
-            jsonData[key] = true; // Checkbox is only present if checked
-        } else if (value) {
-            jsonData[key] = value;
-        }
-    }
-    
-    // Set default values for checkboxes if not checked
-    if (!jsonData.is_active) jsonData.is_active = false;
-    if (!jsonData.is_featured) jsonData.is_featured = false;
-    
-    // Make the API call
-    fetch('/api/v1/products/{{ product.id }}', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(jsonData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.id) {
-            // Success
-            document.getElementById('form-response').innerHTML = `
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                    <strong>Product updated successfully!</strong>
-                </div>
-            `;
-            
-            // Clear message after 3 seconds
-            setTimeout(() => {
-                document.getElementById('form-response').innerHTML = '';
-            }, 3000);
-        } else {
-            throw new Error('Product update failed');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('form-response').innerHTML = `
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                <strong>Error:</strong> Failed to update product. Please check the form data and try again.
-            </div>
-        `;
-    });
+   e.preventDefault();
+
+   const formData = new FormData(this);
+   const jsonData = {};
+
+   // Convert form data to JSON
+   for (let [key, value] of formData.entries()) {
+       // Handle numeric fields
+       if (['price', 'old_price', 'weight'].includes(key) && value) {
+           jsonData[key] = parseFloat(value);
+       } else if (['width', 'height', 'depth', 'fabric_density', 'set_piece_count', 'piece_quantity', 'sort_order', 'category_id', 'parent_id'].includes(key) && value) {
+           jsonData[key] = parseInt(value);
+       } else if (['is_active', 'is_featured'].includes(key)) {
+           jsonData[key] = true; // Checkbox is only present if checked
+       } else if (value) {
+           jsonData[key] = value;
+       }
+   }
+
+   // Set default values for checkboxes if not checked
+   if (!jsonData.is_active) jsonData.is_active = false;
+   if (!jsonData.is_featured) jsonData.is_featured = false;
+
+   // Make the API call
+   fetch('/api/v1/products/{{ product.id }}', {
+       method: 'PUT',
+       headers: {
+           'Content-Type': 'application/json',
+       },
+       body: JSON.stringify(jsonData)
+   })
+   .then(response => response.json())
+   .then(data => {
+       if (data.id) {
+           // Success
+           document.getElementById('form-response').innerHTML = `
+               <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                   <strong>Product updated successfully!</strong>
+               </div>
+           `;
+
+           // Clear message after 3 seconds
+           setTimeout(() => {
+               document.getElementById('form-response').innerHTML = '';
+           }, 3000);
+       } else {
+           throw new Error('Product update failed');
+       }
+   })
+   .catch(error => {
+       console.error('Error:', error);
+       document.getElementById('form-response').innerHTML = `
+           <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+               <strong>Error:</strong> Failed to update product. Please check the form data and try again.
+           </div>
+       `;
+   });
 });
 
 // Media upload handling (same as create page)
 document.body.addEventListener('htmx:beforeRequest', function(event) {
-    if (event.target.id === 'media-upload-form') {
-        const uploadButton = document.getElementById('upload-button');
-        const uploadText = document.getElementById('upload-text');
-        const uploadSpinner = document.getElementById('upload-spinner');
-        
-        uploadButton.disabled = true;
-        uploadText.style.display = 'none';
-        uploadSpinner.classList.remove('hidden');
-    }
+   if (event.target.id === 'media-upload-form') {
+       const uploadButton = document.getElementById('upload-button');
+       const uploadText = document.getElementById('upload-text');
+       const uploadSpinner = document.getElementById('upload-spinner');
+
+       uploadButton.disabled = true;
+       uploadText.style.display = 'none';
+       uploadSpinner.classList.remove('hidden');
+   }
 });
 
 document.body.addEventListener('htmx:afterRequest', function(event) {
-    if (event.target.id === 'media-upload-form') {
-        const uploadButton = document.getElementById('upload-button');
-        const uploadText = document.getElementById('upload-text');
-        const uploadSpinner = document.getElementById('upload-spinner');
-        
-        uploadButton.disabled = false;
-        uploadText.style.display = 'inline';
-        uploadSpinner.classList.add('hidden');
-        
-        const statusDiv = document.getElementById('upload-status');
-        
-        if (event.detail.xhr.status === 201) {
-            // Success
-            try {
-                const response = JSON.parse(event.detail.xhr.response);
-                statusDiv.innerHTML = `
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                        <strong>Success!</strong> Uploaded ${response.length} file(s). <a href="#" onclick="location.reload()" class="underline">Refresh page</a> to see new media.
-                    </div>
-                `;
-                
-                // Reset form
-                document.getElementById('media-upload-form').reset();
-                
-            } catch (e) {
-                console.error('Error parsing response:', e);
-                statusDiv.innerHTML = `
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                        <strong>Error:</strong> Could not parse upload response.
-                    </div>
-                `;
-            }
-        } else {
-            // Error
-            let errorMessage = 'Upload failed';
-            try {
-                const errorResponse = JSON.parse(event.detail.xhr.response);
-                errorMessage = errorResponse.detail || errorMessage;
-            } catch (e) {
-                errorMessage = `Upload failed with status: ${event.detail.xhr.status}`;
-            }
-            
-            statusDiv.innerHTML = `
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                    <strong>Error:</strong> ${errorMessage}
-                </div>
-            `;
-        }
-        
-        // Clear status after 5 seconds
-        setTimeout(() => {
-            const currentStatus = statusDiv.innerHTML;
-            if (currentStatus.includes('Success!') || currentStatus.includes('Error:')) {
-                statusDiv.innerHTML = '';
-            }
-        }, 5000);
-    }
+   if (event.target.id === 'media-upload-form') {
+       const uploadButton = document.getElementById('upload-button');
+       const uploadText = document.getElementById('upload-text');
+       const uploadSpinner = document.getElementById('upload-spinner');
+
+       uploadButton.disabled = false;
+       uploadText.style.display = 'inline';
+       uploadSpinner.classList.add('hidden');
+
+       const statusDiv = document.getElementById('upload-status');
+
+       if (event.detail.xhr.status === 201) {
+           // Success
+           try {
+               const response = JSON.parse(event.detail.xhr.response);
+               statusDiv.innerHTML = `
+                   <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                       <strong>Success!</strong> Uploaded ${response.length} file(s). <a href="#" onclick="location.reload()" class="underline">Refresh page</a> to see new media.
+                   </div>
+               `;
+
+               // Reset form
+               document.getElementById('media-upload-form').reset();
+
+           } catch (e) {
+               console.error('Error parsing response:', e);
+               statusDiv.innerHTML = `
+                   <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                       <strong>Error:</strong> Could not parse upload response.
+                   </div>
+               `;
+           }
+       } else {
+           // Error
+           let errorMessage = 'Upload failed';
+           try {
+               const errorResponse = JSON.parse(event.detail.xhr.response);
+               errorMessage = errorResponse.detail || errorMessage;
+           } catch (e) {
+               errorMessage = `Upload failed with status: ${event.detail.xhr.status}`;
+           }
+
+           statusDiv.innerHTML = `
+               <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                   <strong>Error:</strong> ${errorMessage}
+               </div>
+           `;
+       }
+
+       // Clear status after 5 seconds
+       setTimeout(() => {
+           const currentStatus = statusDiv.innerHTML;
+           if (currentStatus.includes('Success!') || currentStatus.includes('Error:')) {
+               statusDiv.innerHTML = '';
+           }
+       }, 5000);
+   }
 });
 
 // Function to remove existing media
 function removeExistingMedia(mediaId) {
-    if (confirm('Are you sure you want to delete this media?')) {
-        fetch(`/api/v1/media/${mediaId}`, {
-            method: 'DELETE'
-        })
-        .then(response => {
-            if (response.ok) {
-                // Remove the media element from DOM
-                document.getElementById(`media-${mediaId}`).remove();
-                
-                // Show success message
-                const statusDiv = document.getElementById('upload-status');
-                statusDiv.innerHTML = `
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                        <strong>Success!</strong> Media deleted successfully.
-                    </div>
-                `;
-                
-                setTimeout(() => {
-                    statusDiv.innerHTML = '';
-                }, 3000);
-            } else {
-                alert('Failed to delete media');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to delete media');
-        });
-    }
+   if (confirm('Are you sure you want to delete this media?')) {
+       fetch(`/api/v1/media/${mediaId}`, {
+           method: 'DELETE'
+       })
+       .then(response => {
+           if (response.ok) {
+               // Remove the media element from DOM
+               document.getElementById(`media-${mediaId}`).remove();
+
+               // Show success message
+               const statusDiv = document.getElementById('upload-status');
+               statusDiv.innerHTML = `
+                   <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                       <strong>Success!</strong> Media deleted successfully.
+                   </div>
+               `;
+
+               setTimeout(() => {
+                   statusDiv.innerHTML = '';
+               }, 3000);
+           } else {
+               alert('Failed to delete media');
+           }
+       })
+       .catch(error => {
+           console.error('Error:', error);
+           alert('Failed to delete media');
+       });
+   }
 }
 
-// Function to set main media
-function setMainMedia(mediaId) {
-    fetch(`/api/v1/media/${mediaId}/set-main`, {
-        method: 'PUT'
-    })
-    .then(response => {
-        if (response.ok) {
-            // Show success message
-            const statusDiv = document.getElementById('upload-status');
-            statusDiv.innerHTML = `
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                    <strong>Success!</strong> Main image updated. <a href="#" onclick="location.reload()" class="underline">Refresh page</a> to see changes.
-                </div>
-            `;
-            
-            setTimeout(() => {
-                statusDiv.innerHTML = '';
-            }, 3000);
-        } else {
-            alert('Failed to set main media');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to set main media');
-    });
-}
 
 // Show file names when selected
 document.getElementById('media-files').addEventListener('change', function() {
-    const files = this.files;
-    const fileInfo = document.getElementById('file-info') || document.createElement('div');
-    fileInfo.id = 'file-info';
-    fileInfo.className = 'mt-2 text-sm text-gray-600';
-    
-    if (files.length > 0) {
-        const fileNames = Array.from(files).map(file => file.name).join(', ');
-        fileInfo.innerHTML = `Selected: ${fileNames} (${files.length} file${files.length > 1 ? 's' : ''})`;
-        this.parentNode.appendChild(fileInfo);
-    } else {
-        fileInfo.remove();
-    }
+   const files = this.files;
+   const fileInfo = document.getElementById('file-info') || document.createElement('div');
+   fileInfo.id = 'file-info';
+   fileInfo.className = 'mt-2 text-sm text-gray-600';
+
+   if (files.length > 0) {
+       const fileNames = Array.from(files).map(file => file.name).join(', ');
+       fileInfo.innerHTML = `Selected: ${fileNames} (${files.length} file${files.length > 1 ? 's' : ''})`;
+       this.parentNode.appendChild(fileInfo);
+   } else {
+       fileInfo.remove();
+   }
 });
 
 // Handle file drop
 const dropZone = document.querySelector('.file-drop-zone');
 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    dropZone.addEventListener(eventName, preventDefaults, false);
+   dropZone.addEventListener(eventName, preventDefaults, false);
 });
 
 function preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
+   e.preventDefault();
+   e.stopPropagation();
 }
 
 ['dragenter', 'dragover'].forEach(eventName => {
-    dropZone.addEventListener(eventName, highlight, false);
+   dropZone.addEventListener(eventName, highlight, false);
 });
 
 ['dragleave', 'drop'].forEach(eventName => {
-    dropZone.addEventListener(eventName, unhighlight, false);
+   dropZone.addEventListener(eventName, unhighlight, false);
 });
 
 function highlight(e) {
-    dropZone.classList.add('drag-over');
+   dropZone.classList.add('drag-over');
 }
 
 function unhighlight(e) {
-    dropZone.classList.remove('drag-over');
+   dropZone.classList.remove('drag-over');
 }
 
 dropZone.addEventListener('drop', handleDrop, false);
 
 function handleDrop(e) {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-    document.getElementById('media-files').files = files;
+   const dt = e.dataTransfer;
+   const files = dt.files;
+   document.getElementById('media-files').files = files;
 }
 
 // Auto-generate slug from name
 document.getElementById('name').addEventListener('input', function() {
-    const name = this.value;
-    const slug = name.toLowerCase()
-                     .replace(/[^a-z0-9]+/g, '-')
-                     .replace(/(^-|-$)/g, '');
-    document.getElementById('slug').value = slug;
+   const name = this.value;
+   const slug = name.toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/(^-|-$)/g, '');
+   document.getElementById('slug').value = slug;
 });
 </script>
 {% endblock %}

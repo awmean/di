@@ -76,7 +76,11 @@ class Product(Base):
 
     # Other relationships - use string reference for Category
     category: Mapped["Category"] = relationship("Category", back_populates="products")
-    media: Mapped[List["Media"]] = relationship("Media", back_populates="product", cascade="all, delete-orphan")
+    media: Mapped[List["Media"]] = relationship(
+        "Media",
+        back_populates="product",
+        cascade="all, delete-orphan",
+        order_by="Media.sort_order")
     order_items: Mapped[List["OrderItem"]] = relationship("OrderItem", back_populates="product")
 
     @property
