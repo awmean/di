@@ -273,6 +273,23 @@ def update_media(
     return media
 
 
+@router.put("/{media_id}/set-order", response_model=MediaResponse)
+def update_media_sort_order(
+        media_id: int,
+        sort_order: int,
+        db: Session = Depends(get_db)
+):
+    """Update media sort order"""
+    existing_media = MediaRepository.get_by_id(db, media_id)
+    if not existing_media:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Media not found"
+        )
+    media = MediaRepository.update(db, media_id, sort_order=sort_order)
+    return media
+
+
 @router.put("/{media_id}/set-main", response_model=MessageResponse)
 def set_main_media(
         media_id: int,

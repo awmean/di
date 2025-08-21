@@ -410,6 +410,7 @@
         <h4 class="text-md font-medium text-gray-700 mb-4">Current Media ({{ product.media|length }} files)</h4>
         <div id="existing-media" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {% for media in product.media %}
+            <!-- Alternative approach using JavaScript function -->
             <div id="media-{{ media.id }}" class="relative bg-gray-100 rounded-lg overflow-hidden">
                 {% if media.type == 'photo' %}
                 <img src="/uploads/media/{{ media.filename }}" alt="{{ media.original_filename }}"
@@ -417,41 +418,56 @@
                 {% else %}
                 <div class="w-full h-32 flex items-center justify-center bg-gray-200">
                     <svg class="h-8 w-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd"
+                              d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                              clip-rule="evenodd"/>
                     </svg>
                 </div>
                 {% endif %}
-                
+
                 <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2 truncate">
                     {{ media.original_filename }}
                 </div>
-                
+
                 <div class="absolute top-2 right-2 flex space-x-1">
                     {% if not media.is_main %}
-                    <button onclick="setMainMedia({{ media.id }})" 
+                    <button onclick="setMainMedia({{ media.id }})"
                             class="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
                             title="Set as main">
                         ★
                     </button>
                     {% else %}
-                    <span class="bg-yellow-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs" title="Main image">
-                        ★
-                    </span>
+                    <span class="bg-yellow-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                          title="Main image">
+            ★
+        </span>
                     {% endif %}
-                    
-                    <button onclick="removeExistingMedia({{ media.id }})" 
+
+                    <button onclick="removeExistingMedia({{ media.id }})"
                             class="bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
                             title="Delete">
                         ×
                     </button>
                 </div>
-                
+
                 <div class="absolute top-2 left-2">
-                    <span class="bg-blue-500 text-white text-xs px-1 rounded">
-                        {{ media.sort_order }}
-                    </span>
+                    <input type="number"
+                           id="sort-order-{{ media.id }}"
+                           value="{{ media.sort_order }}"
+                           class="bg-blue-500 text-white text-xs px-1 rounded w-12 text-center border-none focus:ring-1 focus:ring-blue-300"
+                           min="0"
+                           onchange="updateSortOrder({{ media.id }}, this.value)"
+                           title="Sort order">
                 </div>
             </div>
+
+            <script>
+                function updateSortOrder(mediaId, sortOrder) {
+                    htmx.ajax('PUT', `/api/v1/media/${mediaId}/set-order?sort_order=${sortOrder}`, {
+                        swap: 'none'
+                    });
+                }
+            </script>
             {% endfor %}
         </div>
     </div>
