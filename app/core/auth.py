@@ -42,10 +42,18 @@ def require_auth(request: Request):
     session_id = request.cookies.get("session_id")
 
     if not session_id:
-        raise HTTPException(status_code=401, detail="Not authenticated")
+        # Redirect to login instead of raising 401
+        raise HTTPException(
+            status_code=status.HTTP_302_FOUND,
+            headers={"Location": "/admin/login"}
+        )
 
     session = get_session(session_id)
     if not session:
-        raise HTTPException(status_code=401, detail="Session expired")
+        # Redirect to login instead of raising 401
+        raise HTTPException(
+            status_code=status.HTTP_302_FOUND,
+            headers={"Location": "/admin/login"}
+        )
 
     return session
