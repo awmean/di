@@ -1,10 +1,10 @@
 # app/api/routers/orders.py
 from typing import List
 
-from app.core.database import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.core.database import get_db
 from app.repositories.order_item import OrderItemRepository
 from app.repositories.order_repository import OrderRepository
 from app.repositories.product_repository import ProductRepository
@@ -14,6 +14,7 @@ from app.schemas.order import (
     OrderCreate, OrderUpdate, OrderResponse, OrderDetailResponse,
     OrderItemCreate, OrderItemResponse
 )
+from app.telegram import TelegramMessenger
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
@@ -54,6 +55,8 @@ def create_order(
 
     # Refresh order to get items and updated total
     db.refresh(order)
+
+    TelegramMessenger.send_order(order)
     return order
 
 
