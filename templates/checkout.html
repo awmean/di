@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block title %}Оформление заявки{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Back Navigation -->
+        <div class="mb-8">
+            <a href="/" class="text-gray-600 hover:text-gray-800 flex items-center space-x-2">
+                <span>← ВЕРНУТЬСЯ НАЗАД</span>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Order Form -->
+            <div class="bg-white rounded-lg shadow-sm p-8">
+                <h1 class="text-2xl font-light text-gray-900 mb-8">Оформление заявки</h1>
+
+                <form id="orderForm" class="space-y-6">
+                    <!-- Name Field -->
+                    <div>
+                        <input type="text"
+                               id="customerName"
+                               name="customer_name"
+                               placeholder="Имя"
+                               required
+                               class="w-full px-4 py-4 border border-gray-300 rounded-none bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-gray-500 transition-colors">
+                    </div>
+
+                    <!-- Phone Field -->
+                    <div class="relative">
+                        <div class="absolute left-0 top-0 h-full flex items-center px-4 bg-gray-50 border-r border-gray-300">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAyNCAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjE2IiBmaWxsPSIjZmZmIi8+CjxyZWN0IHdpZHRoPSIyNCIgaGVpZ2h0PSI1LjMzMyIgZmlsbD0iIzAwNTJGRiIvPgo8cmVjdCB5PSI1LjMzMyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjUuMzM0IiBmaWxsPSIjRkZGRkZGIi8+CjxyZWN0IHk9IjEwLjY2NyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjUuMzMzIiBmaWxsPSIjRkY1MjUyIi8+Cjwvc3ZnPgo="
+                                 alt="RU" class="w-6 h-4">
+                            <span class="ml-2 text-gray-700">+7</span>
+                        </div>
+                        <input type="tel"
+                               id="customerPhone"
+                               name="customer_phone"
+                               placeholder="(000) 000-00-00"
+                               required
+                               class="w-full pl-24 pr-4 py-4 border border-gray-300 rounded-none bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-gray-500 transition-colors">
+                    </div>
+
+                    <!-- Comment Field -->
+                    <div>
+                        <textarea id="comment"
+                                  name="comment"
+                                  placeholder="Комментарий к заказу (необязательно)"
+                                  rows="4"
+                                  class="w-full px-4 py-4 border border-gray-300 rounded-none bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-gray-500 transition-colors resize-vertical"></textarea>
+                    </div>
+
+                    <!-- Privacy Policy Checkbox -->
+                    <div class="flex items-start space-x-3">
+                        <input type="checkbox"
+                               id="privacyConsent"
+                               name="privacy_consent"
+                               required
+                               class="mt-1 w-4 h-4 text-black bg-white border-gray-300 rounded focus:ring-black focus:ring-2">
+                        <label for="privacyConsent" class="text-sm text-gray-600 leading-relaxed">
+                            Я соглашаюсь на <a href="/privacy" class="underline hover:no-underline">обработку персональных данных</a>
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit"
+                            class="w-full bg-black text-white py-4 px-8 font-medium tracking-wider hover:bg-gray-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span id="submitBtnText">Консультация с менеджером</span>
+                        <span id="submitLoader" class="hidden">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Отправка...
+                        </span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="bg-white rounded-lg shadow-sm p-8">
+                <h2 class="text-xl font-light text-gray-900 mb-6">Ваш заказ</h2>
+
+                <div id="cartItems" class="space-y-6">
+                    <!-- Cart items will be inserted here by JavaScript -->
+                </div>
+
+                <div id="emptyCart" class="hidden text-center py-12">
+                    <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 2L3 7v11a2 2 0 002 2h10a2 2 0 002-2V7l-7-5zM8 15a1 1 0 100-2 1 1 0 000 2zm4-2a1 1 0 11-2 0 1 1 0 012 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <p class="text-gray-500 mb-4">Ваша корзина пуста</p>
+                    <a href="/" class="text-black underline hover:no-underline">Перейти к каталогу</a>
+                </div>
+
+                <div id="orderTotal" class="border-t border-gray-200 pt-6 mt-6">
+                    <div class="flex justify-between items-center text-xl font-light">
+                        <span>Сумма:</span>
+                        <span id="totalAmount">0 р.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg max-w-md w-full p-8 text-center">
+        <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+            <svg class="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+        </div>
+        <h3 class="text-xl font-medium text-gray-900 mb-2">Заявка отправлена!</h3>
+        <p class="text-gray-600 mb-6">Мы свяжемся с вами в ближайшее время для консультации по выбранным товарам.</p>
+        <button onclick="closeSuccessModal()" class="w-full bg-black text-white py-3 px-6 font-medium hover:bg-gray-800 transition-colors">
+            Понятно
+        </button>
+    </div>
+</div>
+
+<script src="/static/js/cart-localstorage.min.js"></script>
+<script>
+// Phone number formatting
+function formatPhoneNumber(value) {
+    // Remove all non-digits
+    const digits = value.replace(/\D/g, '');
+
+    // Format as (000) 000-00-00
+    if (digits.length >= 10) {
+        return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 8)}-${digits.slice(8, 10)}`;
+    } else if (digits.length >= 6) {
+        return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+    } else if (digits.length >= 3) {
+        return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    }
+    return digits;
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    loadCartItems();
+    setupEventListeners();
+});
+
+function setupEventListeners() {
+    // Phone formatting
+    const phoneInput = document.getElementById('customerPhone');
+    phoneInput.addEventListener('input', function(e) {
+        const formatted = formatPhoneNumber(e.target.value);
+        e.target.value = formatted;
+    });
+
+    // Form submission
+    document.getElementById('orderForm').addEventListener('submit', handleFormSubmit);
+}
+
+function loadCartItems() {
+    const cartItems = cartLS.list();
+    const cartContainer = document.getElementById('cartItems');
+    const emptyCart = document.getElementById('emptyCart');
+    const orderTotal = document.getElementById('orderTotal');
+    const totalAmount = document.getElementById('totalAmount');
+
+    if (cartItems.length === 0) {
+        cartContainer.innerHTML = '';
+        emptyCart.classList.remove('hidden');
+        orderTotal.classList.add('hidden');
+        return;
+    }
+
+    emptyCart.classList.add('hidden');
+    orderTotal.classList.remove('hidden');
+
+    let total = 0;
+    let html = '';
+
+    cartItems.forEach(item => {
+        const itemTotal = (item.price || 0) * (item.quantity || 1);
+        total += itemTotal;
+
+        html += `
+            <div class="flex items-start space-x-4 pb-6 border-b border-gray-100 last:border-b-0">
+                <div class="flex-shrink-0 w-20 h-20 bg-gray-100 rounded-lg overflow-hidden">
+                    ${item.image ? `<img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">` :
+                      `<div class="w-full h-full flex items-center justify-center text-gray-300">
+                         <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                           <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                         </svg>
+                       </div>`}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-medium text-gray-900 mb-1">${item.name}</h3>
+                    ${item.description ? `<p class="text-sm text-gray-600 mb-2">${item.description}</p>` : ''}
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3">
+                        <button onclick="decreaseQuantity(${item.id})" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-50">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                            </svg>
+                        </button>
+                        <span class="text-gray-900 font-medium w-8 text-center">${item.quantity}</span>
+                        <button onclick="increaseQuantity(${item.id})" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-50">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="text-right min-w-0">
+                        <p class="text-lg font-medium text-gray-900">${Math.round(itemTotal).toLocaleString()} р.</p>
+                    </div>
+                    <button onclick="removeFromCart(${item.id})" class="text-gray-400 hover:text-red-500 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+
+    cartContainer.innerHTML = html;
+    totalAmount.textContent = `${Math.round(total).toLocaleString()} р.`;
+}
+
+function increaseQuantity(productId) {
+    cartLS.quantity(productId, 1);
+    loadCartItems();
+}
+
+function decreaseQuantity(productId) {
+    cartLS.quantity(productId, -1);
+    loadCartItems();
+}
+
+function removeFromCart(productId) {
+    cartLS.remove(productId);
+    loadCartItems();
+}
+
+async function handleFormSubmit(e) {
+    e.preventDefault();
+
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const btnText = document.getElementById('submitBtnText');
+    const loader = document.getElementById('submitLoader');
+
+    // Disable form and show loading
+    submitBtn.disabled = true;
+    btnText.classList.add('hidden');
+    loader.classList.remove('hidden');
+
+    try {
+        const formData = new FormData(e.target);
+        const cartItems = cartLS.list();
+
+        if (cartItems.length === 0) {
+            alert('Ваша корзина пуста');
+            return;
+        }
+
+        // Prepare order data
+        const orderData = {
+            customer_name: formData.get('customer_name'),
+            customer_phone: '+7' + formData.get('customer_phone').replace(/\D/g, ''),
+            comment: formData.get('comment') || '',
+            status: 'new',
+            items: cartItems.map(item => ({
+                product_id: item.id,
+                quantity: item.quantity || 1,
+                price: item.price || 0
+            }))
+        };
+
+        // Send order
+        const response = await fetch('/api/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(orderData)
+        });
+
+        if (response.ok) {
+            // Success - clear cart and show success modal
+            cartLS.destroy();
+            showSuccessModal();
+        } else {
+            throw new Error('Ошибка при отправке заявки');
+        }
+
+    } catch (error) {
+        console.error('Error submitting order:', error);
+        alert('Произошла ошибка при отправке заявки. Пожалуйста, попробуйте еще раз.');
+    } finally {
+        // Re-enable form
+        submitBtn.disabled = false;
+        btnText.classList.remove('hidden');
+        loader.classList.add('hidden');
+    }
+}
+
+function showSuccessModal() {
+    document.getElementById('successModal').classList.remove('hidden');
+}
+
+function closeSuccessModal() {
+    document.getElementById('successModal').classList.add('hidden');
+    // Redirect to home page
+    setTimeout(() => {
+        window.location.href = '/';
+    }, 500);
+}
+
+// Close modal on outside click
+document.getElementById('successModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeSuccessModal();
+    }
+});
+</script>
+{% endblock %}

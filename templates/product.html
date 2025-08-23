@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="bg-gray-50 min-h-screen">
+<div class="min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <!-- Back Navigation -->
         <div class="mb-8">
@@ -25,179 +25,179 @@
             </a>
         </div>
 
-        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-2">
-                <!-- Product Images -->
-                <div class="p-8 bg-gray-50 relative">
-                    {% if product.main_image_url %}
-                    <a href="{{ product.main_image_url }}" class="glightbox block aspect-square bg-white rounded-lg overflow-hidden mb-6 shadow-sm relative group cursor-zoom-in"
-                       data-gallery="product-gallery">
-                        <img id="mainImage" src="{{ product.main_image_url }}" alt="{{ product.name }}"
-                             class="w-full h-full object-cover">
-
-                        <!-- Zoom indicator -->
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 flex items-center justify-center">
-                            <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                <svg class="w-8 h-8 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
-                                </svg>
-                            </div>
-                        </div>
-                    </a>
-                    {% else %}
-                    <div class="aspect-square bg-white rounded-lg overflow-hidden mb-6 shadow-sm relative flex items-center justify-center text-gray-300">
-                        <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                    {% endif %}
-
-                    {% if product.images|length > 1 %}
-                    <!-- Navigation Arrows for Main Image -->
-                    <button onclick="previousMainImage()"
-                            class="absolute left-12 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full shadow-md flex items-center justify-center transition-all duration-200 hover:scale-105">
-                        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                        </svg>
-                    </button>
-
-                    <button onclick="nextMainImage()"
-                            class="absolute right-12 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full shadow-md flex items-center justify-center transition-all duration-200 hover:scale-105">
-                        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </button>
-                    {% endif %}
-
-                    <!-- Thumbnail Images -->
-                    {% if product.images|length > 1 %}
-                    <div class="flex space-x-3 justify-center">
-                        {% for image in product.images[:5] %}
-                        <button class="w-16 h-16 bg-white rounded-lg overflow-hidden border-2 border-gray-200 hover:border-gray-400 transition-colors thumbnail-btn focus:outline-none focus:border-black"
-                                onclick="changeMainImage('/{{ image.file_path }}', {{ loop.index0 }})">
-                            <img src="/{{ image.file_path }}" alt="{{ product.name }}" class="w-full h-full object-cover">
-                        </button>
-                        {% endfor %}
-                        {% if product.images|length > 5 %}
-                        <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center text-xs text-gray-600">
-                            +{{ product.images|length - 5 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-
-                    <!-- Hidden gallery links for GLightbox -->
-                    {% if product.images|length > 1 %}
-                    {% for image in product.images[1:] %}
-                    <a href="/{{ image.file_path }}" class="glightbox"
-                       data-gallery="product-gallery"
-                       style="display: none;">
-                    </a>
-                    {% endfor %}
-                    {% endif %}
-                </div>
-
-                <!-- Product Info -->
-                <div class="p-8 lg:p-12">
-                    <!-- Product Title -->
-                    <h1 class="text-3xl lg:text-4xl font-light text-gray-900 mb-6 leading-tight">{{ product.name }}</h1>
-
-                    <!-- Price -->
-                    {% if product.price %}
-                    <div class="mb-8">
-                        <div class="flex items-baseline space-x-4">
-                            <span class="text-3xl lg:text-4xl font-light text-gray-900">{{ product.price|round(0)|int }} р.</span>
-                            {% if product.old_price and product.old_price > product.price %}
-                            <span class="text-xl text-gray-400 line-through">{{ product.old_price|round(0)|int }} р.</span>
-                            {% endif %}
-                        </div>
-                        {% if product.is_set %}
-                        <p class="text-sm text-gray-500 mt-1">Цена за комплект</p>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-
-                    <!-- Action Buttons -->
-                    <div class="flex space-x-4 mb-8">
-                        <button id="mainActionBtn" onclick="handleMainAction()"
-                                class="flex-1 py-4 px-8 font-medium tracking-wider transition-colors duration-200">
-                            <span id="btnText">КОНСУЛЬТАЦИЯ</span>
-                        </button>
-                    </div>
-
-                    <!-- Parent Product Link (if this is a component) -->
-                    {% if product.parent %}
-                    <div class="mb-8 p-4 bg-gray-50 rounded-lg">
-                        <p class="text-sm text-gray-600 mb-2">Этот товар входит в комплект:</p>
-                        <a href="/product/{{ product.parent.slug }}"
-                           class="text-black font-medium hover:underline">
-                            {{ product.parent.name }}
-                        </a>
-                    </div>
-                    {% endif %}
-
-                    <!-- Product Description -->
-                    {% if product.short_description or product.description %}
-                    <div class="prose prose-gray max-w-none text-gray-700 leading-relaxed">
-                        {% if product.short_description %}
-                        <p class="text-lg mb-4">{{ product.short_description }}</p>
-                        {% endif %}
-                        {% if product.description %}
-                        {{ product.description|nl2br|safe }}
-                        {% endif %}
-                    </div>
-                    {% endif %}
-
-                    <!-- Product Specifications -->
-                    {% set specs = [] %}
-                    {% if product.width %}{% set _ = specs.append(('Диаметр, мм', product.width)) %}{% endif %}
-                    {% if product.height %}{% set _ = specs.append(('Высота, мм', product.height)) %}{% endif %}
-                    {% if product.color %}{% set _ = specs.append(('Варианты исполнения', product.color)) %}{% endif %}
-                    {% if product.material %}{% set _ = specs.append(('Применение', product.material)) %}{% endif %}
-
-                    {% if specs %}
-                    <div class="mt-8 space-y-3 text-sm">
-                        {% for label, value in specs %}
-                        <div class="flex">
-                            <span class="text-gray-600 w-48">{{ label }}:</span>
-                            <span class="text-gray-900">{{ value }}</span>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
+        <!-- НАЗВАНИЕ ПРОДУКТА СВЕРХУ -->
+        <div class="mb-8">
+            <h1 class="text-2xl lg:text-3xl font-light text-gray-900 text-center">{{ product.name }}</h1>
         </div>
 
-        <!-- Set Components (if product is a set) -->
+        <!-- ГЛАВНОЕ ИЗОБРАЖЕНИЕ - АКЦЕНТ НА ФОТО -->
+        <div class="mb-8 relative">
+            {% if product.main_image_url %}
+            <a href="{{ product.main_image_url }}" class="glightbox block relative group cursor-zoom-in mx-auto"
+               data-gallery="product-gallery"
+               style="max-width: 900px;">
+                <img id="mainImage" src="{{ product.main_image_url }}" alt="{{ product.name }}"
+                     class="w-full h-auto object-contain">
+
+                <!-- Zoom indicator -->
+                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 flex items-center justify-center">
+                    <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <svg class="w-12 h-12 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                        </svg>
+                    </div>
+                </div>
+            </a>
+            {% else %}
+            <div class="relative flex items-center justify-center text-gray-300 mx-auto bg-gray-50" style="max-width: 900px; height: 500px;">
+                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                </svg>
+            </div>
+            {% endif %}
+
+            {% if product.images|length > 1 %}
+            <!-- Navigation Arrows -->
+            <button onclick="previousMainImage()"
+                    class="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white bg-opacity-80 hover:bg-opacity-100 shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105">
+                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+
+            <button onclick="nextMainImage()"
+                    class="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white bg-opacity-80 hover:bg-opacity-100 shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105">
+                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+            {% endif %}
+        </div>
+
+        <!-- Thumbnail Images -->
+        {% if product.images|length > 1 %}
+        <div class="flex space-x-4 justify-center mb-12">
+            {% for image in product.images[:8] %}
+            <button class="w-20 h-20 overflow-hidden border-2 border-gray-200 hover:border-gray-400 transition-colors thumbnail-btn focus:outline-none focus:border-black"
+                    onclick="changeMainImage('/{{ image.file_path }}', {{ loop.index0 }})">
+                <img src="/{{ image.file_path }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+            </button>
+            {% endfor %}
+            {% if product.images|length > 8 %}
+            <div class="w-20 h-20 bg-gray-100 flex items-center justify-center text-xs text-gray-600">
+                +{{ product.images|length - 8 }}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Hidden gallery links -->
+        {% for image in product.images[1:] %}
+        <a href="/{{ image.file_path }}" class="glightbox"
+           data-gallery="product-gallery"
+           style="display: none;">
+        </a>
+        {% endfor %}
+        {% endif %}
+
+        <!-- ИНФОРМАЦИЯ О ТОВАРЕ - СВОБОДНАЯ КОМПОНОВКА -->
+        <div class="max-w-4xl mx-auto">
+            <!-- Price -->
+            {% if product.price %}
+            <div class="text-center mb-8">
+                <span class="text-2xl font-light text-gray-900">{{ product.price|round(0)|int }} р.</span>
+                {% if product.old_price and product.old_price > product.price %}
+                <span class="text-lg text-gray-400 line-through ml-3">{{ product.old_price|round(0)|int }} р.</span>
+                {% endif %}
+                {% if product.is_set %}
+                <p class="text-sm text-gray-500 mt-1">Цена за комплект</p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- КНОПКА КОНСУЛЬТАЦИЯ - НЕ НА ВСЮ ШИРИНУ -->
+            <div class="text-center mb-12">
+                <button id="mainActionBtn" onclick="handleMainAction()"
+                        class="inline-block py-4 px-12 font-medium tracking-wider transition-colors duration-200">
+                    <span id="btnText">КОНСУЛЬТАЦИЯ</span>
+                </button>
+            </div>
+
+            <!-- Parent Product Link -->
+            {% if product.parent %}
+            <div class="mb-12 p-6 bg-gray-50 text-center">
+                <p class="text-gray-600 mb-3">Этот товар входит в:</p>
+                <a href="/product/{{ product.parent.slug }}"
+                   class="text-black font-medium text-lg hover:underline">
+                    {{ product.parent.name }}
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Product Description -->
+            {% if product.short_description or product.description %}
+            <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed mb-12 text-center">
+                {% if product.short_description %}
+                <p class="text-xl mb-6">{{ product.short_description }}</p>
+                {% endif %}
+                {% if product.description %}
+                <div class="text-left">
+                    {{ product.description|nl2br|safe }}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Product Specifications -->
+            {% set specs = [] %}
+            {% if product.width %}{% set _ = specs.append(('Диаметр, мм', product.width)) %}{% endif %}
+            {% if product.height %}{% set _ = specs.append(('Высота, мм', product.height)) %}{% endif %}
+            {% if product.color %}{% set _ = specs.append(('Варианты исполнения', product.color)) %}{% endif %}
+            {% if product.material %}{% set _ = specs.append(('Применение', product.material)) %}{% endif %}
+
+            {% if specs %}
+            <div class="mb-16">
+                <h3 class="text-2xl font-light text-gray-900 mb-6 text-center">Характеристики</h3>
+                <div class="max-w-2xl mx-auto space-y-4">
+                    {% for label, value in specs %}
+                    <div class="flex justify-between border-b border-gray-200 pb-2">
+                        <span class="text-gray-600">{{ label }}</span>
+                        <span class="text-gray-900 font-medium">{{ value }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Set Components -->
         {% if product.is_set and product.children %}
-        <div class="mt-12 bg-white rounded-lg shadow-sm p-8">
-            <h2 class="text-2xl font-light text-gray-900 mb-8">Комплект включает</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div class="mt-20">
+            <h2 class="text-2xl font-light text-gray-900 mb-8 text-center">Комплект включает</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
                 {% for child in product.children %}
-                <div class="group">
+                <div class="group text-center">
                     <a href="/product/{{ child.slug }}" class="block">
-                        <div class="aspect-square bg-gray-50 rounded-lg overflow-hidden mb-4 group-hover:shadow-md transition-shadow">
+                        <div class="aspect-square bg-gray-50 overflow-hidden mb-3 transition-shadow">
                             {% if child.main_image_url %}
                             <img src="{{ child.main_image_url }}" alt="{{ child.name }}"
-                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                 class="w-full h-full object-cover transition-transform duration-300">
                             {% else %}
                             <div class="w-full h-full flex items-center justify-center text-gray-300">
-                                <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
+                                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
                                 </svg>
                             </div>
                             {% endif %}
                         </div>
 
-                        <h3 class="font-light text-gray-900 mb-1 group-hover:underline">{{ child.name }}</h3>
+                        <h3 class="font-light text-gray-900 mb-1 text-sm">{{ child.name }}</h3>
                         {% if child.piece_quantity > 1 %}
-                        <p class="text-sm text-gray-500 mb-2">{{ child.piece_quantity }} шт.</p>
+                        <p class="text-gray-500 mb-2 text-xs">{{ child.piece_quantity }} шт.</p>
                         {% endif %}
 
-                        {% if child.price %}
-                        <p class="text-lg font-light text-gray-900">{{ child.price|round(0)|int }} р.</p>
-                        {% endif %}
+<!--                        {% if child.price %}-->
+<!--                        <p class="text-sm font-light text-gray-900">{{ child.price|round(0)|int }} р.</p>-->
+<!--                        {% endif %}-->
                     </a>
                 </div>
                 {% endfor %}
@@ -205,10 +205,10 @@
         </div>
         {% endif %}
 
-        <!-- Related Products or Full Description -->
+        <!-- Full Description -->
         {% if not product.is_set and (product.description and product.description|length > 200) %}
-        <div class="mt-12 bg-white rounded-lg shadow-sm p-8">
-            <h2 class="text-2xl font-light text-gray-900 mb-6">Подробное описание</h2>
+        <div class="mt-20 max-w-4xl mx-auto">
+            <h2 class="text-3xl font-light text-gray-900 mb-8 text-center">Подробное описание</h2>
             <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
                 {{ product.description|nl2br|safe }}
             </div>
@@ -307,11 +307,11 @@ function updateButtonState() {
 
     if (isInCart) {
         // Product is in cart - show "Go to Cart" state
-        btn.className = 'flex-1 bg-gray-100 text-gray-900 border border-gray-300 py-4 px-8 font-medium tracking-wider hover:bg-gray-200 transition-colors duration-200';
+        btn.className = 'inline-block bg-gray-100 text-gray-900 border border-gray-300 py-4 px-12 font-medium tracking-wider hover:bg-gray-200 transition-colors duration-200';
         btnText.textContent = 'ПЕРЕЙТИ В КОРЗИНУ';
     } else {
         // Product not in cart - show "Consultation" state
-        btn.className = 'flex-1 bg-black text-white py-4 px-8 font-medium tracking-wider hover:bg-gray-800 transition-colors duration-200';
+        btn.className = 'inline-block bg-black text-white py-4 px-12 font-medium tracking-wider hover:bg-gray-800 transition-colors duration-200';
         btnText.textContent = 'КОНСУЛЬТАЦИЯ';
     }
 }
@@ -355,10 +355,10 @@ function requestConsultation() {
 function showConsultationMessage() {
     // Create and show a sophisticated toast notification
     const toast = document.createElement('div');
-    toast.className = 'fixed top-8 right-8 bg-white border border-gray-200 shadow-xl px-8 py-6 rounded-lg z-50 transform translate-x-full transition-transform duration-500 max-w-sm';
+    toast.className = 'fixed top-8 right-8 bg-white border border-gray-200 shadow-xl px-8 py-6 z-50 transform translate-x-full transition-transform duration-500 max-w-sm';
     toast.innerHTML = `
         <div class="flex items-start space-x-4">
-            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <div class="w-8 h-8 bg-green-100 flex items-center justify-center flex-shrink-0">
                 <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                 </svg>

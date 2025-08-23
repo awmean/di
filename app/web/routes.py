@@ -85,6 +85,11 @@ async def about(request: Request):
     """About page"""
     return templates.TemplateResponse("about.html", {"request": request})
 
+@router.get("/checkout", response_class=HTMLResponse)
+async def checkout(request: Request):
+    """About page"""
+    return templates.TemplateResponse("checkout.html", {"request": request})
+
 
 @router.get("/contacts", response_class=HTMLResponse)
 async def contacts(request: Request):
