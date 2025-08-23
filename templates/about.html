@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+
+{% block extra_styles %}
+<style>
+    .hero-bg {
+        background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%);
+    }
+    .team-card {
+        transition: all 0.3s ease;
+    }
+    .team-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    .timeline-item {
+        position: relative;
+        padding-left: 3rem;
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 12px;
+        height: 12px;
+        background-color: #8B4513;
+        border-radius: 50%;
+    }
+    .timeline-item::after {
+        content: '';
+        position: absolute;
+        left: 5px;
+        top: 12px;
+        width: 2px;
+        height: calc(100% + 2rem);
+        background-color: #e5e5e5;
+    }
+    .timeline-item:last-child::after {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative min-h-[70vh] flex items-center overflow-hidden w-full animate-fade-in">
+    <!-- Background with overlay -->
+    <div class="absolute inset-0 bg-black">
+        <div class="absolute inset-0 hero-bg"></div>
+    </div>
+
+    <div class="relative z-10 w-full px-4 lg:px-8 py-8 lg:py-0">
+        <div class="text-center text-white space-y-8 animate-fade-in-up">
+            <div class="text-xs lg:text-sm uppercase tracking-widest text-gray-300 font-light">
+                УЗНАЙТЕ БОЛЬШЕ О НАС
+            </div>
+            <h1 class="text-4xl lg:text-7xl font-normal leading-tight tracking-tight">
+                О нашей компании
+            </h1>
+            <p class="text-gray-300 text-lg lg:text-xl font-light max-w-3xl mx-auto leading-relaxed">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </p>
+        </div>
+    </div>
+</section>
+
+<main class="w-full px-4 lg:px-8 py-16">
+    <!-- Story Section -->
+    <section class="mb-32">
+        <div class="px-4 lg:px-8 mb-8 lg:mb-16">
+            <h2 class="text-2xl lg:text-5xl font-light text-brand-dark uppercase tracking-wider">Наша история</h2>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-center px-4 lg:px-8">
+            <div class="space-y-6 lg:space-y-8 order-2 lg:order-1">
+                <p class="text-lg lg:text-xl text-gray-700 leading-relaxed font-light">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                </p>
+                <p class="text-lg lg:text-xl text-gray-700 leading-relaxed font-light">
+                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+                <p class="text-lg lg:text-xl text-gray-700 leading-relaxed font-light">
+                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt.
+                </p>
+            </div>
+            <div class="h-64 lg:h-[500px] bg-brand-light-gray overflow-hidden order-1 lg:order-2">
+                <img src="https://static.tildacdn.com/tild3838-3733-4465-b430-356136303364/lotta-2.jpeg"
+                     alt="Наша история"
+                     class="w-full h-full object-cover">
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="mb-32">
+        <div class="px-4 lg:px-8 mb-16">
+            <h2 class="text-3xl lg:text-5xl font-light text-brand-dark uppercase tracking-wider">Вехи развития</h2>
+        </div>
+        <div class="px-4 lg:px-8 max-w-4xl">
+            <div class="space-y-16">
+                <div class="timeline-item">
+                    <div class="space-y-4">
+                        <div class="text-2xl font-medium text-brand-brown">2015</div>
+                        <h3 class="text-xl font-medium text-brand-dark">Основание компании</h3>
+                        <p class="text-gray-700 leading-relaxed font-light">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="space-y-4">
+                        <div class="text-2xl font-medium text-brand-brown">2017</div>
+                        <h3 class="text-xl font-medium text-brand-dark">Открытие производства</h3>
+                        <p class="text-gray-700 leading-relaxed font-light">
+                            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="space-y-4">
+                        <div class="text-2xl font-medium text-brand-brown">2019</div>
+                        <h3 class="text-xl font-medium text-brand-dark">Расширение ассортимента</h3>
+                        <p class="text-gray-700 leading-relaxed font-light">
+                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="space-y-4">
+                        <div class="text-2xl font-medium text-brand-brown">2022</div>
+                        <h3 class="text-xl font-medium text-brand-dark">Новые технологии</h3>
+                        <p class="text-gray-700 leading-relaxed font-light">
+                            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati.
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="space-y-4">
+                        <div class="text-2xl font-medium text-brand-brown">2024</div>
+                        <h3 class="text-xl font-medium text-brand-dark">Международное признание</h3>
+                        <p class="text-gray-700 leading-relaxed font-light">
+                            Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Values Section -->
+    <section class="mb-32">
+        <div class="px-4 lg:px-8 mb-16">
+            <h2 class="text-3xl lg:text-5xl font-light text-brand-dark uppercase tracking-wider">Миссия и ценности</h2>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 px-4 lg:px-8">
+            <div class="space-y-8">
+                <div>
+                    <h3 class="text-2xl font-medium text-brand-brown mb-6">Наша миссия</h3>
+                    <p class="text-lg text-gray-700 leading-relaxed font-light">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    </p>
+                </div>
+            </div>
+            <div class="space-y-8">
+                <div>
+                    <h3 class="text-2xl font-medium text-brand-brown mb-6">Наши ценности</h3>
+                    <ul class="space-y-4">
+                        <li class="text-lg text-gray-700 leading-relaxed font-light">
+                            <strong class="text-brand-dark">Качество</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                        </li>
+                        <li class="text-lg text-gray-700 leading-relaxed font-light">
+                            <strong class="text-brand-dark">Инновации</strong> — Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
+                        </li>
+                        <li class="text-lg text-gray-700 leading-relaxed font-light">
+                            <strong class="text-brand-dark">Ответственность</strong> — Ut enim ad minim veniam, quis nostrud exercitation
+                        </li>
+                        <li class="text-lg text-gray-700 leading-relaxed font-light">
+                            <strong class="text-brand-dark">Клиентоориентированность</strong> — Duis aute irure dolor in reprehenderit
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="mb-32">
+        <div class="px-4 lg:px-8 mb-16">
+            <h2 class="text-3xl lg:text-5xl font-light text-brand-dark uppercase tracking-wider">Наша команда</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 px-4 lg:px-8">
+            <div class="team-card bg-white text-center">
+                <div class="h-80 bg-brand-light-gray overflow-hidden mb-8">
+                    <img src="https://static.tildacdn.com/tild3838-3733-4465-b430-356136303364/lotta-2.jpeg"
+                         alt="Команда"
+                         class="w-full h-full object-cover">
+                </div>
+                <h3 class="text-xl font-medium text-brand-dark mb-2">Александр Петров</h3>
+                <p class="text-brand-brown font-light mb-4">Генеральный директор</p>
+                <p class="text-gray-700 leading-relaxed font-light text-sm">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+            </div>
+            <div class="team-card bg-white text-center">
+                <div class="h-80 bg-brand-light-gray overflow-hidden mb-8">
+                    <img src="https://static.tildacdn.com/tild3838-3733-4465-b430-356136303364/lotta-2.jpeg"
+                         alt="Команда"
+                         class="w-full h-full object-cover">
+                </div>
+                <h3 class="text-xl font-medium text-brand-dark mb-2">Мария Иванова</h3>
+                <p class="text-brand-brown font-light mb-4">Главный дизайнер</p>
+                <p class="text-gray-700 leading-relaxed font-light text-sm">
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                </p>
+            </div>
+            <div class="team-card bg-white text-center">
+                <div class="h-80 bg-brand-light-gray overflow-hidden mb-8">
+                    <img src="https://static.tildacdn.com/tild3838-3733-4465-b430-356136303364/lotta-2.jpeg"
+                         alt="Команда"
+                         class="w-full h-full object-cover">
+                </div>
+                <h3 class="text-xl font-medium text-brand-dark mb-2">Дмитрий Сидоров</h3>
+                <p class="text-brand-brown font-light mb-4">Руководитель производства</p>
+                <p class="text-gray-700 leading-relaxed font-light text-sm">
+                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="mb-32">
+        <div class="bg-brand-brown text-white p-16 lg:p-20">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-12 text-center">
+                <div>
+                    <div class="text-4xl lg:text-6xl font-thin mb-4">9+</div>
+                    <div class="text-sm uppercase tracking-wider font-light">Лет опыта</div>
+                </div>
+                <div>
+                    <div class="text-4xl lg:text-6xl font-thin mb-4">500+</div>
+                    <div class="text-sm uppercase tracking-wider font-light">Довольных клиентов</div>
+                </div>
+                <div>
+                    <div class="text-4xl lg:text-6xl font-thin mb-4">1200+</div>
+                    <div class="text-sm uppercase tracking-wider font-light">Выполненных проектов</div>
+                </div>
+                <div>
+                    <div class="text-4xl lg:text-6xl font-thin mb-4">155</div>
+                    <div class="text-sm uppercase tracking-wider font-light">Позиций в каталоге</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certificates Section -->
+    <section class="mb-32">
+        <div class="px-4 lg:px-8 mb-16">
+            <h2 class="text-3xl lg:text-5xl font-light text-brand-dark uppercase tracking-wider">Сертификаты</h2>
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 px-4 lg:px-8">
+            <div class="bg-white p-8 text-center border border-gray-200">
+                <div class="h-24 w-24 bg-brand-light-gray mx-auto mb-6 flex items-center justify-center">
+                    <svg class="w-12 h-12 text-brand-brown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-brand-dark mb-2">ISO 9001</h3>
+                <p class="text-sm text-gray-600 font-light">Система менеджмента качества</p>
+            </div>
+            <div class="bg-white p-8 text-center border border-gray-200">
+                <div class="h-24 w-24 bg-brand-light-gray mx-auto mb-6 flex items-center justify-center">
+                    <svg class="w-12 h-12 text-brand-brown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-brand-dark mb-2">FSC</h3>
+                <p class="text-sm text-gray-600 font-light">Ответственное лесопользование</p>
+            </div>
+            <div class="bg-white p-8 text-center border border-gray-200">
+                <div class="h-24 w-24 bg-brand-light-gray mx-auto mb-6 flex items-center justify-center">
+                    <svg class="w-12 h-12 text-brand-brown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-brand-dark mb-2">GREENGUARD</h3>
+                <p class="text-sm text-gray-600 font-light">Низкие эмиссии химических веществ</p>
+            </div>
+            <div class="bg-white p-8 text-center border border-gray-200">
+                <div class="h-24 w-24 bg-brand-light-gray mx-auto mb-6 flex items-center justify-center">
+                    <svg class="w-12 h-12 text-brand-brown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-brand-dark mb-2">CE</h3>
+                <p class="text-sm text-gray-600 font-light">Соответствие европейским стандартам</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="mb-32">
+        <div class="bg-brand-dark text-white p-16 lg:p-20 text-center">
+            <h2 class="text-3xl lg:text-4xl font-medium mb-6">Готовы начать сотрудничество?</h2>
+            <p class="text-xl text-gray-300 mb-12 max-w-2xl mx-auto font-light">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="bg-brand-brown text-white px-12 py-4 text-sm uppercase tracking-wider hover:bg-opacity-90 transition-all font-medium">
+                    Связаться с нами
+                </button>
+                <button class="border-2 border-white text-white px-12 py-4 text-sm uppercase tracking-wider hover:bg-white hover:text-brand-dark transition-all font-medium">
+                    Посмотреть каталог
+                </button>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

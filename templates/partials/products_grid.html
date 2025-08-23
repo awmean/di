@@ -1,7 +1,7 @@
 <div id="products-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
     {% for product in products%}
     <div class="furniture-card cursor-pointer" data-category="{{ product.category }}">
-        <a href="" class="block">
+        <a href="/product/{{ product.slug }}" class="block">
             <div class="h-80 bg-brand-light-gray mb-6 overflow-hidden relative group">
                 {% if product.main_image %}
                 <!-- Main image - always visible -->
@@ -20,7 +20,6 @@
         </a>
         <div class="space-y-3">
             <h3 class="font-medium text-lg text-brand-dark">{{ product.name }}</h3>
-            <p class="text-sm text-brand-gray">{{ product.description }}</p>
             <div class="flex items-center justify-between">
                 <p class="font-medium text-brand-dark">{{ "{:,}".format(product.price).replace(",", " ") }} ₽</p>
             </div>
