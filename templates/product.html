@@ -1,0 +1,376 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - {{ product.category.name }}{% endblock %}
+
+{% block meta %}
+{% if product.meta_title %}
+<meta property="og:title" content="{{ product.meta_title }}">
+{% endif %}
+{% if product.meta_description %}
+<meta name="description" content="{{ product.meta_description }}">
+<meta property="og:description" content="{{ product.meta_description }}">
+{% endif %}
+{% if product.main_image_url %}
+<meta property="og:image" content="{{ request.base_url }}{{ product.main_image_url[1:] }}">
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Back Navigation -->
+        <div class="mb-8">
+            <a href="/" class="text-gray-600 hover:text-gray-800 flex items-center space-x-2">
+                <span>← ВЕРНУТЬСЯ НАЗАД</span>
+            </a>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2">
+                <!-- Product Images -->
+                <div class="p-8 bg-gray-50">
+                    <div class="aspect-square bg-white rounded-lg overflow-hidden mb-6 shadow-sm">
+                        {% if product.main_image_url %}
+                        <img id="mainImage" src="{{ product.main_image_url }}" alt="{{ product.name }}"
+                             class="w-full h-full object-cover">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-gray-300">
+                            <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Thumbnail Images -->
+                    {% if product.images|length > 1 %}
+                    <div class="flex space-x-3 justify-center">
+                        {% for image in product.images[:5] %}
+                        <button class="w-16 h-16 bg-white rounded-lg overflow-hidden border-2 border-gray-200 hover:border-gray-400 transition-colors thumbnail-btn focus:outline-none focus:border-black"
+                                onclick="changeMainImage('{{ image.file_path }}')">
+                            <img src="/{{ image.file_path }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                        </button>
+                        {% endfor %}
+                        {% if product.images|length > 5 %}
+                        <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center text-xs text-gray-600">
+                            +{{ product.images|length - 5 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Navigation Arrow -->
+                    {% if product.images|length > 1 %}
+                    <div class="absolute right-4 top-1/2 transform -translate-y-1/2">
+                        <button onclick="nextImage()" class="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center hover:shadow-lg transition-shadow">
+                            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Product Info -->
+                <div class="p-8 lg:p-12">
+                    <!-- Product Title -->
+                    <h1 class="text-3xl lg:text-4xl font-light text-gray-900 mb-6 leading-tight">{{ product.name }}</h1>
+
+                    <!-- Price -->
+                    {% if product.price %}
+                    <div class="mb-8">
+                        <div class="flex items-baseline space-x-4">
+                            <span class="text-3xl lg:text-4xl font-light text-gray-900">{{ product.price|round(0)|int }} р.</span>
+                            {% if product.old_price and product.old_price > product.price %}
+                            <span class="text-xl text-gray-400 line-through">{{ product.old_price|round(0)|int }} р.</span>
+                            {% endif %}
+                        </div>
+                        {% if product.is_set %}
+                        <p class="text-sm text-gray-500 mt-1">Цена за комплект</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-4 mb-8">
+                        <button id="mainActionBtn" onclick="handleMainAction()"
+                                class="flex-1 py-4 px-8 font-medium tracking-wider transition-colors duration-200">
+                            <span id="btnText">КОНСУЛЬТАЦИЯ</span>
+                        </button>
+                        <button class="w-12 h-12 border border-gray-300 rounded-full flex items-center justify-center hover:border-gray-400 transition-colors">
+                            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- 3D Model Link -->
+                    <div class="mb-8">
+                        <a href="#" class="text-black underline hover:no-underline">Запросить 3D модель</a>
+                    </div>
+
+                    <!-- Parent Product Link (if this is a component) -->
+                    {% if product.parent %}
+                    <div class="mb-8 p-4 bg-gray-50 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-2">Этот товар входит в комплект:</p>
+                        <a href="/product/{{ product.parent.slug }}"
+                           class="text-black font-medium hover:underline">
+                            {{ product.parent.name }}
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <!-- Product Description -->
+                    {% if product.short_description or product.description %}
+                    <div class="prose prose-gray max-w-none text-gray-700 leading-relaxed">
+                        {% if product.short_description %}
+                        <p class="text-lg mb-4">{{ product.short_description }}</p>
+                        {% endif %}
+                        {% if product.description %}
+                        {{ product.description|nl2br|safe }}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Product Specifications -->
+                    {% set specs = [] %}
+                    {% if product.width %}{% set _ = specs.append(('Диаметр, мм', product.width)) %}{% endif %}
+                    {% if product.height %}{% set _ = specs.append(('Высота, мм', product.height)) %}{% endif %}
+                    {% if product.color %}{% set _ = specs.append(('Варианты исполнения', product.color)) %}{% endif %}
+                    {% if product.material %}{% set _ = specs.append(('Применение', product.material)) %}{% endif %}
+
+                    {% if specs %}
+                    <div class="mt-8 space-y-3 text-sm">
+                        {% for label, value in specs %}
+                        <div class="flex">
+                            <span class="text-gray-600 w-48">{{ label }}:</span>
+                            <span class="text-gray-900">{{ value }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Set Components (if product is a set) -->
+        {% if product.is_set and product.children %}
+        <div class="mt-12 bg-white rounded-lg shadow-sm p-8">
+            <h2 class="text-2xl font-light text-gray-900 mb-8">Комплект включает</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {% for child in product.children %}
+                <div class="group">
+                    <a href="/product/{{ child.slug }}" class="block">
+                        <div class="aspect-square bg-gray-50 rounded-lg overflow-hidden mb-4 group-hover:shadow-md transition-shadow">
+                            {% if child.main_image_url %}
+                            <img src="{{ child.main_image_url }}" alt="{{ child.name }}"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            {% else %}
+                            <div class="w-full h-full flex items-center justify-center text-gray-300">
+                                <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <h3 class="font-light text-gray-900 mb-1 group-hover:underline">{{ child.name }}</h3>
+                        {% if child.piece_quantity > 1 %}
+                        <p class="text-sm text-gray-500 mb-2">{{ child.piece_quantity }} шт.</p>
+                        {% endif %}
+
+                        {% if child.price %}
+                        <p class="text-lg font-light text-gray-900">{{ child.price|round(0)|int }} р.</p>
+                        {% endif %}
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Related Products or Full Description -->
+        {% if not product.is_set and (product.description and product.description|length > 200) %}
+        <div class="mt-12 bg-white rounded-lg shadow-sm p-8">
+            <h2 class="text-2xl font-light text-gray-900 mb-6">Подробное описание</h2>
+            <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+                {{ product.description|nl2br|safe }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script src="/static/js/cart-localstorage.min.js"></script>
+<script>
+// Product data for cart
+const productData = {
+    id: {{ product.id }},
+    name: "{{ product.name }}",
+    price: {{ product.price or 0 }},
+    image: "{{ product.main_image_url or '' }}"
+};
+
+let currentImageIndex = 0;
+const images = [
+    {% for image in product.images %}
+    "{{ image.file_path }}"{% if not loop.last %},{% endif %}
+    {% endfor %}
+];
+
+// Image gallery functionality
+function changeMainImage(imagePath) {
+    document.getElementById('mainImage').src = '/' + imagePath;
+
+    // Update active thumbnail
+    document.querySelectorAll('.thumbnail-btn').forEach(btn => {
+        btn.classList.remove('border-black');
+        btn.classList.add('border-gray-200');
+    });
+    event.target.closest('.thumbnail-btn').classList.add('border-black');
+    event.target.closest('.thumbnail-btn').classList.remove('border-gray-200');
+
+    // Update current index
+    currentImageIndex = images.indexOf(imagePath);
+}
+
+function nextImage() {
+    if (images.length === 0) return;
+
+    currentImageIndex = (currentImageIndex + 1) % images.length;
+    const nextImagePath = images[currentImageIndex];
+    document.getElementById('mainImage').src = '/' + nextImagePath;
+
+    // Update thumbnail states
+    const thumbnails = document.querySelectorAll('.thumbnail-btn');
+    thumbnails.forEach((btn, index) => {
+        if (index === currentImageIndex) {
+            btn.classList.add('border-black');
+            btn.classList.remove('border-gray-200');
+        } else {
+            btn.classList.remove('border-black');
+            btn.classList.add('border-gray-200');
+        }
+    });
+}
+
+// Button state management
+function updateButtonState() {
+    const btn = document.getElementById('mainActionBtn');
+    const btnText = document.getElementById('btnText');
+    const isInCart = cartLS.exists(productData.id);
+
+    if (isInCart) {
+        // Product is in cart - show "Go to Cart" state
+        btn.className = 'flex-1 bg-gray-100 text-gray-900 border border-gray-300 py-4 px-8 font-medium tracking-wider hover:bg-gray-200 transition-colors duration-200';
+        btnText.textContent = 'ПЕРЕЙТИ В КОРЗИНУ';
+    } else {
+        // Product not in cart - show "Consultation" state
+        btn.className = 'flex-1 bg-black text-white py-4 px-8 font-medium tracking-wider hover:bg-gray-800 transition-colors duration-200';
+        btnText.textContent = 'КОНСУЛЬТАЦИЯ';
+    }
+}
+
+// Handle main action button click
+function handleMainAction() {
+    const isInCart = cartLS.exists(productData.id);
+
+    if (isInCart) {
+        // Go to checkout
+        window.location.href = '/checkout';
+    } else {
+        // Add to cart (consultation request)
+        requestConsultation();
+    }
+}
+
+// Consultation request
+function requestConsultation() {
+    // Create cart item with required fields
+    const cartItem = {
+        id: productData.id,
+        name: productData.name,
+        price: productData.price,
+        image: productData.image
+    };
+
+    // Add to cart using cart-localstorage library (quantity = 1)
+    cartLS.add(cartItem, 1);
+
+    // Update button state
+    updateButtonState();
+
+    // Show success message
+    showConsultationMessage();
+
+    // Update cart count in header if you have one
+    updateCartCount();
+}
+
+function showConsultationMessage() {
+    // Create and show a sophisticated toast notification
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-8 right-8 bg-white border border-gray-200 shadow-xl px-8 py-6 rounded-lg z-50 transform translate-x-full transition-transform duration-500 max-w-sm';
+    toast.innerHTML = `
+        <div class="flex items-start space-x-4">
+            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+            </div>
+            <div class="flex-1">
+                <h4 class="font-medium text-gray-900 mb-2">Товар добавлен в корзину</h4>
+                <p class="text-sm text-gray-600 mb-3">Перейдите в корзину чтобы оформить заявку</p>
+                <a href="/checkout" class="inline-block bg-black text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors">
+                    Перейти в корзину
+                </a>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(toast);
+
+    // Animate in
+    setTimeout(() => {
+        toast.classList.remove('translate-x-full');
+    }, 100);
+
+    // Remove after 8 seconds (longer since there's a call-to-action)
+    setTimeout(() => {
+        toast.classList.add('translate-x-full');
+        setTimeout(() => {
+            if (document.body.contains(toast)) {
+                document.body.removeChild(toast);
+            }
+        }, 500);
+    }, 8000);
+}
+
+function updateCartCount() {
+    // Update cart count in header if you have a cart counter element
+    const cartCounter = document.querySelector('.cart-counter');
+    if (cartCounter) {
+        const cartItems = cartLS.list();
+        const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+        cartCounter.textContent = totalItems;
+
+        if (totalItems > 0) {
+            cartCounter.classList.remove('hidden');
+        }
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateCartCount();
+    updateButtonState();
+
+    // Set first thumbnail as active
+    const firstThumbnail = document.querySelector('.thumbnail-btn');
+    if (firstThumbnail) {
+        firstThumbnail.classList.add('border-black');
+        firstThumbnail.classList.remove('border-gray-200');
+    }
+});
+</script>
+{% endblock %}
