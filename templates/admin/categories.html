@@ -58,9 +58,6 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center">
-                        {% if category.get_icon() %}
-                        <img class="h-6 w-6 rounded mr-2" src="{{ category.get_icon().file_path }}" alt="{{ category.name }} icon">
-                        {% endif %}
                         <div>
                             <div class="text-sm font-medium text-gray-900">{{ category.name }}</div>
                             {% if category.description %}

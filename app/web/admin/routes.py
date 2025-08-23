@@ -3,12 +3,12 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
+from app.admin_users.repository import AdminUserRepository
+from app.categories.repository import CategoryRepository
 from app.core.auth import require_auth
 from app.core.database import get_db
-from app.repositories.admin_user_repository import AdminUserRepository
-from app.repositories.category_repository import CategoryRepository
-from app.repositories.order_repository import OrderRepository
-from app.repositories.product_repository import ProductRepository
+from app.orders.repository import OrderRepository
+from app.products.repository import ProductRepository
 from app.web.admin import router, templates
 
 admin_templates = Jinja2Templates(directory="templates/admin")
@@ -79,9 +79,10 @@ def admin_categories(request: Request, session=Depends(require_auth), db: Sessio
 def admin_categories(category_id: int, request: Request, session=Depends(require_auth), db: Session = Depends(get_db)):
     user = AdminUserRepository.get_by_id(db, session['user_id'])
     category = CategoryRepository.get_by_id(db, category_id)
+    categories = CategoryRepository.get_all(db)
     return templates.TemplateResponse(
         "category_edit.html",
-        {"request": request, "user": user, 'category_id': category_id, 'category': category}
+        {"request": request, "user": user, 'category_id': category_id, 'category': category, 'categories': categories}
     )
 
 

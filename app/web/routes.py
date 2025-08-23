@@ -3,11 +3,11 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
+from app.categories.repository import CategoryRepository
 from app.core.database import get_db
-from app.repositories.category_repository import CategoryRepository
-from app.repositories.product_repository import ProductRepository
+from app.products.repository import ProductRepository
 
-router = APIRouter()
+router = APIRouter(tags=["Web"])
 templates = Jinja2Templates(directory="templates")
 
 PRODUCTS_PER_PAGE = 36
@@ -28,9 +28,6 @@ async def catalog(request: Request, db: Session = Depends(get_db)):
     """Catalog page with filtering and pagination"""
     products = ProductRepository.get_all(db=db)
     categories = CategoryRepository.get_all(db=db)
-
-    for product in products:
-        print(product.main_image.file_path)
 
     return templates.TemplateResponse(
         "catalog.html",

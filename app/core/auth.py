@@ -2,7 +2,9 @@
 import secrets
 from datetime import datetime, timedelta
 from typing import Dict, Optional
-from fastapi import HTTPException, Request, Depends, status
+from urllib.parse import quote
+
+from fastapi import HTTPException, Request, status
 
 # Simple in-memory session store
 sessions: Dict[str, Dict] = {}
@@ -37,23 +39,28 @@ def delete_session(session_id: str):
     sessions.pop(session_id, None)
 
 
+
 def require_auth(request: Request):
     """Auth dependency - use this to protect routes"""
     session_id = request.cookies.get("session_id")
 
     if not session_id:
-        # Redirect to login instead of raising 401
+        # Capture the current URL and redirect to login with 'next' parameter
+        current_url = str(request.url)
+        login_url = f"/admin/login?next={quote(current_url)}"
         raise HTTPException(
             status_code=status.HTTP_302_FOUND,
-            headers={"Location": "/admin/login"}
+            headers={"Location": login_url}
         )
 
     session = get_session(session_id)
     if not session:
-        # Redirect to login instead of raising 401
+        # Capture the current URL and redirect to login with 'next' parameter
+        current_url = str(request.url)
+        login_url = f"/admin/login?next={quote(current_url)}"
         raise HTTPException(
             status_code=status.HTTP_302_FOUND,
-            headers={"Location": "/admin/login"}
+            headers={"Location": login_url}
         )
 
     return session

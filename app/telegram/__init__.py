@@ -3,7 +3,7 @@ from typing import Optional, Dict, Any
 import requests
 
 from app.core.config import settings
-from app.models import Order
+from app.orders.models import Order
 
 
 class TelegramMessenger:
