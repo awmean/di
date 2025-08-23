@@ -38,7 +38,7 @@ def create_app() -> FastAPI:
 
     # Create API router with auth dependency
     api_router = APIRouter(
-        prefix="/api/v1",
+        prefix="/api",
         dependencies=[Depends(require_auth)]
     )
 

@@ -37,7 +37,7 @@
     <div id="form-response" class="mb-4"></div>
 
     <form id="product-form"
-      hx-post="/api/v1/products/"
+      hx-post="/api/products/"
       hx-headers='{"Content-Type": "application/json"}'
       hx-target="#form-response"
       hx-swap="innerHTML"
@@ -390,7 +390,7 @@
         <!-- Media Upload Form -->
         <div class="mb-6">
             <form id="media-upload-form"
-                  hx-post="/api/v1/media/upload/multiple"
+                  hx-post="/api/media/upload/multiple"
                   hx-encoding="multipart/form-data"
                   hx-target="#upload-status"
                   hx-swap="innerHTML"
@@ -546,7 +546,7 @@ document.body.addEventListener('htmx:afterRequest', function(event) {
 // Function to remove media (placeholder - you'll need to implement the delete API)
 function removeMedia(mediaId) {
     if (confirm('Are you sure you want to delete this media?')) {
-        fetch(`/api/v1/media/${mediaId}`, {
+        fetch(`/api/media/${mediaId}`, {
             method: 'DELETE'
         })
         .then(response => {
@@ -606,7 +606,7 @@ document.getElementById('product-form').addEventListener('submit', function(e) {
     if (!jsonData.is_featured) jsonData.is_featured = false;
 
     // Make the API call
-    fetch('/api/v1/products/', {
+    fetch('/api/products/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

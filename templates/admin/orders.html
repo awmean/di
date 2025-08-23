@@ -125,7 +125,7 @@
                         <!-- Status Quick Actions -->
                         {% if order.status == 'new' %}
                         <button
-                                hx-put="/api/v1/orders/{{ order.id }}/status?status=processing"
+                                hx-put="/api/orders/{{ order.id }}/status?status=processing"
                                 hx-swap="none"
                                 hx-on:htmx:after-request="if(event.detail.xhr.status === 200) { location.reload(); }"
                                 class="text-blue-600 hover:text-blue-900 text-xs px-2 py-1 bg-blue-50 rounded"
@@ -134,7 +134,7 @@
                         </button>
                         {% elif order.status == 'processing' %}
                         <button
-                                hx-put="/api/v1/orders/{{ order.id }}/status?status=completed"
+                                hx-put="/api/orders/{{ order.id }}/status?status=completed"
                                 hx-swap="none"
                                 hx-on:htmx:after-request="if(event.detail.xhr.status === 200) { location.reload(); }"
                                 class="text-green-600 hover:text-green-900 text-xs px-2 py-1 bg-green-50 rounded"
@@ -145,7 +145,7 @@
 
                         {% if order.status in ['new', 'processing'] %}
                         <button
-                                hx-put="/api/v1/orders/{{ order.id }}/status?status=cancelled"
+                                hx-put="/api/orders/{{ order.id }}/status?status=cancelled"
                                 hx-confirm="Are you sure you want to cancel this order?"
                                 hx-swap="none"
                                 hx-on:htmx:after-request="if(event.detail.xhr.status === 200) { location.reload(); }"
@@ -156,7 +156,7 @@
                         {% endif %}
 
                         <button
-                                hx-delete="/api/v1/orders/{{ order.id }}"
+                                hx-delete="/api/orders/{{ order.id }}"
                                 hx-confirm="Are you sure you want to delete this order? This action cannot be undone."
                                 hx-target="#order-row-{{ order.id }}"
                                 hx-swap="delete"

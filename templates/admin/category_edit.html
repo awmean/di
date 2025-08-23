@@ -216,7 +216,7 @@ document.getElementById('category-edit-form').addEventListener('submit', functio
     if (!jsonData.is_active) jsonData.is_active = false;
 
     // Make the API call
-    fetch('/api/v1/categories/{{ category.id }}', {
+    fetch('/api/categories/{{ category.id }}', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -307,7 +307,7 @@ document.body.addEventListener('htmx:afterRequest', function(event) {
 // Function to remove category media
 function removeCategoryMedia(mediaId) {
     if (confirm('Are you sure you want to delete this media?')) {
-        fetch(`/api/v1/media/${mediaId}`, {
+        fetch(`/api/media/${mediaId}`, {
             method: 'DELETE'
         })
         .then(response => {
