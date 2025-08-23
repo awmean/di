@@ -2,7 +2,6 @@ from fastapi import FastAPI, APIRouter, Depends
 from fastapi.staticfiles import StaticFiles
 
 # Import domain routers
-from app.admin_users.router import router as admin_users_router
 from app.categories.router import router as categories_router
 from app.core.auth import require_auth
 from app.core.database import engine
@@ -44,7 +43,6 @@ def create_app() -> FastAPI:
     )
 
     # Add domain routers to API router
-    api_router.include_router(admin_users_router)
     api_router.include_router(categories_router)
     api_router.include_router(products_router)
     api_router.include_router(orders_router)
