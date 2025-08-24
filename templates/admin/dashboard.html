@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard - Admin{% endblock %}
+{% block title %}Панель управления - Админ{% endblock %}
 
 {% block content %}
 <div class="mb-8">
-    <h2 class="text-2xl font-bold text-gray-900">Dashboard</h2>
-    <p class="mt-1 text-sm text-gray-500">Manage your store inventory and orders</p>
+    <h2 class="text-2xl font-bold text-gray-900">Панель управления</h2>
+    <p class="mt-1 text-sm text-gray-500">Управляйте инвентарем вашего магазина и заказами</p>
 </div>
 
-<!-- Quick Navigation Cards -->
+<!-- Карточки быстрой навигации -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <!-- Orders Card -->
+    <!-- Карточка заказов -->
     <a href="/admin/orders"
        class="block bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 border border-gray-200 hover:border-blue-300">
         <div class="p-6">
@@ -24,13 +24,13 @@
                     </div>
                 </div>
                 <div class="ml-4">
-                    <h3 class="text-lg font-medium text-gray-900">Orders</h3>
-                    <p class="text-sm text-gray-500">Manage customer orders and status</p>
+                    <h3 class="text-lg font-medium text-gray-900">Заказы</h3>
+                    <p class="text-sm text-gray-500">Управление заказами клиентов и статусами</p>
                 </div>
             </div>
             <div class="mt-4">
                 <div class="flex items-center justify-between text-sm">
-                    <span class="text-gray-600">View all orders</span>
+                    <span class="text-gray-600">Просмотреть все заказы</span>
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
@@ -39,7 +39,7 @@
         </div>
     </a>
 
-    <!-- Products Card -->
+    <!-- Карточка товаров -->
     <a href="/admin/products"
        class="block bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 border border-gray-200 hover:border-green-300">
         <div class="p-6">
@@ -53,13 +53,13 @@
                     </div>
                 </div>
                 <div class="ml-4">
-                    <h3 class="text-lg font-medium text-gray-900">Products</h3>
-                    <p class="text-sm text-gray-500">Manage your product catalog</p>
+                    <h3 class="text-lg font-medium text-gray-900">Товары</h3>
+                    <p class="text-sm text-gray-500">Управление каталогом товаров</p>
                 </div>
             </div>
             <div class="mt-4">
                 <div class="flex items-center justify-between text-sm">
-                    <span class="text-gray-600">View all products</span>
+                    <span class="text-gray-600">Просмотреть все товары</span>
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
@@ -68,7 +68,7 @@
         </div>
     </a>
 
-    <!-- Categories Card -->
+    <!-- Карточка категорий -->
     <a href="/admin/categories"
        class="block bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 border border-gray-200 hover:border-purple-300">
         <div class="p-6">
@@ -82,13 +82,13 @@
                     </div>
                 </div>
                 <div class="ml-4">
-                    <h3 class="text-lg font-medium text-gray-900">Categories</h3>
-                    <p class="text-sm text-gray-500">Organize product categories</p>
+                    <h3 class="text-lg font-medium text-gray-900">Категории</h3>
+                    <p class="text-sm text-gray-500">Организация категорий товаров</p>
                 </div>
             </div>
             <div class="mt-4">
                 <div class="flex items-center justify-between text-sm">
-                    <span class="text-gray-600">View all categories</span>
+                    <span class="text-gray-600">Просмотреть все категории</span>
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
@@ -98,9 +98,9 @@
     </a>
 </div>
 
-<!-- Quick Actions -->
+<!-- Быстрые действия -->
 <div class="mb-8">
-    <h3 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+    <h3 class="text-lg font-medium text-gray-900 mb-4">Быстрые действия</h3>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <a href="/admin/products/create"
            class="flex items-center p-4 bg-green-50 rounded-lg border border-green-200 hover:bg-green-100 transition-colors duration-200">
@@ -113,8 +113,8 @@
                 </div>
             </div>
             <div class="ml-3">
-                <p class="text-sm font-medium text-green-900">Add Product</p>
-                <p class="text-xs text-green-700">Create new product</p>
+                <p class="text-sm font-medium text-green-900">Добавить товар</p>
+                <p class="text-xs text-green-700">Создать новый товар</p>
             </div>
         </a>
 
@@ -129,8 +129,8 @@
                 </div>
             </div>
             <div class="ml-3">
-                <p class="text-sm font-medium text-purple-900">Add Category</p>
-                <p class="text-xs text-purple-700">Create new category</p>
+                <p class="text-sm font-medium text-purple-900">Добавить категорию</p>
+                <p class="text-xs text-purple-700">Создать новую категорию</p>
             </div>
         </a>
     </div>
