@@ -24,16 +24,16 @@
 {% block content %}
 <div class="mb-8 flex items-center justify-between">
     <div>
-        <h2 class="text-2xl font-bold text-gray-900">Create New Product</h2>
-        <p class="mt-1 text-sm text-gray-500">Add a new product to your catalog</p>
+        <h2 class="text-2xl font-bold text-gray-900">Создать новый товар</h2>
+        <p class="mt-1 text-sm text-gray-500">Добавить новый товар в каталог</p>
     </div>
     <a href="/admin/products"
        class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-        Back to Products
+        Назад к товарам
     </a>
 </div>
 
-    <!-- Form Response Area -->
+    <!-- Область ответа формы -->
     <div id="form-response" class="mb-4"></div>
 
     <form id="product-form"
@@ -42,13 +42,13 @@
       hx-target="#form-response"
       hx-swap="innerHTML"
       class="space-y-8">
-    <!-- Basic Information -->
+    <!-- Основная информация -->
     <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Basic Information</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Основная информация</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label for="name" class="block text-sm font-medium text-gray-700">Product Name *</label>
+                <label for="name" class="block text-sm font-medium text-gray-700">Название товара *</label>
                 <input type="text"
                        id="name"
                        name="name"
@@ -57,18 +57,18 @@
             </div>
 
             <div>
-                <label for="slug" class="block text-sm font-medium text-gray-700">Slug *</label>
+                <label for="slug" class="block text-sm font-medium text-gray-700">Слаг *</label>
                 <input type="text"
                        id="slug"
                        name="slug"
                        required
-                       placeholder="auto-generated-from-name"
+                       placeholder="автоматически-генерируется-из-названия"
                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
             </div>
         </div>
 
         <div class="mt-6">
-            <label for="short_description" class="block text-sm font-medium text-gray-700">Short Description</label>
+            <label for="short_description" class="block text-sm font-medium text-gray-700">Краткое описание</label>
             <input type="text"
                    id="short_description"
                    name="short_description"
@@ -77,7 +77,7 @@
         </div>
 
         <div class="mt-6">
-            <label for="description" class="block text-sm font-medium text-gray-700">Full Description</label>
+            <label for="description" class="block text-sm font-medium text-gray-700">Полное описание</label>
             <textarea id="description"
                       name="description"
                       rows="4"
@@ -85,18 +85,18 @@
         </div>
     </div>
 
-    <!-- Category & Hierarchy -->
+    <!-- Категория и иерархия -->
     <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Category & Hierarchy</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Категория и иерархия</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label for="category_id" class="block text-sm font-medium text-gray-700">Category *</label>
+                <label for="category_id" class="block text-sm font-medium text-gray-700">Категория *</label>
                 <select id="category_id"
                         name="category_id"
                         required
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Select Category</option>
+                    <option value="">Выберите категорию</option>
                     {% for category in categories %}
                         {% if category.is_active %}
                         <option value="{{ category.id }}">
@@ -108,60 +108,60 @@
             </div>
 
             <div>
-                <label for="parent_id" class="block text-sm font-medium text-gray-700">Parent Product</label>
+                <label for="parent_id" class="block text-sm font-medium text-gray-700">Родительский товар</label>
                 <select id="parent_id"
                         name="parent_id"
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">None (Standalone/Set)</option>
+                    <option value="">Нет (Отдельный/Набор)</option>
                     {% for product in products %}
                         {% if product.is_active and (product.is_set or product.is_standalone_product) %}
                         <option value="{{ product.id }}">
                             {{ product.name }}
                             {% if product.is_set %}
-                                (Set - {{ product.set_piece_count or product.children|length }} pieces)
+                                (Набор - {{ product.set_piece_count or product.children|length }} шт.)
                             {% endif %}
                         </option>
                         {% endif %}
                     {% endfor %}
                 </select>
-                <p class="mt-1 text-sm text-gray-500">Select a parent if this is an individual piece of a set</p>
+                <p class="mt-1 text-sm text-gray-500">Выберите родительский товар, если это отдельная часть набора</p>
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <div>
-                <label for="set_piece_count" class="block text-sm font-medium text-gray-700">Set Piece Count</label>
+                <label for="set_piece_count" class="block text-sm font-medium text-gray-700">Количество частей в наборе</label>
                 <input type="number"
                        id="set_piece_count"
                        name="set_piece_count"
                        min="1"
                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                <p class="mt-1 text-sm text-gray-500">Total pieces if this is a set</p>
+                <p class="mt-1 text-sm text-gray-500">Общее количество частей, если это набор</p>
             </div>
 
             <div>
-                <label for="piece_quantity" class="block text-sm font-medium text-gray-700">Piece Quantity</label>
+                <label for="piece_quantity" class="block text-sm font-medium text-gray-700">Количество частей</label>
                 <input type="number"
                        id="piece_quantity"
                        name="piece_quantity"
                        min="1"
                        value="1"
                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                <p class="mt-1 text-sm text-gray-500">How many of this piece in the set</p>
+                <p class="mt-1 text-sm text-gray-500">Сколько таких частей в наборе</p>
             </div>
         </div>
     </div>
 
-    <!-- Pricing -->
+    <!-- Цены -->
     <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Pricing & SKU</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Цены и артикул</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-                <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+                <label for="price" class="block text-sm font-medium text-gray-700">Цена</label>
                 <div class="mt-1 relative rounded-md shadow-sm">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span class="text-gray-500 sm:text-sm">$</span>
+                        <span class="text-gray-500 sm:text-sm">₽</span>
                     </div>
                     <input type="number"
                            id="price"
@@ -173,10 +173,10 @@
             </div>
 
             <div>
-                <label for="old_price" class="block text-sm font-medium text-gray-700">Old Price</label>
+                <label for="old_price" class="block text-sm font-medium text-gray-700">Старая цена</label>
                 <div class="mt-1 relative rounded-md shadow-sm">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span class="text-gray-500 sm:text-sm">$</span>
+                        <span class="text-gray-500 sm:text-sm">₽</span>
                     </div>
                     <input type="number"
                            id="old_price"
@@ -188,7 +188,7 @@
             </div>
 
             <div>
-                <label for="sku" class="block text-sm font-medium text-gray-700">SKU</label>
+                <label for="sku" class="block text-sm font-medium text-gray-700">Артикул</label>
                 <input type="text"
                        id="sku"
                        name="sku"
@@ -198,13 +198,13 @@
         </div>
     </div>
 
-    <!-- Physical Characteristics -->
+    <!-- Физические характеристики -->
     <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Physical Characteristics</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Физические характеристики</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label for="material" class="block text-sm font-medium text-gray-700">Material</label>
+                <label for="material" class="block text-sm font-medium text-gray-700">Материал</label>
                 <input type="text"
                        id="material"
                        name="material"
@@ -213,7 +213,7 @@
             </div>
 
             <div>
-                <label for="color" class="block text-sm font-medium text-gray-700">Color</label>
+                <label for="color" class="block text-sm font-medium text-gray-700">Цвет</label>
                 <input type="text"
                        id="color"
                        name="color"
@@ -224,7 +224,7 @@
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             <div>
-                <label for="width" class="block text-sm font-medium text-gray-700">Width (cm)</label>
+                <label for="width" class="block text-sm font-medium text-gray-700">Ширина (см)</label>
                 <input type="number"
                        id="width"
                        name="width"
@@ -233,7 +233,7 @@
             </div>
 
             <div>
-                <label for="height" class="block text-sm font-medium text-gray-700">Height (cm)</label>
+                <label for="height" class="block text-sm font-medium text-gray-700">Высота (см)</label>
                 <input type="number"
                        id="height"
                        name="height"
@@ -242,7 +242,7 @@
             </div>
 
             <div>
-                <label for="depth" class="block text-sm font-medium text-gray-700">Depth (cm)</label>
+                <label for="depth" class="block text-sm font-medium text-gray-700">Глубина (см)</label>
                 <input type="number"
                        id="depth"
                        name="depth"
@@ -251,7 +251,7 @@
             </div>
 
             <div>
-                <label for="weight" class="block text-sm font-medium text-gray-700">Weight (kg)</label>
+                <label for="weight" class="block text-sm font-medium text-gray-700">Вес (кг)</label>
                 <input type="number"
                        id="weight"
                        name="weight"
@@ -262,59 +262,59 @@
         </div>
     </div>
 
-    <!-- Furniture-Specific Characteristics -->
+    <!-- Характеристики мебели -->
     <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Furniture-Specific Details</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Характеристики мебели</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label for="frame_material" class="block text-sm font-medium text-gray-700">Frame Material</label>
+                <label for="frame_material" class="block text-sm font-medium text-gray-700">Материал каркаса</label>
                 <input type="text"
                        id="frame_material"
                        name="frame_material"
                        maxlength="200"
-                       placeholder="e.g., High-quality cast aluminum + Aluminum extrusion"
+                       placeholder="например, Высококачественный литой алюминий + алюминиевый профиль"
                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
             </div>
 
             <div>
-                <label for="fabric_material" class="block text-sm font-medium text-gray-700">Fabric Material</label>
+                <label for="fabric_material" class="block text-sm font-medium text-gray-700">Материал ткани</label>
                 <input type="text"
                        id="fabric_material"
                        name="fabric_material"
                        maxlength="200"
-                       placeholder="e.g., 100% Polyester, 70% Olefin 30% Polyester"
+                       placeholder="например, 100% полиэстер, 70% олефин 30% полиэстер"
                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
             </div>
         </div>
 
         <div class="mt-6">
-            <label for="fabric_density" class="block text-sm font-medium text-gray-700">Fabric Density (g/m²)</label>
+            <label for="fabric_density" class="block text-sm font-medium text-gray-700">Плотность ткани (г/м²)</label>
             <input type="number"
                    id="fabric_density"
                    name="fabric_density"
                    min="0"
-                   placeholder="e.g., 435"
+                   placeholder="например, 435"
                    class="mt-1 block w-full md:w-1/2 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
         </div>
 
         <div class="mt-6">
-            <label for="cushion_filling" class="block text-sm font-medium text-gray-700">Cushion Filling</label>
+            <label for="cushion_filling" class="block text-sm font-medium text-gray-700">Наполнение подушек</label>
             <textarea id="cushion_filling"
                       name="cushion_filling"
                       rows="3"
-                      placeholder="e.g., Back: polypropylene cotton + non-woven material..."
+                      placeholder="например, Спинка: полипропиленовый хлопок + нетканый материал..."
                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
         </div>
     </div>
 
-    <!-- Settings -->
+    <!-- Настройки -->
     <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Settings</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Настройки</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-                <label for="sort_order" class="block text-sm font-medium text-gray-700">Sort Order</label>
+                <label for="sort_order" class="block text-sm font-medium text-gray-700">Порядок сортировки</label>
                 <input type="number"
                        id="sort_order"
                        name="sort_order"
@@ -329,7 +329,7 @@
                        value="true"
                        checked
                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                <label for="is_active" class="ml-2 block text-sm text-gray-900">Active</label>
+                <label for="is_active" class="ml-2 block text-sm text-gray-900">Активный</label>
             </div>
 
             <div class="flex items-center">
@@ -338,7 +338,7 @@
                        name="is_featured"
                        value="true"
                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                <label for="is_featured" class="ml-2 block text-sm text-gray-900">Featured</label>
+                <label for="is_featured" class="ml-2 block text-sm text-gray-900">Рекомендуемый</label>
             </div>
         </div>
     </div>
@@ -349,17 +349,17 @@
 
         <div class="space-y-6">
             <div>
-                <label for="meta_title" class="block text-sm font-medium text-gray-700">Meta Title</label>
+                <label for="meta_title" class="block text-sm font-medium text-gray-700">Мета-заголовок</label>
                 <input type="text"
                        id="meta_title"
                        name="meta_title"
                        maxlength="200"
                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                <p class="mt-1 text-sm text-gray-500">Leave empty to auto-generate from product name</p>
+                <p class="mt-1 text-sm text-gray-500">Оставьте пустым для автоматической генерации из названия товара</p>
             </div>
 
             <div>
-                <label for="meta_description" class="block text-sm font-medium text-gray-700">Meta Description</label>
+                <label for="meta_description" class="block text-sm font-medium text-gray-700">Мета-описание</label>
                 <textarea id="meta_description"
                           name="meta_description"
                           maxlength="300"
@@ -369,25 +369,25 @@
         </div>
     </div>
 
-    <!-- Form Actions -->
+    <!-- Действия формы -->
     <div class="flex justify-end space-x-4">
         <a href="/admin/products"
            class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-md text-sm font-medium">
-            Cancel
+            Отмена
         </a>
         <button type="submit"
                 class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-sm font-medium">
-            Create Product
+            Создать товар
         </button>
     </div>
 </form>
 
-<!-- Media Upload Section (Shown after product creation) -->
+<!-- Секция загрузки медиа (показывается после создания товара) -->
 <div id="media-upload-section" class="mt-8" style="display: none;">
     <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Product Media</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Медиа товара</h3>
 
-        <!-- Media Upload Form -->
+        <!-- Форма загрузки медиа -->
         <div class="mb-6">
             <form id="media-upload-form"
                   hx-post="/api/media/upload/multiple"
@@ -401,7 +401,7 @@
                 <input type="hidden" name="media_type" value="photo">
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Photos</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Загрузить фото</label>
                     <div class="file-drop-zone rounded-lg p-8 text-center">
                         <input type="file"
                                name="files"
@@ -414,9 +414,9 @@
                                 <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                             <p class="mt-2 text-sm text-gray-600">
-                                <span class="font-medium text-blue-600">Click to upload</span> or drag and drop
+                                <span class="font-medium text-blue-600">Нажмите для загрузки</span> или перетащите файлы
                             </p>
-                            <p class="text-xs text-gray-500">PNG, JPG, JPEG up to 10MB each (max 10 files)</p>
+                            <p class="text-xs text-gray-500">PNG, JPG, JPEG до 10МБ каждый (максимум 10 файлов)</p>
                         </div>
                     </div>
                 </div>
@@ -429,19 +429,19 @@
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Uploading...
+                        Загрузка...
                     </span>
-                    <span id="upload-text">Upload Media</span>
+                    <span id="upload-text">Загрузить медиа</span>
                 </button>
             </form>
         </div>
 
-        <!-- Media Preview -->
+        <!-- Предпросмотр медиа -->
         <div id="media-preview" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            <!-- Uploaded media will appear here -->
+            <!-- Загруженные медиа появятся здесь -->
         </div>
 
-        <!-- Upload Status -->
+        <!-- Статус загрузки -->
         <div id="upload-status" class="mt-4"></div>
     </div>
 </div>

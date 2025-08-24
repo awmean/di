@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Products - Admin{% endblock %}
+{% block title %}Товары - Админка{% endblock %}
 
 {% block extra_head %}
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
@@ -8,14 +8,14 @@
 
 {% block content %}
 <div class="mb-8 flex justify-between items-center">
-    <h2 class="text-2xl font-bold text-gray-900">Products</h2>
+    <h2 class="text-2xl font-bold text-gray-900">Товары</h2>
     <a href="/admin/products/create"
        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-        Add New Product
+        Добавить товар
     </a>
 </div>
 
-<!-- Products Table -->
+<!-- Таблица товаров -->
 <div class="bg-white shadow-sm rounded-lg overflow-hidden">
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
@@ -25,28 +25,28 @@
                     ID
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
+                    Название
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Category
+                    Категория
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Type
+                    Тип
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Price
+                    Цена
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    SKU
+                    Артикул (SKU)
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                    Статус
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Created
+                    Создан
                 </th>
                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
+                    Действия
                 </th>
             </tr>
             </thead>
@@ -65,49 +65,49 @@
                     {% endif %}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ product.category.name if product.category else 'N/A' }}
+                    {{ product.category.name if product.category else 'Н/Д' }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                     {% if product.is_set %}
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                            Set ({{ product.set_piece_count or product.children|length }} pcs)
+                            Набор ({{ product.set_piece_count or product.children|length }} шт.)
                         </span>
                     {% elif product.is_individual_piece %}
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            Piece
+                            Элемент
                         </span>
                     {% else %}
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Standalone
+                            Отдельный
                         </span>
                     {% endif %}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {% if product.price %}
-                    ${{ "%.2f"|format(product.price) }}
+                    {{ "%.2f"|format(product.price) }} ₽
                     {% if product.old_price %}
-                    <span class="text-gray-400 line-through ml-1">${{ "%.2f"|format(product.old_price) }}</span>
+                    <span class="text-gray-400 line-through ml-1">{{ "%.2f"|format(product.old_price) }} ₽</span>
                     {% endif %}
                     {% else %}
-                    <span class="text-gray-400">N/A</span>
+                    <span class="text-gray-400">Н/Д</span>
                     {% endif %}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ product.sku or 'N/A' }}
+                    {{ product.sku or 'Н/Д' }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                     {% if product.is_active %}
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Active
+                            Активен
                         </span>
                     {% else %}
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                            Inactive
+                            Неактивен
                         </span>
                     {% endif %}
                     {% if product.is_featured %}
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 ml-1">
-                            Featured
+                            Рекомендуемый
                         </span>
                     {% endif %}
                 </td>
@@ -118,15 +118,15 @@
                     <div class="flex items-center justify-end space-x-2">
                         <a href="/admin/products/{{ product.id }}/edit"
                            class="text-indigo-600 hover:text-indigo-900 text-sm">
-                            Edit
+                            Редактировать
                         </a>
                         <button
                                 hx-delete="/api/products/{{ product.id }}"
-                                hx-confirm="Are you sure you want to delete this product?"
+                                hx-confirm="Вы уверены, что хотите удалить этот товар?"
                                 hx-target="#product-row-{{ product.id }}"
                                 hx-swap="delete"
                                 class="text-red-600 hover:text-red-900 text-sm">
-                            Delete
+                            Удалить
                         </button>
                     </div>
                 </td>
@@ -138,37 +138,37 @@
 
     {% if not products %}
     <div class="text-center py-8">
-        <div class="text-gray-500 text-lg">No products found</div>
-        <p class="text-gray-400 mt-2">Get started by creating your first product</p>
+        <div class="text-gray-500 text-lg">Товары не найдены</div>
+        <p class="text-gray-400 mt-2">Начните с создания первого товара</p>
         <a href="/admin/products/create"
            class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-            Add First Product
+            Добавить первый товар
         </a>
     </div>
     {% endif %}
 </div>
 
-<!-- Summary Stats (Optional) -->
+<!-- Сводка -->
 {% if products %}
 <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
     <div class="bg-white rounded-lg shadow p-6">
-        <div class="text-sm font-medium text-gray-500">Total Products</div>
+        <div class="text-sm font-medium text-gray-500">Всего товаров</div>
         <div class="mt-2 text-3xl font-semibold text-gray-900">{{ products|length }}</div>
     </div>
     <div class="bg-white rounded-lg shadow p-6">
-        <div class="text-sm font-medium text-gray-500">Active Products</div>
+        <div class="text-sm font-medium text-gray-500">Активные</div>
         <div class="mt-2 text-3xl font-semibold text-green-600">
             {{ products|selectattr('is_active')|list|length }}
         </div>
     </div>
     <div class="bg-white rounded-lg shadow p-6">
-        <div class="text-sm font-medium text-gray-500">Featured Products</div>
+        <div class="text-sm font-medium text-gray-500">Рекомендуемые</div>
         <div class="mt-2 text-3xl font-semibold text-yellow-600">
             {{ products|selectattr('is_featured')|list|length }}
         </div>
     </div>
     <div class="bg-white rounded-lg shadow p-6">
-        <div class="text-sm font-medium text-gray-500">Product Sets</div>
+        <div class="text-sm font-medium text-gray-500">Наборы</div>
         <div class="mt-2 text-3xl font-semibold text-purple-600">
             {{ products|selectattr('is_set')|list|length }}
         </div>
