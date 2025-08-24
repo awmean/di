@@ -15,32 +15,78 @@
 {% endif %}
 {% endblock %}
 
+{% block extra_styles %}
+<style>
+/* FSLightbox styles */
+.fslightbox-container {
+    background-color: white !important;
+}
+
+.fslightbox-absoluted {
+    background-color: white !important;
+}
+
+.fslightbox-fade-in,
+.fslightbox-fade-out {
+    background-color: white !important;
+}
+
+.thumbnail-btn {
+    transition: all 0.3s ease;
+}
+
+.thumbnail-btn:hover {
+    transform: translateY(-1px);
+}
+
+.nav-arrow {
+    transition: all 0.3s ease;
+}
+
+.nav-arrow:hover {
+    transform: scale(1.1);
+}
+
+.toast-slide {
+    transform: translateX(100%);
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.toast-slide.show {
+    transform: translateX(0);
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <!-- Back Navigation -->
-        <div class="mb-8">
-            <a href="/" class="text-gray-600 hover:text-gray-800 flex items-center space-x-2">
-                <span>← ВЕРНУТЬСЯ НАЗАД</span>
-            </a>
+    <!-- Back Navigation -->
+    <div class="max-w-7xl mx-auto px-8 pt-8 pb-4">
+        <a href="/catalog" class="text-gray-600 hover:text-brand-brown flex items-center space-x-2 text-sm uppercase tracking-[0.1em] font-light transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            <span>Вернуться к каталогу</span>
+        </a>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-8 py-12">
+        <!-- Product Name -->
+        <div class="mb-16">
+            <h1 class="text-3xl lg:text-4xl font-light text-brand-dark text-center uppercase tracking-[0.1em]">{{ product.name }}</h1>
         </div>
 
-        <!-- НАЗВАНИЕ ПРОДУКТА СВЕРХУ -->
-        <div class="mb-8">
-            <h1 class="text-2xl lg:text-3xl font-light text-gray-900 text-center">{{ product.name }}</h1>
-        </div>
-
-        <!-- ГЛАВНОЕ ИЗОБРАЖЕНИЕ - АКЦЕНТ НА ФОТО -->
-        <div class="mb-8 relative">
+        <!-- Main Image Section -->
+        <div class="mb-16 relative">
             {% if product.main_image_url %}
             <a href="{{ product.main_image_url }}" data-fslightbox="product-gallery" class="block cursor-zoom-in mx-auto"
-               style="max-width: 900px;">
+               style="max-width: 800px;">
                 <img id="mainImage" src="{{ product.main_image_url }}" alt="{{ product.name }}"
                      class="w-full h-auto object-contain">
             </a>
             {% else %}
-            <div class="relative flex items-center justify-center text-gray-300 mx-auto bg-gray-50" style="max-width: 900px; height: 500px;">
-                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 20 20">
+            <div class="relative flex items-center justify-center text-gray-300 mx-auto bg-brand-light-gray" style="max-width: 800px; height: 500px;">
+                <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
                 </svg>
             </div>
@@ -49,15 +95,15 @@
             {% if product.images|length > 1 %}
             <!-- Navigation Arrows -->
             <button onclick="previousMainImage()"
-                    class="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 transition-all duration-300 hover:scale-125 group">
-                <svg class="w-8 h-8 text-black/40 group-hover:text-black transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                    class="nav-arrow absolute left-4 top-1/2 transform -translate-y-1/2 p-3">
+                <svg class="w-6 h-6 text-gray-400 hover:text-brand-brown" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
                 </svg>
             </button>
 
             <button onclick="nextMainImage()"
-                    class="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 transition-all duration-300 hover:scale-125 group">
-                <svg class="w-8 h-8 text-black/40 group-hover:text-black transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                    class="nav-arrow absolute right-4 top-1/2 transform -translate-y-1/2 p-3">
+                <svg class="w-6 h-6 text-gray-400 hover:text-brand-brown" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                 </svg>
             </button>
@@ -66,15 +112,15 @@
 
         <!-- Thumbnail Images -->
         {% if product.images|length > 1 %}
-        <div class="flex space-x-4 justify-center mb-12">
+        <div class="flex space-x-3 justify-center mb-20">
             {% for image in product.images[:8] %}
-            <button class="w-20 h-20 overflow-hidden border-2 border-gray-200 hover:border-gray-400 transition-colors thumbnail-btn focus:outline-none focus:border-black"
+            <button class="thumbnail-btn w-16 h-16 overflow-hidden border border-gray-200 hover:border-brand-brown focus:outline-none focus:border-brand-brown"
                     onclick="changeMainImage('/{{ image.file_path }}', {{ loop.index0 }})">
                 <img src="/{{ image.file_path }}" alt="{{ product.name }}" class="w-full h-full object-cover">
             </button>
             {% endfor %}
             {% if product.images|length > 8 %}
-            <div class="w-20 h-20 bg-gray-100 flex items-center justify-center text-xs text-gray-600">
+            <div class="w-16 h-16 bg-brand-light-gray flex items-center justify-center text-xs text-brand-gray font-light">
                 +{{ product.images|length - 8 }}
             </div>
             {% endif %}
@@ -86,35 +132,35 @@
         {% endfor %}
         {% endif %}
 
-        <!-- ИНФОРМАЦИЯ О ТОВАРЕ - СВОБОДНАЯ КОМПОНОВКА -->
-        <div class="max-w-4xl mx-auto">
+        <!-- Product Information -->
+        <div class="max-w-3xl mx-auto">
             <!-- Price -->
             {% if product.price %}
-            <div class="text-center mb-8">
-                <span class="text-2xl font-light text-gray-900">{{ product.price|round(0)|int }} р.</span>
+            <div class="text-center mb-12">
+                <span class="text-3xl font-light text-brand-dark">{{ product.price|round(0)|int }} ₽</span>
                 {% if product.old_price and product.old_price > product.price %}
-                <span class="text-lg text-gray-400 line-through ml-3">{{ product.old_price|round(0)|int }} р.</span>
+                <span class="text-xl text-brand-gray line-through ml-4 font-light">{{ product.old_price|round(0)|int }} ₽</span>
                 {% endif %}
                 {% if product.is_set %}
-                <p class="text-sm text-gray-500 mt-1">Цена за комплект</p>
+                <p class="text-sm text-brand-gray mt-2 font-light uppercase tracking-[0.1em]">Цена за комплект</p>
                 {% endif %}
             </div>
             {% endif %}
 
-            <!-- КНОПКА КОНСУЛЬТАЦИЯ - НЕ НА ВСЮ ШИРИНУ -->
-            <div class="text-center mb-12">
+            <!-- Action Button -->
+            <div class="text-center mb-16">
                 <button id="mainActionBtn" onclick="handleMainAction()"
-                        class="inline-block py-4 px-12 font-medium tracking-wider transition-colors duration-200">
-                    <span id="btnText">КОНСУЛЬТАЦИЯ</span>
+                        class="inline-block py-4 px-16 font-light tracking-[0.2em] text-xs uppercase transition-all duration-300">
+                    <span id="btnText">Консультация</span>
                 </button>
             </div>
 
             <!-- Parent Product Link -->
             {% if product.parent %}
-            <div class="mb-12 p-6 bg-gray-50 text-center">
-                <p class="text-gray-600 mb-3">Этот товар входит в:</p>
+            <div class="mb-16 p-8 bg-brand-light-gray text-center">
+                <p class="text-brand-gray mb-4 font-light">Этот товар входит в:</p>
                 <a href="/product/{{ product.parent.slug }}"
-                   class="text-black font-medium text-lg hover:underline">
+                   class="text-brand-dark font-medium text-lg hover:text-brand-brown transition-colors">
                     {{ product.parent.name }}
                 </a>
             </div>
@@ -122,12 +168,12 @@
 
             <!-- Product Description -->
             {% if product.short_description or product.description %}
-            <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed mb-12 text-center">
+            <div class="mb-16 text-center">
                 {% if product.short_description %}
-                <p class="text-xl mb-6">{{ product.short_description }}</p>
+                <p class="text-xl font-light mb-8 leading-relaxed text-brand-dark">{{ product.short_description }}</p>
                 {% endif %}
                 {% if product.description %}
-                <div class="text-left">
+                <div class="text-base font-light leading-loose text-gray-700 text-left">
                     {{ product.description|nl2br|safe }}
                 </div>
                 {% endif %}
@@ -142,13 +188,13 @@
             {% if product.material %}{% set _ = specs.append(('Применение', product.material)) %}{% endif %}
 
             {% if specs %}
-            <div class="mb-16">
-                <h3 class="text-2xl font-light text-gray-900 mb-6 text-center">Характеристики</h3>
-                <div class="max-w-2xl mx-auto space-y-4">
+            <div class="mb-20">
+                <h3 class="text-2xl font-light text-brand-dark mb-8 text-center uppercase tracking-[0.1em]">Характеристики</h3>
+                <div class="max-w-xl mx-auto space-y-4">
                     {% for label, value in specs %}
-                    <div class="flex justify-between border-b border-gray-200 pb-2">
-                        <span class="text-gray-600">{{ label }}</span>
-                        <span class="text-gray-900 font-medium">{{ value }}</span>
+                    <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                        <span class="text-brand-gray font-light">{{ label }}</span>
+                        <span class="text-brand-dark font-normal">{{ value }}</span>
                     </div>
                     {% endfor %}
                 </div>
@@ -158,16 +204,16 @@
 
         <!-- Set Components -->
         {% if product.is_set and product.children %}
-        <div class="mt-20">
-            <h2 class="text-2xl font-light text-gray-900 mb-8 text-center">Комплект включает</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+        <div class="mt-24">
+            <h2 class="text-2xl font-light text-brand-dark mb-12 text-center uppercase tracking-[0.1em]">Комплект включает</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
                 {% for child in product.children %}
                 <div class="group text-center">
                     <a href="/product/{{ child.slug }}" class="block">
-                        <div class="aspect-square bg-gray-50 overflow-hidden mb-3 transition-shadow">
+                        <div class="aspect-square bg-brand-light-gray overflow-hidden mb-4 transition-all duration-300 hover:shadow-sm">
                             {% if child.main_image_url %}
                             <img src="{{ child.main_image_url }}" alt="{{ child.name }}"
-                                 class="w-full h-full object-cover transition-transform duration-300">
+                                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
                             {% else %}
                             <div class="w-full h-full flex items-center justify-center text-gray-300">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -177,14 +223,10 @@
                             {% endif %}
                         </div>
 
-                        <h3 class="font-light text-gray-900 mb-1 text-sm">{{ child.name }}</h3>
+                        <h3 class="font-light text-brand-dark mb-1 text-sm">{{ child.name }}</h3>
                         {% if child.piece_quantity > 1 %}
-                        <p class="text-gray-500 mb-2 text-xs">{{ child.piece_quantity }} шт.</p>
+                        <p class="text-brand-gray mb-2 text-xs font-light">{{ child.piece_quantity }} шт.</p>
                         {% endif %}
-
-<!--                        {% if child.price %}-->
-<!--                        <p class="text-sm font-light text-gray-900">{{ child.price|round(0)|int }} р.</p>-->
-<!--                        {% endif %}-->
                     </a>
                 </div>
                 {% endfor %}
@@ -194,9 +236,9 @@
 
         <!-- Full Description -->
         {% if not product.is_set and (product.description and product.description|length > 200) %}
-        <div class="mt-20 max-w-4xl mx-auto">
-            <h2 class="text-3xl font-light text-gray-900 mb-8 text-center">Подробное описание</h2>
-            <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+        <div class="mt-24 max-w-3xl mx-auto">
+            <h2 class="text-2xl font-light text-brand-dark mb-12 text-center uppercase tracking-[0.1em]">Подробное описание</h2>
+            <div class="text-base font-light leading-loose text-gray-700">
                 {{ product.description|nl2br|safe }}
             </div>
         </div>
@@ -206,27 +248,6 @@
 
 <!-- FSLightbox JS -->
 <script src="https://cdn.jsdelivr.net/npm/fslightbox@3.7.4/index.min.js"></script>
-
-<!-- Custom FSLightbox styles -->
-<style>
-/* Основной контейнер лайтбокса */
-.fslightbox-container {
-    background-color: white !important;
-}
-
-/* Дополнительно для надежности */
-.fslightbox-absoluted {
-    background-color: white !important;
-}
-
-/* Убираем любые фоновые эффекты */
-.fslightbox-fade-in,
-.fslightbox-fade-out {
-    background-color: white !important;
-}
-</style>
-
-<script src="/static/js/cart-localstorage.min.js"></script>
 <script>
 // Product data for cart
 const productData = {
@@ -257,16 +278,18 @@ function changeMainImage(imagePath, index) {
     // Update active thumbnail
     document.querySelectorAll('.thumbnail-btn').forEach((btn, i) => {
         if (i === index) {
-            btn.classList.add('border-black');
+            btn.classList.add('border-brand-brown');
             btn.classList.remove('border-gray-200');
         } else {
-            btn.classList.remove('border-black');
+            btn.classList.remove('border-brand-brown');
             btn.classList.add('border-gray-200');
         }
     });
 
     // Refresh FSLightbox to recognize changes
-    refreshFsLightbox();
+    if (typeof refreshFsLightbox !== 'undefined') {
+        refreshFsLightbox();
+    }
 }
 
 function nextMainImage() {
@@ -285,18 +308,23 @@ function previousMainImage() {
 function updateButtonState() {
     const btn = document.getElementById('mainActionBtn');
     const btnText = document.getElementById('btnText');
+
+    if (!cartLS) return;
+
     const isInCart = cartLS.exists(productData.id);
 
     if (isInCart) {
-        btn.className = 'inline-block bg-gray-100 text-gray-900 border border-gray-300 py-4 px-12 font-medium tracking-wider hover:bg-gray-200 transition-colors duration-200';
+        btn.className = 'inline-block bg-brand-light-gray text-brand-dark border border-brand-gray py-4 px-16 font-light tracking-[0.2em] text-xs uppercase hover:bg-gray-200 transition-all duration-300';
         btnText.textContent = 'ПЕРЕЙТИ В КОРЗИНУ';
     } else {
-        btn.className = 'inline-block bg-black text-white py-4 px-12 font-medium tracking-wider hover:bg-gray-800 transition-colors duration-200';
+        btn.className = 'inline-block bg-brand-brown text-white py-4 px-16 font-light tracking-[0.2em] text-xs uppercase hover:bg-opacity-90 transition-all duration-300';
         btnText.textContent = 'КОНСУЛЬТАЦИЯ';
     }
 }
 
 function handleMainAction() {
+    if (!cartLS) return;
+
     const isInCart = cartLS.exists(productData.id);
     if (isInCart) {
         window.location.href = '/checkout';
@@ -306,6 +334,8 @@ function handleMainAction() {
 }
 
 function requestConsultation() {
+    if (!cartLS) return;
+
     const cartItem = {
         id: productData.id,
         name: productData.name,
@@ -321,7 +351,7 @@ function requestConsultation() {
 
 function showConsultationMessage() {
     const toast = document.createElement('div');
-    toast.className = 'fixed top-8 right-8 bg-white border border-gray-200 shadow-xl px-8 py-6 z-50 transform translate-x-full transition-transform duration-500 max-w-sm';
+    toast.className = 'toast-slide fixed top-8 right-8 bg-white border border-gray-200 shadow-xl px-8 py-6 z-50 max-w-sm';
     toast.innerHTML = `
         <div class="flex items-start space-x-4">
             <div class="w-8 h-8 bg-green-100 flex items-center justify-center flex-shrink-0">
@@ -330,9 +360,9 @@ function showConsultationMessage() {
                 </svg>
             </div>
             <div class="flex-1">
-                <h4 class="font-medium text-gray-900 mb-2">Товар добавлен в корзину</h4>
-                <p class="text-sm text-gray-600 mb-3">Перейдите в корзину чтобы оформить заявку</p>
-                <a href="/checkout" class="inline-block bg-black text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors">
+                <h4 class="font-medium text-brand-dark mb-2">Товар добавлен в корзину</h4>
+                <p class="text-sm text-brand-gray mb-3 font-light">Перейдите в корзину чтобы оформить заявку</p>
+                <a href="/checkout" class="inline-block bg-brand-brown text-white px-4 py-2 text-xs font-light uppercase tracking-[0.1em] hover:bg-opacity-90 transition-colors">
                     Перейти в корзину
                 </a>
             </div>
@@ -340,16 +370,16 @@ function showConsultationMessage() {
     `;
 
     document.body.appendChild(toast);
-    setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+    setTimeout(() => toast.classList.add('show'), 100);
     setTimeout(() => {
-        toast.classList.add('translate-x-full');
+        toast.classList.remove('show');
         setTimeout(() => document.body.contains(toast) && document.body.removeChild(toast), 500);
     }, 8000);
 }
 
 function updateCartCount() {
     const cartCounter = document.querySelector('.cart-counter');
-    if (cartCounter) {
+    if (cartCounter && cartLS) {
         const cartItems = cartLS.list();
         const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
         cartCounter.textContent = totalItems;
@@ -366,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set first thumbnail as active
     const firstThumbnail = document.querySelector('.thumbnail-btn');
     if (firstThumbnail) {
-        firstThumbnail.classList.add('border-black');
+        firstThumbnail.classList.add('border-brand-brown');
         firstThumbnail.classList.remove('border-gray-200');
     }
 });

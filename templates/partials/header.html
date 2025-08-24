@@ -32,6 +32,27 @@
     .hamburger.active .hamburger-line:nth-child(3) {
         transform: rotate(-45deg) translate(6px, -6px);
     }
+    .cart-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #8B4513;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 11px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 18px;
+        padding: 0 1px;
+    }
+    .cart-container {
+        position: relative;
+        display: inline-block;
+    }
 </style>
 
 <!-- Mobile Menu Overlay -->
@@ -99,24 +120,101 @@
                    class="text-gray-800 hover:text-brand-brown transition-colors uppercase text-xs font-medium tracking-[0.25em]">КОНТАКТЫ</a>
             </nav>
 
-            <!-- Desktop Search -->
+            <!-- Desktop Cart -->
             <div class="hidden lg:flex items-center">
-                <button class="text-gray-800 hover:text-brand-brown transition-colors">
+                <a href="/checkout" class="cart-container text-gray-800 hover:text-brand-brown transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 10H6L5 9z"></path>
                     </svg>
-                </button>
+                    <span id="cart-count" class="cart-badge">0</span>
+                </a>
             </div>
 
             <!-- Mobile Menu Button -->
-            <div class="flex lg:hidden items-center">
+            <div class="flex lg:hidden items-center space-x-4">
+                <!-- Mobile Cart -->
+                <a href="/checkout" class="cart-container text-gray-800 hover:text-brand-brown transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 10H6L5 9z"></path>
+                    </svg>
+                    <span id="mobile-cart-count" class="cart-badge">0</span>
+                </a>
+
                 <button id="menu-toggle" class="hamburger flex flex-col justify-center items-center w-6 h-6 space-y-1">
                     <span class="hamburger-line w-5 h-0.5 bg-gray-800"></span>
                     <span class="hamburger-line w-5 h-0.5 bg-gray-800"></span>
                     <span class="hamburger-line w-5 h-0.5 bg-gray-800"></span>
-                </button>
+                </div>
             </div>
         </div>
     </div>
 </header>
+
+<script>
+// Update cart count function
+function updateCartCount() {
+    if (typeof cartLS !== 'undefined') {
+        const count = cartLS.list().length;
+        const desktopBadge = document.getElementById('cart-count');
+        const mobileBadge = document.getElementById('mobile-cart-count');
+
+        if (desktopBadge) desktopBadge.textContent = count;
+        if (mobileBadge) mobileBadge.textContent = count;
+
+        // Hide badge if count is 0
+        if (count === 0) {
+            if (desktopBadge) desktopBadge.style.display = 'none';
+            if (mobileBadge) mobileBadge.style.display = 'none';
+        } else {
+            if (desktopBadge) desktopBadge.style.display = 'flex';
+            if (mobileBadge) mobileBadge.style.display = 'flex';
+        }
+    }
+}
+
+// Initialize cart count on load
+document.addEventListener('DOMContentLoaded', function() {
+    updateCartCount();
+
+    // Mobile menu functionality
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
+    const closeMenu = document.getElementById('close-menu');
+
+    function openMenu() {
+        mobileMenu.classList.add('active');
+        menuOverlay.classList.add('active');
+        menuToggle.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenuFunc() {
+        mobileMenu.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        menuToggle.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    if (menuToggle) menuToggle.addEventListener('click', openMenu);
+    if (closeMenu) closeMenu.addEventListener('click', closeMenuFunc);
+    if (menuOverlay) menuOverlay.addEventListener('click', closeMenuFunc);
+
+    // Header scroll effect
+    const header = document.getElementById('main-header');
+    let lastScrollY = window.scrollY;
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+            header.classList.add('sticky-header');
+        } else {
+            header.classList.remove('sticky-header');
+        }
+    });
+});
+
+// Export updateCartCount function to global scope so it can be called from other scripts
+window.updateCartCount = updateCartCount;
+</script>
