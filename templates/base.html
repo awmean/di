@@ -52,12 +52,32 @@
             }
         }
     </script>
+
+    <!-- Sticky Footer Styles -->
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+        }
+    </style>
+
     {% block extra_styles %}{% endblock %}
 </head>
 <body class="font-raleway text-gray-900 bg-white">
 {% include 'partials/header.html' %}
 
-{% block content %}{% endblock %}
+<main>
+    {% block content %}{% endblock %}
+</main>
 
 {% include 'partials/footer.html' %}
 
