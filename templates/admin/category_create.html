@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Create Category - Admin{% endblock %}
+{% block title %}Создать категорию - Админ{% endblock %}
 
 {% block extra_head %}
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
@@ -9,16 +9,16 @@
 {% block content %}
 <div class="mb-8 flex items-center justify-between">
     <div>
-        <h2 class="text-2xl font-bold text-gray-900">Create New Category</h2>
-        <p class="mt-1 text-sm text-gray-500">Add a new category to organize your products</p>
+        <h2 class="text-2xl font-bold text-gray-900">Создать новую категорию</h2>
+        <p class="mt-1 text-sm text-gray-500">Добавьте новую категорию для организации ваших товаров</p>
     </div>
     <a href="/admin/categories"
        class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-        Back to Categories
+        Назад к категориям
     </a>
 </div>
 
-<!-- Form Response Area -->
+<!-- Область ответа формы -->
 <div id="form-response" class="mb-4"></div>
 
 <form id="category-form"
@@ -27,13 +27,13 @@
       hx-target="#form-response"
       hx-swap="innerHTML"
       class="space-y-8">
-    <!-- Basic Information -->
+    <!-- Основная информация -->
     <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Basic Information</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Основная информация</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label for="name" class="block text-sm font-medium text-gray-700">Category Name *</label>
+                <label for="name" class="block text-sm font-medium text-gray-700">Название категории *</label>
                 <input type="text"
                        id="name"
                        name="name"
@@ -42,65 +42,65 @@
             </div>
 
             <div>
-                <label for="slug" class="block text-sm font-medium text-gray-700">Slug *</label>
+                <label for="slug" class="block text-sm font-medium text-gray-700">Слаг *</label>
                 <input type="text"
                        id="slug"
                        name="slug"
                        required
-                       placeholder="auto-generated-from-name"
+                       placeholder="автоматически-из-названия"
                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
             </div>
         </div>
 
         <div class="mt-6">
-            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <label for="description" class="block text-sm font-medium text-gray-700">Описание</label>
             <textarea id="description"
                       name="description"
                       rows="4"
-                      placeholder="Brief description of this category and what products it contains..."
+                      placeholder="Краткое описание этой категории и какие товары она содержит..."
                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
         </div>
     </div>
 
-    <!-- Hierarchy & Organization -->
+    <!-- Иерархия и организация -->
     <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Hierarchy & Organization</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Иерархия и организация</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label for="parent_id" class="block text-sm font-medium text-gray-700">Parent Category</label>
+                <label for="parent_id" class="block text-sm font-medium text-gray-700">Родительская категория</label>
                 <select id="parent_id"
                         name="parent_id"
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">None (Root Category)</option>
+                    <option value="">Нет (Корневая категория)</option>
                     {% for category in categories %}
                     {% if category.is_active %}
                     <option value="{{ category.id }}">
                         {% if category.parent %}{{ category.parent.name }} → {% endif %}{{ category.name }}
-                        {% if category.children|length > 0 %} ({{ category.children|length }} sub){% endif %}
+                        {% if category.children|length > 0 %} ({{ category.children|length }} под){% endif %}
                     </option>
                     {% endif %}
                     {% endfor %}
                 </select>
-                <p class="mt-1 text-sm text-gray-500">Select a parent category to create a subcategory</p>
+                <p class="mt-1 text-sm text-gray-500">Выберите родительскую категорию для создания подкатегории</p>
             </div>
 
             <div>
-                <label for="sort_order" class="block text-sm font-medium text-gray-700">Sort Order</label>
+                <label for="sort_order" class="block text-sm font-medium text-gray-700">Порядок сортировки</label>
                 <input type="number"
                        id="sort_order"
                        name="sort_order"
                        value="0"
                        min="0"
                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                <p class="mt-1 text-sm text-gray-500">Lower numbers appear first (0 = highest priority)</p>
+                <p class="mt-1 text-sm text-gray-500">Меньшие числа отображаются первыми (0 = наивысший приоритет)</p>
             </div>
         </div>
     </div>
 
-    <!-- Settings -->
+    <!-- Настройки -->
     <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Settings</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Настройки</h3>
 
         <div class="flex items-center space-x-6">
             <div class="flex items-center">
@@ -110,49 +110,49 @@
                        value="true"
                        checked
                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                <label for="is_active" class="ml-2 block text-sm text-gray-900">Active</label>
-                <p class="ml-2 text-xs text-gray-500">Allow products to be assigned to this category</p>
+                <label for="is_active" class="ml-2 block text-sm text-gray-900">Активна</label>
+                <p class="ml-2 text-xs text-gray-500">Разрешить назначение товаров в эту категорию</p>
             </div>
         </div>
     </div>
 
-    <!-- Form Actions -->
+    <!-- Действия формы -->
     <div class="flex justify-end space-x-4">
         <a href="/admin/categories"
            class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-md text-sm font-medium">
-            Cancel
+            Отмена
         </a>
         <button type="submit"
                 class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-sm font-medium">
-            Create Category
+            Создать категорию
         </button>
     </div>
 </form>
 
 <script>
-    // Convert form data to JSON and handle submission
+    // Конвертируем данные формы в JSON и обрабатываем отправку
     document.getElementById('category-form').addEventListener('submit', function(e) {
         e.preventDefault();
 
         const formData = new FormData(this);
         const jsonData = {};
 
-        // Convert form data to JSON
+        // Конвертируем данные формы в JSON
         for (let [key, value] of formData.entries()) {
-            // Handle numeric fields
+            // Обрабатываем числовые поля
             if (['sort_order', 'parent_id'].includes(key) && value) {
                 jsonData[key] = parseInt(value);
             } else if (['is_active'].includes(key)) {
-                jsonData[key] = true; // Checkbox is only present if checked
+                jsonData[key] = true; // Чекбокс присутствует только если отмечен
             } else if (value) {
                 jsonData[key] = value;
             }
         }
 
-        // Set default values for checkboxes if not checked
+        // Устанавливаем значения по умолчанию для чекбоксов, если не отмечены
         if (!jsonData.is_active) jsonData.is_active = false;
 
-        // Make the API call
+        // Делаем API вызов
         fetch('/api/categories/', {
             method: 'POST',
             headers: {
@@ -163,47 +163,38 @@
         .then(response => response.json())
         .then(data => {
             if (data.id) {
-                // Success - redirect to categories list
+                // Успех - перенаправляем на список категорий
                 document.getElementById('form-response').innerHTML = `
                     <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                        <strong>Category created successfully!</strong> Category ID: ${data.id}
+                        <strong>Категория создана успешно!</strong> ID категории: ${data.id}
                     </div>
                 `;
 
-                // Redirect after a brief delay
+                // Перенаправляем после короткой задержки
                 setTimeout(() => {
                     window.location.href = '/admin/categories';
                 }, 2000);
             } else {
-                throw new Error('Category creation failed');
+                throw new Error('Создание категории не удалось');
             }
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error('Ошибка:', error);
             document.getElementById('form-response').innerHTML = `
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                    <strong>Error:</strong> Failed to create category. Please check the form data and try again.
+                    <strong>Ошибка:</strong> Не удалось создать категорию. Проверьте данные формы и попробуйте снова.
                 </div>
             `;
         });
     });
 
-    // Auto-generate slug from name
-    document.getElementById('name').addEventListener('input', function() {
-        const name = this.value;
-        const slug = name.toLowerCase()
-                         .replace(/[^a-z0-9]+/g, '-')
-                         .replace(/(^-|-$)/g, '');
-        document.getElementById('slug').value = slug;
-    });
-
-    // Show/hide parent category help text based on selection
+    // Показываем/скрываем подсказку для родительской категории в зависимости от выбора
     document.getElementById('parent_id').addEventListener('change', function() {
         const helpText = this.parentNode.querySelector('.text-gray-500');
         if (this.value) {
-            helpText.textContent = 'This category will be a subcategory of the selected parent';
+            helpText.textContent = 'Эта категория будет подкатегорией выбранной родительской категории';
         } else {
-            helpText.textContent = 'Select a parent category to create a subcategory';
+            helpText.textContent = 'Выберите родительскую категорию для создания подкатегории';
         }
     });
 </script>

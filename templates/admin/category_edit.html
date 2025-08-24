@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Edit Category - {{ category.name }} - Admin{% endblock %}
+{% block title %}Редактировать категорию - {{ category.name }} - Админ{% endblock %}
 
 {% block extra_head %}
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
@@ -24,28 +24,28 @@
 {% block content %}
 <div class="mb-8 flex items-center justify-between">
     <div>
-        <h2 class="text-2xl font-bold text-gray-900">Edit Category</h2>
-        <p class="mt-1 text-sm text-gray-500">Update category: {{ category.name }}</p>
+        <h2 class="text-2xl font-bold text-gray-900">Редактировать категорию</h2>
+        <p class="mt-1 text-sm text-gray-500">Изменить категорию: {{ category.name }}</p>
     </div>
     <div class="flex space-x-3">
         <a href="/admin/categories"
            class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-            Back to Categories
+            Назад к категориям
         </a>
     </div>
 </div>
 
-<!-- Form Response Area -->
+<!-- Область ответа формы -->
 <div id="form-response" class="mb-4"></div>
 
 <form id="category-edit-form" class="space-y-8">
-    <!-- Basic Information -->
+    <!-- Основная информация -->
     <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Basic Information</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Основная информация</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label for="name" class="block text-sm font-medium text-gray-700">Category Name *</label>
+                <label for="name" class="block text-sm font-medium text-gray-700">Название категории *</label>
                 <input type="text"
                        id="name"
                        name="name"
@@ -55,7 +55,7 @@
             </div>
 
             <div>
-                <label for="slug" class="block text-sm font-medium text-gray-700">Slug *</label>
+                <label for="slug" class="block text-sm font-medium text-gray-700">Слаг *</label>
                 <input type="text"
                        id="slug"
                        name="slug"
@@ -66,74 +66,76 @@
         </div>
 
         <div class="mt-6">
-            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <label for="description" class="block text-sm font-medium text-gray-700">Описание</label>
             <textarea id="description"
                       name="description"
                       rows="4"
-                      placeholder="Brief description of this category and what products it contains..."
+                      placeholder="Краткое описание этой категории и какие товары она содержит..."
                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">{{ category.description or '' }}</textarea>
         </div>
     </div>
 
-    <!-- Hierarchy & Organization -->
+    <!-- Иерархия и организация -->
     <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Hierarchy & Organization</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Иерархия и организация</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label for="parent_id" class="block text-sm font-medium text-gray-700">Parent Category</label>
+                <label for="parent_id" class="block text-sm font-medium text-gray-700">Родительская категория</label>
                 <select id="parent_id"
                         name="parent_id"
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">None (Root Category)</option>
+                    <option value="">Нет (Корневая категория)</option>
                     {% for potential_parent in categories %}
                         {% if potential_parent.is_active and potential_parent.id != category.id %}
                         <option value="{{ potential_parent.id }}" {% if potential_parent.id == category.parent_id %}selected{% endif %}>
                             {% if potential_parent.parent %}{{ potential_parent.parent.name }} → {% endif %}{{ potential_parent.name }}
-                            {% if potential_parent.children|length > 0 %} ({{ potential_parent.children|length }} sub){% endif %}
+                            {% if potential_parent.children|length > 0 %} ({{ potential_parent.children|length }} под){%
+                            endif %}
                         </option>
                         {% endif %}
                     {% endfor %}
                 </select>
                 <p class="mt-1 text-sm text-gray-500">
-                    {% if category.parent %}Currently under: {{ category.parent.name }}{% else %}Currently a root category{% endif %}
+                    {% if category.parent %}Сейчас под: {{ category.parent.name }}{% else %}Сейчас корневая категория{%
+                    endif %}
                 </p>
             </div>
 
             <div>
-                <label for="sort_order" class="block text-sm font-medium text-gray-700">Sort Order</label>
+                <label for="sort_order" class="block text-sm font-medium text-gray-700">Порядок сортировки</label>
                 <input type="number"
                        id="sort_order"
                        name="sort_order"
                        value="{{ category.sort_order or 0 }}"
                        min="0"
                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                <p class="mt-1 text-sm text-gray-500">Lower numbers appear first (0 = highest priority)</p>
+                <p class="mt-1 text-sm text-gray-500">Меньшие числа отображаются первыми (0 = наивысший приоритет)</p>
             </div>
         </div>
 
-        <!-- Category Stats -->
+        <!-- Статистика категории -->
         {% if category.children|length > 0 or category.products|length > 0 %}
         <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-            <h4 class="text-sm font-medium text-gray-900 mb-2">Category Statistics</h4>
+            <h4 class="text-sm font-medium text-gray-900 mb-2">Статистика категории</h4>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                 <div>
-                    <span class="text-gray-500">Products:</span>
+                    <span class="text-gray-500">Товары:</span>
                     <span class="font-medium text-green-600">{{ category.products|length }}</span>
                 </div>
                 <div>
-                    <span class="text-gray-500">Subcategories:</span>
+                    <span class="text-gray-500">Подкатегории:</span>
                     <span class="font-medium text-blue-600">{{ category.children|length }}</span>
                 </div>
                 {% if category.children|length > 0 %}
                 <div class="col-span-2 md:col-span-1">
-                    <span class="text-gray-500">Subcategories:</span>
+                    <span class="text-gray-500">Подкатегории:</span>
                     <div class="mt-1">
                         {% for child in category.children[:3] %}
                             <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mr-1 mb-1">{{ child.name }}</span>
                         {% endfor %}
                         {% if category.children|length > 3 %}
-                            <span class="text-xs text-gray-500">+{{ category.children|length - 3 }} more</span>
+                        <span class="text-xs text-gray-500">+{{ category.children|length - 3 }} еще</span>
                         {% endif %}
                     </div>
                 </div>
@@ -143,9 +145,9 @@
         {% endif %}
     </div>
 
-    <!-- Settings -->
+    <!-- Настройки -->
     <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Settings</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Настройки</h3>
 
         <div class="flex items-center space-x-6">
             <div class="flex items-center">
@@ -155,8 +157,8 @@
                        value="true"
                        {% if category.is_active %}checked{% endif %}
                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                <label for="is_active" class="ml-2 block text-sm text-gray-900">Active</label>
-                <p class="ml-2 text-xs text-gray-500">Allow products to be assigned to this category</p>
+                <label for="is_active" class="ml-2 block text-sm text-gray-900">Активна</label>
+                <p class="ml-2 text-xs text-gray-500">Разрешить назначение товаров в эту категорию</p>
             </div>
         </div>
 
@@ -170,8 +172,9 @@
                 </div>
                 <div class="ml-3">
                     <p class="text-sm text-yellow-700">
-                        <strong>Warning:</strong> This category has {{ category.products|length }} product(s) assigned.
-                        Deactivating it may affect product visibility.
+                        <strong>Предупреждение:</strong> К этой категории привязано {{ category.products|length }}
+                        товар(ов).
+                        Деактивация может повлиять на видимость товаров.
                     </p>
                 </div>
             </div>
@@ -179,267 +182,94 @@
         {% endif %}
     </div>
 
-    <!-- Form Actions -->
+    <!-- Действия формы -->
     <div class="flex justify-end space-x-4">
         <a href="/admin/categories"
            class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-md text-sm font-medium">
-            Cancel
+            Отмена
         </a>
         <button type="submit"
                 class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-sm font-medium">
-            Update Category
+            Обновить категорию
         </button>
     </div>
 </form>
 
 <script>
-// Update category form submission
-document.getElementById('category-edit-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+    // Обработка отправки формы редактирования категории
+    document.getElementById('category-edit-form').addEventListener('submit', function(e) {
+        e.preventDefault();
 
-    const formData = new FormData(this);
-    const jsonData = {};
+        const formData = new FormData(this);
+        const jsonData = {};
 
-    // Convert form data to JSON
-    for (let [key, value] of formData.entries()) {
-        // Handle numeric fields
-        if (['sort_order', 'parent_id'].includes(key) && value) {
-            jsonData[key] = parseInt(value);
-        } else if (['is_active'].includes(key)) {
-            jsonData[key] = true; // Checkbox is only present if checked
-        } else if (value) {
-            jsonData[key] = value;
-        }
-    }
-
-    // Set default values for checkboxes if not checked
-    if (!jsonData.is_active) jsonData.is_active = false;
-
-    // Make the API call
-    fetch('/api/categories/{{ category.id }}', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(jsonData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.id) {
-            // Success
-            document.getElementById('form-response').innerHTML = `
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                    <strong>Category updated successfully!</strong>
-                </div>
-            `;
-
-            // Clear message after 3 seconds
-            setTimeout(() => {
-                document.getElementById('form-response').innerHTML = '';
-            }, 3000);
-        } else {
-            throw new Error('Category update failed');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('form-response').innerHTML = `
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                <strong>Error:</strong> Failed to update category. Please check the form data and try again.
-            </div>
-        `;
-    });
-});
-
-// Media upload handling
-document.body.addEventListener('htmx:afterRequest', function(event) {
-    if (event.target.id === 'photo-upload-form' || event.target.id === 'icon-upload-form') {
-        const statusDiv = document.getElementById('upload-status');
-
-        if (event.detail.xhr.status === 201) {
-            // Success
-            try {
-                const response = JSON.parse(event.detail.xhr.response);
-                statusDiv.innerHTML = `
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                        <strong>Success!</strong> Uploaded ${response.length} file(s). <a href="#" onclick="location.reload()" class="underline">Refresh page</a> to see new media.
-                    </div>
-                `;
-
-                // Reset form
-                event.target.reset();
-
-            } catch (e) {
-                console.error('Error parsing response:', e);
-                statusDiv.innerHTML = `
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                        <strong>Error:</strong> Could not parse upload response.
-                    </div>
-                `;
+        // Конвертируем данные формы в JSON
+        for (let [key, value] of formData.entries()) {
+            // Обрабатываем числовые поля
+            if (['sort_order', 'parent_id'].includes(key) && value) {
+                jsonData[key] = parseInt(value);
+            } else if (['is_active'].includes(key)) {
+                jsonData[key] = true; // Чекбокс присутствует только если отмечен
+            } else if (value) {
+                jsonData[key] = value;
             }
-        } else {
-            // Error
-            let errorMessage = 'Upload failed';
-            try {
-                const errorResponse = JSON.parse(event.detail.xhr.response);
-                errorMessage = errorResponse.detail || errorMessage;
-            } catch (e) {
-                errorMessage = `Upload failed with status: ${event.detail.xhr.status}`;
-            }
-
-            statusDiv.innerHTML = `
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                    <strong>Error:</strong> ${errorMessage}
-                </div>
-            `;
         }
 
-        // Clear status after 5 seconds
-        setTimeout(() => {
-            const currentStatus = statusDiv.innerHTML;
-            if (currentStatus.includes('Success!') || currentStatus.includes('Error:')) {
-                statusDiv.innerHTML = '';
-            }
-        }, 5000);
-    }
-});
+        // Устанавливаем значения по умолчанию для чекбоксов, если не отмечены
+        if (!jsonData.is_active) jsonData.is_active = false;
 
-// Function to remove category media
-function removeCategoryMedia(mediaId) {
-    if (confirm('Are you sure you want to delete this media?')) {
-        fetch(`/api/media/${mediaId}`, {
-            method: 'DELETE'
+        // Делаем API вызов
+        fetch('/api/categories/{{ category.id }}', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(jsonData)
         })
-        .then(response => {
-            if (response.ok) {
-                // Remove the media element from DOM
-                document.getElementById(`media-${mediaId}`).remove();
-
-                // Show success message
-                const statusDiv = document.getElementById('upload-status');
-                statusDiv.innerHTML = `
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                        <strong>Success!</strong> Media deleted successfully.
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                // Успех
+                document.getElementById('form-response').innerHTML = `
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                        <strong>Категория успешно обновлена!</strong>
                     </div>
                 `;
 
+                // Очищаем сообщение через 3 секунды
                 setTimeout(() => {
-                    statusDiv.innerHTML = '';
+                    document.getElementById('form-response').innerHTML = '';
                 }, 3000);
             } else {
-                alert('Failed to delete media');
+                throw new Error('Обновление категории не удалось');
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to delete media');
+            console.error('Ошибка:', error);
+            document.getElementById('form-response').innerHTML = `
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    <strong>Ошибка:</strong> Не удалось обновить категорию. Проверьте данные формы и попробуйте снова.
+                </div>
+            `;
         });
-    }
-}
-
-
-// Show file names when selected
-document.getElementById('photo-files').addEventListener('change', function() {
-    updateFileInfo(this, 'photo-file-info');
-});
-
-document.getElementById('icon-files').addEventListener('change', function() {
-    updateFileInfo(this, 'icon-file-info');
-});
-
-function updateFileInfo(input, infoId) {
-    const files = input.files;
-    let fileInfo = document.getElementById(infoId);
-
-    if (!fileInfo) {
-        fileInfo = document.createElement('div');
-        fileInfo.id = infoId;
-        fileInfo.className = 'mt-2 text-sm text-gray-600';
-        input.parentNode.appendChild(fileInfo);
-    }
-
-    if (files.length > 0) {
-        const fileNames = Array.from(files).map(file => file.name).join(', ');
-        fileInfo.innerHTML = `Selected: ${fileNames}`;
-    } else {
-        fileInfo.remove();
-    }
-}
-
-// Handle file drop
-const photoDropZone = document.querySelector('#photo-files').closest('.file-drop-zone');
-const iconDropZone = document.querySelector('#icon-files').closest('.file-drop-zone');
-
-[photoDropZone, iconDropZone].forEach(dropZone => {
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, preventDefaults, false);
     });
 
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropZone.addEventListener(eventName, highlight, false);
+    // Показываем/скрываем подсказку для родительской категории в зависимости от выбора
+    document.getElementById('parent_id').addEventListener('change', function() {
+        const helpText = this.parentNode.querySelector('.text-gray-500');
+        if (this.value) {
+            helpText.textContent = 'Эта категория будет перемещена под выбранную родительскую категорию';
+        } else {
+            helpText.textContent = 'Эта категория станет корневой категорией';
+        }
     });
 
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, unhighlight, false);
+    // Предотвращаем выбор самой себя в качестве родителя (дополнительная клиентская валидация)
+    document.getElementById('parent_id').addEventListener('change', function() {
+        if (this.value == '{{ category.id }}') {
+            alert('Категория не может быть своим собственным родителем!');
+            this.value = '{{ category.parent_id or "" }}';
+        }
     });
-});
-
-function preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
-}
-
-function highlight(e) {
-    e.currentTarget.classList.add('drag-over');
-}
-
-function unhighlight(e) {
-    e.currentTarget.classList.remove('drag-over');
-}
-
-photoDropZone.addEventListener('drop', function(e) {
-    handleDrop(e, 'photo-files');
-}, false);
-
-iconDropZone.addEventListener('drop', function(e) {
-    handleDrop(e, 'icon-files');
-}, false);
-
-function handleDrop(e, inputId) {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-    document.getElementById(inputId).files = files;
-
-    // Trigger change event to update file info
-    const changeEvent = new Event('change', { bubbles: true });
-    document.getElementById(inputId).dispatchEvent(changeEvent);
-}
-
-// Auto-generate slug from name
-document.getElementById('name').addEventListener('input', function() {
-    const name = this.value;
-    const slug = name.toLowerCase()
-                     .replace(/[^a-z0-9]+/g, '-')
-                     .replace(/(^-|-$)/g, '');
-    document.getElementById('slug').value = slug;
-});
-
-// Show/hide parent category help text based on selection
-document.getElementById('parent_id').addEventListener('change', function() {
-    const helpText = this.parentNode.querySelector('.text-gray-500');
-    if (this.value) {
-        helpText.textContent = 'This category will be moved under the selected parent';
-    } else {
-        helpText.textContent = 'This category will become a root category';
-    }
-});
-
-// Prevent selecting self as parent (additional client-side validation)
-document.getElementById('parent_id').addEventListener('change', function() {
-    if (this.value == '{{ category.id }}') {
-        alert('A category cannot be its own parent!');
-        this.value = '{{ category.parent_id or "" }}';
-    }
-});
 </script>
 {% endblock %}

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Categories - Admin{% endblock %}
+{% block title %}Категории - Админ{% endblock %}
 
 {% block extra_head %}
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
@@ -8,14 +8,14 @@
 
 {% block content %}
 <div class="mb-8 flex justify-between items-center">
-    <h2 class="text-2xl font-bold text-gray-900">Categories</h2>
+    <h2 class="text-2xl font-bold text-gray-900">Категории</h2>
     <a href="/admin/categories/create"
        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-        Add New Category
+        Добавить категорию
     </a>
 </div>
 
-<!-- Categories Table -->
+<!-- Таблица категорий -->
 <div class="bg-white shadow-sm rounded-lg overflow-hidden">
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
@@ -25,28 +25,28 @@
                     ID
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
+                    Название
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Slug
+                    Слаг
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Parent
+                    Родитель
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Products
+                    Товары
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Sort Order
+                    Порядок
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                    Статус
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Created
+                    Создана
                 </th>
                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
+                    Действия
                 </th>
             </tr>
             </thead>
@@ -78,13 +78,13 @@
                     </span>
                     {% else %}
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                        Root
+                        Корневая
                     </span>
                     {% endif %}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        {{ category.products|length }} products
+                        {{ category.products|length }} товаров
                     </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -93,16 +93,16 @@
                 <td class="px-6 py-4 whitespace-nowrap">
                     {% if category.is_active %}
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Active
+                        Активна
                     </span>
                     {% else %}
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                        Inactive
+                        Неактивна
                     </span>
                     {% endif %}
                     {% if category.children|length > 0 %}
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 ml-1">
-                        {{ category.children|length }} sub
+                        {{ category.children|length }} под
                     </span>
                     {% endif %}
                 </td>
@@ -113,15 +113,15 @@
                     <div class="flex items-center justify-end space-x-2">
                         <a href="/admin/categories/{{ category.id }}/edit"
                            class="text-indigo-600 hover:text-indigo-900 text-sm">
-                            Edit
+                            Редактировать
                         </a>
                         <button
                                 hx-delete="/api/categories/{{ category.id }}"
-                                hx-confirm="Are you sure you want to delete this category?"
+                                hx-confirm="Вы уверены, что хотите удалить эту категорию?"
                                 hx-target="#category-row-{{ category.id }}"
                                 hx-swap="delete"
                                 class="text-red-600 hover:text-red-900 text-sm">
-                            Delete
+                            Удалить
                         </button>
                     </div>
                 </td>
@@ -133,37 +133,37 @@
 
     {% if not categories %}
     <div class="text-center py-8">
-        <div class="text-gray-500 text-lg">No categories found</div>
-        <p class="text-gray-400 mt-2">Get started by creating your first category</p>
+        <div class="text-gray-500 text-lg">Категории не найдены</div>
+        <p class="text-gray-400 mt-2">Начните с создания первой категории</p>
         <a href="/admin/categories/create"
            class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-            Add First Category
+            Добавить первую категорию
         </a>
     </div>
     {% endif %}
 </div>
 
-<!-- Summary Stats -->
+<!-- Статистика -->
 {% if categories %}
 <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
     <div class="bg-white rounded-lg shadow p-6">
-        <div class="text-sm font-medium text-gray-500">Total Categories</div>
+        <div class="text-sm font-medium text-gray-500">Всего категорий</div>
         <div class="mt-2 text-3xl font-semibold text-gray-900">{{ categories|length }}</div>
     </div>
     <div class="bg-white rounded-lg shadow p-6">
-        <div class="text-sm font-medium text-gray-500">Active Categories</div>
+        <div class="text-sm font-medium text-gray-500">Активных категорий</div>
         <div class="mt-2 text-3xl font-semibold text-green-600">
             {{ categories|selectattr('is_active')|list|length }}
         </div>
     </div>
     <div class="bg-white rounded-lg shadow p-6">
-        <div class="text-sm font-medium text-gray-500">Root Categories</div>
+        <div class="text-sm font-medium text-gray-500">Корневых категорий</div>
         <div class="mt-2 text-3xl font-semibold text-blue-600">
             {{ categories|rejectattr('parent')|list|length }}
         </div>
     </div>
     <div class="bg-white rounded-lg shadow p-6">
-        <div class="text-sm font-medium text-gray-500">With Subcategories</div>
+        <div class="text-sm font-medium text-gray-500">С подкатегориями</div>
         <div class="mt-2 text-3xl font-semibold text-purple-600">
             {{ categories|selectattr('children')|list|length }}
         </div>
