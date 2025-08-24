@@ -33,20 +33,10 @@
         <!-- ГЛАВНОЕ ИЗОБРАЖЕНИЕ - АКЦЕНТ НА ФОТО -->
         <div class="mb-8 relative">
             {% if product.main_image_url %}
-            <a href="{{ product.main_image_url }}" class="glightbox block relative group cursor-zoom-in mx-auto"
-               data-gallery="product-gallery"
+            <a href="{{ product.main_image_url }}" data-fslightbox="product-gallery" class="block cursor-zoom-in mx-auto"
                style="max-width: 900px;">
                 <img id="mainImage" src="{{ product.main_image_url }}" alt="{{ product.name }}"
                      class="w-full h-auto object-contain">
-
-                <!-- Zoom indicator -->
-                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 flex items-center justify-center">
-                    <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <svg class="w-12 h-12 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
-                        </svg>
-                    </div>
-                </div>
             </a>
             {% else %}
             <div class="relative flex items-center justify-center text-gray-300 mx-auto bg-gray-50" style="max-width: 900px; height: 500px;">
@@ -59,16 +49,16 @@
             {% if product.images|length > 1 %}
             <!-- Navigation Arrows -->
             <button onclick="previousMainImage()"
-                    class="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white bg-opacity-80 hover:bg-opacity-100 shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105">
-                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    class="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 transition-all duration-300 hover:scale-125 group">
+                <svg class="w-8 h-8 text-black/40 group-hover:text-black transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
                 </svg>
             </button>
 
             <button onclick="nextMainImage()"
-                    class="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white bg-opacity-80 hover:bg-opacity-100 shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105">
-                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    class="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 transition-all duration-300 hover:scale-125 group">
+                <svg class="w-8 h-8 text-black/40 group-hover:text-black transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                 </svg>
             </button>
             {% endif %}
@@ -90,12 +80,9 @@
             {% endif %}
         </div>
 
-        <!-- Hidden gallery links -->
+        <!-- Hidden gallery links for FSLightbox -->
         {% for image in product.images[1:] %}
-        <a href="/{{ image.file_path }}" class="glightbox"
-           data-gallery="product-gallery"
-           style="display: none;">
-        </a>
+        <a href="/{{ image.file_path }}" data-fslightbox="product-gallery" style="display: none;"></a>
         {% endfor %}
         {% endif %}
 
@@ -217,9 +204,27 @@
     </div>
 </div>
 
-<!-- GLightbox CSS and JS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
-<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+<!-- FSLightbox JS -->
+<script src="https://cdn.jsdelivr.net/npm/fslightbox@3.7.4/index.min.js"></script>
+
+<!-- Custom FSLightbox styles -->
+<style>
+/* Основной контейнер лайтбокса */
+.fslightbox-container {
+    background-color: white !important;
+}
+
+/* Дополнительно для надежности */
+.fslightbox-absoluted {
+    background-color: white !important;
+}
+
+/* Убираем любые фоновые эффекты */
+.fslightbox-fade-in,
+.fslightbox-fade-out {
+    background-color: white !important;
+}
+</style>
 
 <script src="/static/js/cart-localstorage.min.js"></script>
 <script>
@@ -238,12 +243,9 @@ const images = [
     {% endfor %}
 ];
 
-// Initialize GLightbox
-let lightbox;
-
 // Main image navigation
 function changeMainImage(imagePath, index) {
-    const mainImageLink = document.querySelector('.glightbox[data-gallery="product-gallery"]');
+    const mainImageLink = document.querySelector('[data-fslightbox="product-gallery"]');
     const mainImage = document.getElementById('mainImage');
 
     if (mainImage && mainImageLink) {
@@ -263,40 +265,20 @@ function changeMainImage(imagePath, index) {
         }
     });
 
-    // Reinitialize GLightbox with updated elements
-    if (lightbox) {
-        lightbox.destroy();
-    }
-    initGLightbox();
-}
-
-function initGLightbox() {
-    lightbox = GLightbox({
-        touchNavigation: true,
-        loop: true,
-        autoplayVideos: false,
-        zoomable: true,
-        draggable: true,
-        closeOnOutsideClick: true,
-        keyboardNavigation: true,
-        selector: '.glightbox'
-    });
+    // Refresh FSLightbox to recognize changes
+    refreshFsLightbox();
 }
 
 function nextMainImage() {
     if (images.length === 0) return;
-
     currentImageIndex = (currentImageIndex + 1) % images.length;
-    const nextImagePath = images[currentImageIndex];
-    changeMainImage(nextImagePath, currentImageIndex);
+    changeMainImage(images[currentImageIndex], currentImageIndex);
 }
 
 function previousMainImage() {
     if (images.length === 0) return;
-
     currentImageIndex = currentImageIndex === 0 ? images.length - 1 : currentImageIndex - 1;
-    const prevImagePath = images[currentImageIndex];
-    changeMainImage(prevImagePath, currentImageIndex);
+    changeMainImage(images[currentImageIndex], currentImageIndex);
 }
 
 // Button state management
@@ -306,32 +288,24 @@ function updateButtonState() {
     const isInCart = cartLS.exists(productData.id);
 
     if (isInCart) {
-        // Product is in cart - show "Go to Cart" state
         btn.className = 'inline-block bg-gray-100 text-gray-900 border border-gray-300 py-4 px-12 font-medium tracking-wider hover:bg-gray-200 transition-colors duration-200';
         btnText.textContent = 'ПЕРЕЙТИ В КОРЗИНУ';
     } else {
-        // Product not in cart - show "Consultation" state
         btn.className = 'inline-block bg-black text-white py-4 px-12 font-medium tracking-wider hover:bg-gray-800 transition-colors duration-200';
         btnText.textContent = 'КОНСУЛЬТАЦИЯ';
     }
 }
 
-// Handle main action button click
 function handleMainAction() {
     const isInCart = cartLS.exists(productData.id);
-
     if (isInCart) {
-        // Go to checkout
         window.location.href = '/checkout';
     } else {
-        // Add to cart (consultation request)
         requestConsultation();
     }
 }
 
-// Consultation request
 function requestConsultation() {
-    // Create cart item with required fields
     const cartItem = {
         id: productData.id,
         name: productData.name,
@@ -339,21 +313,13 @@ function requestConsultation() {
         image: productData.image
     };
 
-    // Add to cart using cart-localstorage library (quantity = 1)
     cartLS.add(cartItem, 1);
-
-    // Update button state
     updateButtonState();
-
-    // Show success message
     showConsultationMessage();
-
-    // Update cart count in header if you have one
     updateCartCount();
 }
 
 function showConsultationMessage() {
-    // Create and show a sophisticated toast notification
     const toast = document.createElement('div');
     toast.className = 'fixed top-8 right-8 bg-white border border-gray-200 shadow-xl px-8 py-6 z-50 transform translate-x-full transition-transform duration-500 max-w-sm';
     toast.innerHTML = `
@@ -374,34 +340,20 @@ function showConsultationMessage() {
     `;
 
     document.body.appendChild(toast);
-
-    // Animate in
-    setTimeout(() => {
-        toast.classList.remove('translate-x-full');
-    }, 100);
-
-    // Remove after 8 seconds (longer since there's a call-to-action)
+    setTimeout(() => toast.classList.remove('translate-x-full'), 100);
     setTimeout(() => {
         toast.classList.add('translate-x-full');
-        setTimeout(() => {
-            if (document.body.contains(toast)) {
-                document.body.removeChild(toast);
-            }
-        }, 500);
+        setTimeout(() => document.body.contains(toast) && document.body.removeChild(toast), 500);
     }, 8000);
 }
 
 function updateCartCount() {
-    // Update cart count in header if you have a cart counter element
     const cartCounter = document.querySelector('.cart-counter');
     if (cartCounter) {
         const cartItems = cartLS.list();
         const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
         cartCounter.textContent = totalItems;
-
-        if (totalItems > 0) {
-            cartCounter.classList.remove('hidden');
-        }
+        if (totalItems > 0) cartCounter.classList.remove('hidden');
     }
 }
 
@@ -409,6 +361,7 @@ function updateCartCount() {
 document.addEventListener('DOMContentLoaded', function() {
     updateCartCount();
     updateButtonState();
+    currentImageIndex = 0;
 
     // Set first thumbnail as active
     const firstThumbnail = document.querySelector('.thumbnail-btn');
@@ -416,12 +369,6 @@ document.addEventListener('DOMContentLoaded', function() {
         firstThumbnail.classList.add('border-black');
         firstThumbnail.classList.remove('border-gray-200');
     }
-
-    // Initialize currentImageIndex
-    currentImageIndex = 0;
-
-    // Initialize GLightbox
-    initGLightbox();
 });
 </script>
 {% endblock %}
