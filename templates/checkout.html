@@ -277,7 +277,7 @@ async function handleFormSubmit(e) {
         };
 
         // Send order
-        const response = await fetch('/api/orders', {
+        const response = await fetch('/order', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

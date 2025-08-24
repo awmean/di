@@ -5,52 +5,12 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.orders.repository import OrderRepository, OrderItemRepository
-from app.orders.schemas import OrderResponse, OrderCreate, OrderItemResponse
-from app.products.repository import ProductRepository
-from app.telegram import TelegramMessenger
+from app.orders.schemas import OrderResponse, OrderItemResponse
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
 
-@router.post("/", response_model=OrderResponse, status_code=status.HTTP_201_CREATED)
-def create_order(
-        order_data: OrderCreate,
-        db: Session = Depends(get_db)
-):
-    """Create new order with items"""
-    # Validate all products exist
-    for item in order_data.items:
-        product = ProductRepository.get_by_id(db, item.product_id)
-        if not product:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Product with ID {item.product_id} not found"
-            )
 
-    # Create order
-    order = OrderRepository.create(
-        db=db,
-        customer_name=order_data.customer_name,
-        customer_phone=order_data.customer_phone,
-        comment=order_data.comment,
-        status=order_data.status
-    )
-
-    # Create order items
-    for item_data in order_data.items:
-        OrderItemRepository.create(
-            db=db,
-            order_id=order.id,
-            product_id=item_data.product_id,
-            quantity=item_data.quantity,
-            price=float(item_data.price)
-        )
-
-    # Refresh order to get items and updated total
-    db.refresh(order)
-
-    TelegramMessenger.send_order(order)
-    return order
 
 
 @router.put("/{order_id}/status", response_model=OrderResponse)

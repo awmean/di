@@ -256,8 +256,6 @@ class TelegramMessenger:
 
         # Timestamps
         message += f"<b>Дата создания:</b> {order.created_at.strftime('%d.%m.%Y в %H:%M')}\n"
-        if order.updated_at != order.created_at:
-            message += f"<b>Последнее обновление:</b> {order.updated_at.strftime('%d.%m.%Y в %H:%M')}\n"
 
         return message
 
