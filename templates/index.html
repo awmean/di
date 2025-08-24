@@ -9,8 +9,8 @@
         transition: all 0.3s ease;
     }
     .furniture-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
 </style>
 {% endblock %}
@@ -23,78 +23,78 @@
         <div class="absolute inset-0 hero-bg"></div>
     </div>
 
-    <div class="relative z-10 w-full px-4 lg:px-8 py-8 lg:py-0">
+    <div class="relative z-10 w-full max-w-7xl mx-auto px-8 py-16">
         <!-- Mobile Layout -->
-        <div class="lg:hidden flex flex-col space-y-8 min-h-[80vh] justify-center">
+        <div class="lg:hidden flex flex-col space-y-16 min-h-[80vh] justify-center">
             <!-- Mobile Left Content -->
-            <div class="text-white space-y-6 text-left animate-fade-in-up">
-                <div class="text-xs uppercase tracking-widest text-gray-300 font-light">
+            <div class="text-white space-y-8 text-left animate-fade-in-up">
+                <div class="text-xs uppercase tracking-[0.3em] text-gray-300 font-light">
                     ДЛЯ ТЕХ, КТО ЦЕНИТ СВОЕ НАСТРОЕНИЕ, КОМФОРТ И СТАТУС
                 </div>
-                <h2 class="text-3xl font-normal leading-tight tracking-tight">
+                <h2 class="text-2xl font-light leading-relaxed tracking-wide">
                     Дизайнерская мебель<br>
                     собственного производства
                 </h2>
-                <p class="text-gray-300 text-base font-light leading-relaxed">
+                <p class="text-gray-300 text-sm font-light leading-loose max-w-md">
                     Выделенный менеджер, который будет вести ваш проект от расчета до отгрузки
                 </p>
-                <button class="bg-brand-brown text-white px-8 py-3 text-sm uppercase tracking-wider hover:bg-opacity-90 transition-all font-normal">
+                <button class="bg-brand-brown text-white px-10 py-4 text-xs uppercase tracking-[0.2em] hover:bg-opacity-90 transition-all font-light">
                     Смотреть каталог
                 </button>
             </div>
 
             <!-- Mobile Center Content - Black Panel -->
-            <div class="bg-brand-dark p-6 text-white">
-                <p class="mb-4 text-base font-light leading-relaxed">
+            <div class="bg-brand-dark/90 backdrop-blur-sm p-8 text-white">
+                <p class="mb-6 text-sm font-light leading-loose">
                     Можем изменить параметры нашей продукции, чтобы она идеально подошла вашему интерьеру
                 </p>
-                <div class="text-xs text-gray-200 font-light uppercase tracking-wider">
+                <div class="text-xs text-gray-200 font-light uppercase tracking-[0.25em]">
                     Идеальная планировка решения, удобная и красивая
                 </div>
             </div>
 
             <!-- Mobile Right Content -->
             <div class="text-white text-center">
-                <div class="text-5xl font-thin mb-4 tracking-tighter">155</div>
-                <div class="text-xs uppercase tracking-widest font-light">
+                <div class="text-4xl font-thin mb-4 tracking-wide">155</div>
+                <div class="text-xs uppercase tracking-[0.3em] font-light">
                     ПОЗИЦИЙ СЛОЖНЫХ ИЗДЕЛИЙ
                 </div>
             </div>
         </div>
 
         <!-- Desktop Layout -->
-        <div class="hidden lg:grid grid-cols-3 gap-0 h-full items-center w-full">
+        <div class="hidden lg:grid grid-cols-12 gap-16 items-center min-h-[80vh]">
             <!-- Desktop Left Content -->
-            <div class="text-white space-y-8 text-left animate-fade-in-up">
-                <div class="text-sm uppercase tracking-widest text-gray-300 font-light">
+            <div class="col-span-4 text-white space-y-12 animate-fade-in-up">
+                <div class="text-xs uppercase tracking-[0.3em] text-gray-300 font-light">
                     ДЛЯ ТЕХ, КТО ЦЕНИТ СВОЕ НАСТРОЕНИЕ, КОМФОРТ И СТАТУС
                 </div>
-                <h2 class="text-6xl font-normal leading-tight tracking-tight">
+                <h2 class="text-4xl font-light leading-relaxed tracking-wide">
                     Дизайнерская мебель<br>
                     собственного производства
                 </h2>
-                <p class="text-gray-300 text-lg font-light max-w-lg leading-relaxed">
+                <p class="text-gray-300 text-base font-light leading-loose max-w-sm">
                     Выделенный менеджер, который будет вести ваш проект от расчета до отгрузки
                 </p>
-                <button class="bg-brand-brown text-white px-8 py-3 text-sm uppercase tracking-wider hover:bg-opacity-90 transition-all font-normal mt-6">
+                <button class="bg-brand-brown text-white px-12 py-4 text-xs uppercase tracking-[0.2em] hover:bg-opacity-90 transition-all font-light">
                     Смотреть каталог
                 </button>
             </div>
 
             <!-- Desktop Center Content - Black Panel -->
-            <div class="bg-brand-dark p-12 text-white h-full flex flex-col justify-center">
-                <p class="mb-8 text-lg font-light leading-relaxed">
+            <div class="col-span-4 bg-brand-dark/90 backdrop-blur-sm p-12 text-white h-80 flex flex-col justify-center">
+                <p class="mb-8 text-base font-light leading-loose">
                     Можем изменить параметры нашей продукции, чтобы она идеально подошла вашему интерьеру
                 </p>
-                <div class="text-sm text-gray-200 font-light uppercase tracking-wider">
+                <div class="text-xs text-gray-200 font-light uppercase tracking-[0.25em]">
                     Идеальная планировка решения, удобная и красивая
                 </div>
             </div>
 
             <!-- Desktop Right Content -->
-            <div class="text-white text-center pl-8">
-                <div class="text-9xl font-thin mb-6 tracking-tighter">155</div>
-                <div class="text-sm uppercase tracking-widest font-light">
+            <div class="col-span-4 text-white text-center">
+                <div class="text-7xl font-thin mb-6 tracking-wide">155</div>
+                <div class="text-xs uppercase tracking-[0.3em] font-light">
                     ПОЗИЦИЙ СЛОЖНЫХ ИЗДЕЛИЙ
                 </div>
             </div>
@@ -102,110 +102,118 @@
     </div>
 </section>
 
-<main class="w-full px-4 lg:px-8 py-16">
+<main class="w-full">
     <!-- About Section -->
-    <section class="mb-32">
-        <div class="px-4 lg:px-8 mb-8 lg:mb-16">
-            <h2 class="text-2xl lg:text-5xl font-light text-brand-dark uppercase tracking-wider">О бренде</h2>
-        </div>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-center px-4 lg:px-8">
-            <div class="space-y-6 lg:space-y-8 order-2 lg:order-1">
-                <p class="text-lg lg:text-xl text-gray-700 leading-relaxed font-light">
-                    Мы создаём мебель, которая сочетает в себе современный дизайн и функциональность.
-                </p>
-                <p class="text-lg lg:text-xl text-gray-700 leading-relaxed font-light">
-                    Каждое изделие — результат тщательной работы с материалами и внимания к деталям.
-                </p>
+    <section class="py-32">
+        <div class="max-w-7xl mx-auto px-8">
+            <div class="mb-24">
+                <h2 class="text-3xl lg:text-4xl font-light text-brand-dark uppercase tracking-[0.15em]">О бренде</h2>
             </div>
-            <div class="h-64 lg:h-[500px] bg-brand-light-gray overflow-hidden order-1 lg:order-2">
-                <img src="https://static.tildacdn.com/tild3838-3733-4465-b430-356136303364/lotta-2.jpeg"
-                     alt="О бренде"
-                     class="w-full h-full object-cover">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+                <div class="space-y-12 order-2 lg:order-1">
+                    <p class="text-lg text-gray-700 leading-loose font-light">
+                        Мы создаём мебель, которая сочетает в себе современный дизайн и функциональность.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-loose font-light">
+                        Каждое изделие — результат тщательной работы с материалами и внимания к деталям.
+                    </p>
+                </div>
+                <div class="h-96 bg-brand-light-gray overflow-hidden order-1 lg:order-2">
+                    <img src="https://static.tildacdn.com/tild3838-3733-4465-b430-356136303364/lotta-2.jpeg"
+                         alt="О бренде"
+                         class="w-full h-full object-cover">
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Benefits Section -->
-    <section class="mb-32">
-        <div class="px-4 lg:px-8 mb-16">
-            <h2 class="text-3xl lg:text-5xl font-light text-brand-dark uppercase tracking-wider">Преимущества</h2>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-16 px-4 lg:px-8">
-            <div class="text-left">
-                <div class="h-16 w-16 mb-8 bg-brand-brown flex items-center justify-center">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
-                    </svg>
-                </div>
-                <p class="text-brand-dark font-medium text-lg">Натуральные материалы</p>
+    <section class="py-32 bg-gray-50/30">
+        <div class="max-w-7xl mx-auto px-8">
+            <div class="mb-24">
+                <h2 class="text-3xl lg:text-4xl font-light text-brand-dark uppercase tracking-[0.15em]">Преимущества</h2>
             </div>
-            <div class="text-left">
-                <div class="h-16 w-16 mb-8 bg-brand-brown flex items-center justify-center">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-20">
+                <div class="text-left">
+                    <div class="h-12 w-12 mb-8 bg-brand-brown flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                        </svg>
+                    </div>
+                    <p class="text-brand-dark font-normal text-base">Натуральные материалы</p>
                 </div>
-                <p class="text-brand-dark font-medium text-lg">Высокое качество</p>
-            </div>
-            <div class="text-left">
-                <div class="h-16 w-16 mb-8 bg-brand-brown flex items-center justify-center">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+                <div class="text-left">
+                    <div class="h-12 w-12 mb-8 bg-brand-brown flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <p class="text-brand-dark font-normal text-base">Высокое качество</p>
                 </div>
-                <p class="text-brand-dark font-medium text-lg">Быстрая доставка</p>
-            </div>
-            <div class="text-left">
-                <div class="h-16 w-16 mb-8 bg-brand-brown flex items-center justify-center">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                    </svg>
+                <div class="text-left">
+                    <div class="h-12 w-12 mb-8 bg-brand-brown flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <p class="text-brand-dark font-normal text-base">Быстрая доставка</p>
                 </div>
-                <p class="text-brand-dark font-medium text-lg">Индивидуальный подход</p>
+                <div class="text-left">
+                    <div class="h-12 w-12 mb-8 bg-brand-brown flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                    </div>
+                    <p class="text-brand-dark font-normal text-base">Индивидуальный подход</p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Reviews Section -->
-    <section class="mb-32">
-        <div class="px-4 lg:px-8 mb-16">
-            <h2 class="text-3xl lg:text-5xl font-light text-brand-dark uppercase tracking-wider">Отзывы</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 px-4 lg:px-8">
-            <div class="bg-white p-12">
-                <p class="italic mb-8 text-gray-700 leading-relaxed text-lg font-light">"Мебель превзошла все ожидания.
-                    Качество на высшем уровне."</p>
-                <p class="font-medium text-brand-dark text-lg">— Анна, Москва</p>
+    <section class="py-32">
+        <div class="max-w-7xl mx-auto px-8">
+            <div class="mb-24">
+                <h2 class="text-3xl lg:text-4xl font-light text-brand-dark uppercase tracking-[0.15em]">Отзывы</h2>
             </div>
-            <div class="bg-white p-12">
-                <p class="italic mb-8 text-gray-700 leading-relaxed text-lg font-light">"Отличное обслуживание и быстрая
-                    доставка. Рекомендую!"</p>
-                <p class="font-medium text-brand-dark text-lg">— Дмитрий, СПб</p>
-            </div>
-            <div class="bg-white p-12">
-                <p class="italic mb-8 text-gray-700 leading-relaxed text-lg font-light">"Идеальное сочетание стиля и
-                    комфорта. Очень довольны покупкой."</p>
-                <p class="font-medium text-brand-dark text-lg">— Екатерина, Казань</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-16">
+                <div class="bg-white p-12 border border-gray-100">
+                    <p class="italic mb-8 text-gray-700 leading-loose text-base font-light">"Мебель превзошла все ожидания.
+                        Качество на высшем уровне."</p>
+                    <p class="font-medium text-brand-dark text-sm tracking-wide">— АННА, МОСКВА</p>
+                </div>
+                <div class="bg-white p-12 border border-gray-100">
+                    <p class="italic mb-8 text-gray-700 leading-loose text-base font-light">"Отличное обслуживание и быстрая
+                        доставка. Рекомендую!"</p>
+                    <p class="font-medium text-brand-dark text-sm tracking-wide">— ДМИТРИЙ, СПБ</p>
+                </div>
+                <div class="bg-white p-12 border border-gray-100">
+                    <p class="italic mb-8 text-gray-700 leading-loose text-base font-light">"Идеальное сочетание стиля и
+                        комфорта. Очень довольны покупкой."</p>
+                    <p class="font-medium text-brand-dark text-sm tracking-wide">— ЕКАТЕРИНА, КАЗАНЬ</p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="mb-32">
-        <div class="bg-brand-brown text-white p-16 lg:p-20 text-center">
-            <h2 class="text-3xl lg:text-4xl font-medium mb-12">Оставьте номер, чтобы первыми узнать о старте продаж</h2>
-            <form class="max-w-lg mx-auto" method="POST" action="/subscribe">
-                <input type="tel" name="phone" placeholder="Ваш телефон"
-                       class="w-full border-0 p-6 mb-8 text-brand-dark text-lg" required>
-                <button type="submit"
-                        class="bg-white text-brand-brown px-12 py-4 text-sm uppercase tracking-wider hover:bg-opacity-90 transition-all font-medium w-full">
-                    Отправить
-                </button>
-            </form>
+    <section class="py-32">
+        <div class="max-w-4xl mx-auto px-8">
+            <div class="bg-brand-brown text-white p-20 text-center">
+                <h2 class="text-2xl lg:text-3xl font-light mb-16 leading-relaxed">Оставьте номер, чтобы первыми узнать о старте продаж</h2>
+                <form class="max-w-md mx-auto" method="POST" action="/subscribe">
+                    <input type="tel" name="phone" placeholder="Ваш телефон"
+                           class="w-full border-0 p-6 mb-8 text-brand-dark text-base font-light" required>
+                    <button type="submit"
+                            class="bg-white text-brand-brown px-12 py-4 text-xs uppercase tracking-[0.2em] hover:bg-opacity-90 transition-all font-normal w-full">
+                        Отправить
+                    </button>
+                </form>
+            </div>
         </div>
     </section>
 </main>
