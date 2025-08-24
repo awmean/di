@@ -33,237 +33,162 @@
     .htmx-request.htmx-indicator {
         opacity: 1;
     }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <!-- Cart Modal -->
+<div id="cart-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-xl font-medium text-brand-dark uppercase tracking-[0.15em]">Корзина</h2>
+                    <button id="close-cart" class="text-gray-500 hover:text-brand-brown transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
 
+                <div id="empty-cart" class="text-center py-16">
+                    <p class="text-gray-500 font-light text-lg">Корзина пуста</p>
+                </div>
 
-<main class="w-full px-4 lg:px-8 py-16">
+                <div id="cart-items" class="space-y-4 mb-8"></div>
+
+                <div class="border-t border-gray-200 pt-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-lg font-medium text-brand-dark">Итого:</span>
+                        <span id="cart-total" class="text-xl font-medium text-brand-dark">0 ₽</span>
+                    </div>
+                    <button id="send-order"
+                            class="w-full bg-brand-brown text-white py-4 text-sm uppercase tracking-[0.2em] hover:bg-opacity-90 transition-all font-light">
+                        Оформить заказ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Modal -->
+<div id="order-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white max-w-lg w-full">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-xl font-medium text-brand-dark uppercase tracking-[0.15em]">Оформление заказа</h2>
+                    <button id="close-order" class="text-gray-500 hover:text-brand-brown transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <form id="order-form" class="space-y-6">
+                    <div>
+                        <input type="text" id="customer-name" placeholder="Ваше имя"
+                               class="w-full border border-gray-300 p-4 text-brand-dark font-light" required>
+                    </div>
+                    <div>
+                        <input type="tel" id="customer-phone" placeholder="Телефон"
+                               class="w-full border border-gray-300 p-4 text-brand-dark font-light" required>
+                    </div>
+                    <div>
+                        <input type="email" id="customer-email" placeholder="Email"
+                               class="w-full border border-gray-300 p-4 text-brand-dark font-light">
+                    </div>
+                    <div>
+                        <textarea id="customer-comment" rows="4" placeholder="Комментарий к заказу"
+                                  class="w-full border border-gray-300 p-4 text-brand-dark font-light"></textarea>
+                    </div>
+                    <button type="submit"
+                            class="w-full bg-brand-brown text-white py-4 text-sm uppercase tracking-[0.2em] hover:bg-opacity-90 transition-all font-light">
+                        Отправить заказ
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main class="w-full py-12">
+    <!-- Page Title -->
+    <section class="mb-12">
+        <div class="max-w-7xl mx-auto px-8">
+            <h1 class="text-3xl lg:text-4xl font-light text-brand-dark uppercase tracking-[0.15em]">Каталог</h1>
+        </div>
+    </section>
+
     <!-- Filters -->
+    <section class="mb-16">
+        <div class="max-w-7xl mx-auto px-8">
+            <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
+                <button class="filter-btn px-5 py-2 text-xs uppercase tracking-[0.15em] font-light bg-brand-dark text-white transition-all"
+                        data-filter="all"
+                        hx-get="{{ url_for('catalog') }}?category=all"
+                        hx-target="#products-grid"
+                        hx-push-url="true">
+                    Все
+                </button>
+                <button class="filter-btn px-5 py-2 text-xs uppercase tracking-[0.15em] font-light bg-white border border-brand-dark text-brand-dark hover:bg-brand-dark hover:text-white transition-all"
+                        data-filter="chairs"
+                        hx-get="{{ url_for('catalog') }}?category=chairs"
+                        hx-target="#products-grid"
+                        hx-push-url="true">
+                    Стулья
+                </button>
+                <button class="filter-btn px-5 py-2 text-xs uppercase tracking-[0.15em] font-light bg-white border border-brand-dark text-brand-dark hover:bg-brand-dark hover:text-white transition-all"
+                        data-filter="tables"
+                        hx-get="{{ url_for('catalog') }}?category=tables"
+                        hx-target="#products-grid"
+                        hx-push-url="true">
+                    Столы
+                </button>
+                <button class="filter-btn px-5 py-2 text-xs uppercase tracking-[0.15em] font-light bg-white border border-brand-dark text-brand-dark hover:bg-brand-dark hover:text-white transition-all"
+                        data-filter="sofas"
+                        hx-get="{{ url_for('catalog') }}?category=sofas"
+                        hx-target="#products-grid"
+                        hx-push-url="true">
+                    Диваны
+                </button>
+                <button class="filter-btn px-5 py-2 text-xs uppercase tracking-[0.15em] font-light bg-white border border-brand-dark text-brand-dark hover:bg-brand-dark hover:text-white transition-all"
+                        data-filter="storage"
+                        hx-get="{{ url_for('catalog') }}?category=storage"
+                        hx-target="#products-grid"
+                        hx-push-url="true">
+                    Хранение
+                </button>
+            </div>
+        </div>
+    </section>
 
     <!-- Products Grid -->
-    <div id="products-grid">
-        {% include 'partials/products_grid.html' %}
-    </div>
-
-    <!-- Load More Button -->
-    {% if has_more %}
-    <div class="text-center mt-16" id="load-more-container">
-        <button id="load-more-btn"
-                class="bg-brand-brown text-white px-8 py-3 text-sm uppercase tracking-wider hover:bg-opacity-90 transition-all font-medium"
-                hx-get="{{ url_for('load_more_products') }}?page={{ next_page }}{% if current_filter and current_filter != 'all' %}&category={{ current_filter }}{% endif %}"
-                hx-target="#products-list"
-                hx-swap="beforeend"
-                hx-indicator="#loading-indicator">
-            Загрузить еще
-            <div id="loading-indicator" class="htmx-indicator inline-block ml-2">
-                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
+    <section>
+        <div class="max-w-7xl mx-auto px-8">
+            <div id="products-grid">
+                {% include 'partials/products_grid.html' %}
             </div>
-        </button>
-    </div>
-    {% endif %}
+        </div>
+    </section>
 </main>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
 <script src="https://unpkg.com/htmx.org@1.9.8"></script>
-<script>
-    // Cart functionality
-    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-    function updateCartUI() {
-        const cartCount = document.getElementById('cart-count');
-        const mobileCartCount = document.getElementById('mobile-cart-count');
-        const cartItems = document.getElementById('cart-items');
-        const emptyCart = document.getElementById('empty-cart');
-        const cartTotal = document.getElementById('cart-total');
-        const sendOrderBtn = document.getElementById('send-order');
-
-        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-        const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-        // Update cart count
-        if (totalItems > 0) {
-            cartCount.textContent = totalItems;
-            cartCount.classList.remove('hidden');
-            mobileCartCount.textContent = totalItems;
-            mobileCartCount.classList.remove('hidden');
-        } else {
-            cartCount.classList.add('hidden');
-            mobileCartCount.classList.add('hidden');
-        }
-
-        // Update cart modal
-        if (cart.length === 0) {
-            cartItems.classList.add('hidden');
-            emptyCart.classList.remove('hidden');
-            sendOrderBtn.disabled = true;
-        } else {
-            cartItems.classList.remove('hidden');
-            emptyCart.classList.add('hidden');
-            sendOrderBtn.disabled = false;
-
-            cartItems.innerHTML = cart.map(item => `
-                <div class="cart-item flex items-center justify-between p-4 border border-gray-200">
-                    <div class="flex-1">
-                        <h4 class="font-medium text-brand-dark">${item.name}</h4>
-                        <p class="text-sm text-brand-gray">${item.price.toLocaleString()} ₽</p>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <button onclick="updateQuantity(${item.id}, -1)" class="w-8 h-8 flex items-center justify-center border border-gray-300 hover:bg-gray-100">-</button>
-                        <span class="w-8 text-center">${item.quantity}</span>
-                        <button onclick="updateQuantity(${item.id}, 1)" class="w-8 h-8 flex items-center justify-center border border-gray-300 hover:bg-gray-100">+</button>
-                        <button onclick="removeFromCart(${item.id})" class="ml-4 text-red-500 hover:text-red-700">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        cartTotal.textContent = `${totalPrice.toLocaleString()} ₽`;
-    }
-
-    function addToCart(id, name, price) {
-        const existingItem = cart.find(item => item.id === id);
-        if (existingItem) {
-            existingItem.quantity += 1;
-        } else {
-            cart.push({ id, name, price, quantity: 1 });
-        }
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateCartUI();
-    }
-
-    function updateQuantity(id, change) {
-        const item = cart.find(item => item.id === id);
-        if (item) {
-            item.quantity += change;
-            if (item.quantity <= 0) {
-                removeFromCart(id);
-            } else {
-                localStorage.setItem('cart', JSON.stringify(cart));
-                updateCartUI();
-            }
-        }
-    }
-
-    function removeFromCart(id) {
-        cart = cart.filter(item => item.id !== id);
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateCartUI();
-    }
-
-    // Modal functionality
-    const cartModal = document.getElementById('cart-modal');
-    const orderModal = document.getElementById('order-modal');
-    const cartBtn = document.getElementById('cart-btn');
-    const mobileCartBtn = document.getElementById('mobile-cart-btn');
-    const closeCart = document.getElementById('close-cart');
-    const closeOrder = document.getElementById('close-order');
-    const sendOrderBtn = document.getElementById('send-order');
-
-    function openCartModal() {
-        cartModal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeCartModal() {
-        cartModal.classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-
-    function openOrderModal() {
-        closeCartModal();
-        orderModal.classList.remove('hidden');
-    }
-
-    function closeOrderModal() {
-        orderModal.classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-
-    cartBtn?.addEventListener('click', openCartModal);
-    mobileCartBtn?.addEventListener('click', openCartModal);
-    closeCart?.addEventListener('click', closeCartModal);
-    closeOrder?.addEventListener('click', closeOrderModal);
-    sendOrderBtn?.addEventListener('click', openOrderModal);
-
-    // Close modals on outside click
-    cartModal?.addEventListener('click', (e) => {
-        if (e.target === cartModal) closeCartModal();
-    });
-
-    orderModal?.addEventListener('click', (e) => {
-        if (e.target === orderModal) closeOrderModal();
-    });
-
-    // Filter functionality
-    document.addEventListener('htmx:afterRequest', function(event) {
-        if (event.detail.target.id === 'products-grid') {
-            // Update active filter button
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-                btn.classList.add('bg-white', 'border', 'border-brand-dark', 'text-brand-dark');
-                btn.classList.remove('bg-brand-dark', 'text-white');
-            });
-
-            const activeFilter = new URLSearchParams(window.location.search).get('category') || 'all';
-            const activeBtn = document.querySelector(`[data-filter="${activeFilter}"]`);
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-                activeBtn.classList.remove('bg-white', 'border', 'border-brand-dark', 'text-brand-dark');
-                activeBtn.classList.add('bg-brand-dark', 'text-white');
-            }
-        }
-    });
-
-    // HTMX event listeners
-    document.addEventListener('htmx:afterRequest', function(event) {
-        if (event.detail.xhr.getResponseHeader('HX-Hide-Load-More')) {
-            const loadMoreContainer = document.getElementById('load-more-container');
-            if (loadMoreContainer) {
-                loadMoreContainer.style.display = 'none';
-            }
-        }
-    });
-
-    // Order form submission
-    document.getElementById('order-form')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const orderData = {
-            name: document.getElementById('customer-name').value,
-            phone: document.getElementById('customer-phone').value,
-            email: document.getElementById('customer-email').value,
-            comment: document.getElementById('customer-comment').value,
-            items: cart,
-            total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-        };
-
-        // Here you would send the order to your backend
-        console.log('Order data:', orderData);
-
-        // Clear cart and close modal
-        cart = [];
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateCartUI();
-        closeOrderModal();
-
-        // Show success message
-        alert('Заказ отправлен! Наш менеджер свяжется с вами в ближайшее время.');
-    });
-
-    // Initialize cart UI
-    updateCartUI();
-</script>
 {% endblock %}
