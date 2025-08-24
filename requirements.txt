@@ -1,16 +1,30 @@
 # Web Framework
 fastapi
-uvicorn[standard]
+uvicorn
 
 # Database
 sqlalchemy
 psycopg2-binary
 
-# Password Hashing
-passlib[bcrypt]
+# Validation and Data Processing
+pydantic
 
-# Templating
+# Password Hashing
+passlib
+
+# Environment Variables
+python-dotenv
+
+# HTTP Requests
+requests
+
+# File Handling
+
+# Template Engine
 jinja2
 
-# Environment Variables (optional but recommended)
-python-dotenv
+# Static Files and Forms
+python-multipart
+
+# ASGI Server Dependencies
+starlette
