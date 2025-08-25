@@ -16,46 +16,107 @@
 {% endblock %}
 
 {% block extra_styles %}
+<!-- Fancybox CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/fancybox/fancybox.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/carousel/carousel.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/carousel/carousel.lazyload.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/carousel/carousel.arrows.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/carousel/carousel.thumbs.css" />
+
 <style>
-/* FSLightbox styles */
-.fslightbox-container {
-    background-color: white !important;
+/* Fancybox Carousel Custom Styles */
+#productCarousel {
+    --f-arrow-pos: 10px;
+    --f-arrow-bg: rgba(255,255,255,0.9);
+    --f-arrow-hover-bg: rgba(255,255,255,1);
+    --f-arrow-color: #8B4513;
+    --f-arrow-width: 40px;
+    --f-arrow-height: 40px;
+    --f-arrow-svg-width: 20px;
+    --f-arrow-svg-height: 20px;
+    --f-arrow-svg-stroke-width: 2px;
+    --f-arrow-border-radius: 50%;
+
+    height: 400px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-.fslightbox-absoluted {
-    background-color: white !important;
+#productCarousel .f-carousel__slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-in;
 }
 
-.fslightbox-fade-in,
-.fslightbox-fade-out {
-    background-color: white !important;
+#productCarousel img {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    object-fit: contain;
 }
 
-.thumbnail-btn {
+/* Thumbnails styling */
+.product-thumbnails {
+    margin-top: 1rem;
+}
+
+.product-thumbnails .f-carousel__slide {
+    margin: 0 4px;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
     transition: all 0.3s ease;
+    height: 60px;
+    width: 60px;
 }
 
-.thumbnail-btn:hover {
-    transform: translateY(-1px);
+.product-thumbnails .f-carousel__slide:hover,
+.product-thumbnails .f-carousel__slide.is-selected {
+    border-color: #8B4513;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
-/* Убираем дергание стрелок при нажатии */
-.nav-arrow {
-    transition: all 0.2s ease;
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
+.product-thumbnails img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.nav-arrow:hover {
-    transform: scale(1.05);
+/* Mobile responsive */
+@media (max-width: 640px) {
+    #productCarousel {
+        height: 300px;
+        --f-arrow-width: 35px;
+        --f-arrow-height: 35px;
+        --f-arrow-svg-width: 16px;
+        --f-arrow-svg-height: 16px;
+    }
+
+    .product-thumbnails .f-carousel__slide {
+        height: 50px;
+        width: 50px;
+        margin: 0 2px;
+    }
 }
 
-.nav-arrow:active {
-    transform: scale(1.05); /* Не изменяем scale при нажатии */
+/* Fancybox lightbox customization */
+.fancybox__container {
+    --fancybox-bg: rgba(24, 24, 27, 0.92);
 }
 
-/* Улучшенный тост для мобильных */
+.fancybox__slide {
+    padding: 44px;
+}
+
+.fancybox__content > .f-carousel__slide > img {
+    max-height: 95vh;
+    max-width: 95vw;
+}
+
+/* Toast styles */
 .toast-slide {
     transform: translateX(100%);
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -65,7 +126,6 @@
     transform: translateX(0);
 }
 
-/* Мобильные стили для тоста */
 @media (max-width: 640px) {
     .toast-slide {
         position: fixed !important;
@@ -101,18 +161,26 @@
         <!-- Product Name -->
         <div class="mb-12 sm:mb-16">
             <h1 class="text-2xl sm:text-3xl lg:text-4xl font-light text-brand-dark text-center uppercase tracking-[0.1em]">
-                {{ product.name }}</h1>
+                {{ product.name }}
+            </h1>
         </div>
 
-        <!-- Main Image Section -->
-        <div class="mb-12 sm:mb-16 relative">
-            {% if product.main_image_url %}
-            <a href="{{ product.main_image_url }}" data-fslightbox="product-gallery" class="block cursor-zoom-in mx-auto"
-               style="max-width: 800px;">
-                <img id="mainImage" src="{{ product.main_image_url }}" alt="{{ product.name }}"
-                     class="w-full h-auto object-contain">
-            </a>
+        <!-- Main Image Carousel Section -->
+        <div class="mb-8 sm:mb-12">
+            {% if product.images and product.images|length > 0 %}
+            <div class="f-carousel" id="productCarousel">
+                {% for image in product.images %}
+                <div class="f-carousel__slide"
+                     data-fancybox="product-gallery"
+                     data-src="/{{ image.file_path }}"
+                     data-thumb-src="/{{ image.file_path }}">
+                    <img data-lazy-src="/{{ image.file_path }}"
+                         alt="{{ product.name }} - изображение {{ loop.index }}" />
+                </div>
+                {% endfor %}
+            </div>
             {% else %}
+            <!-- Placeholder when no images -->
             <div class="relative flex items-center justify-center text-gray-300 mx-auto bg-brand-light-gray"
                  style="max-width: 800px; height: 400px;">
                 <svg class="w-16 h-16 sm:w-24 sm:h-24" fill="currentColor" viewBox="0 0 20 20">
@@ -120,47 +188,19 @@
                 </svg>
             </div>
             {% endif %}
-
-            {% if product.images|length > 1 %}
-            <!-- Navigation Arrows -->
-            <button onclick="previousMainImage()"
-                    class="nav-arrow absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 p-2 sm:p-3 bg-white bg-opacity-80 rounded-full shadow-sm">
-                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 hover:text-brand-brown" fill="none"
-                     stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
-                </svg>
-            </button>
-
-            <button onclick="nextMainImage()"
-                    class="nav-arrow absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 p-2 sm:p-3 bg-white bg-opacity-80 rounded-full shadow-sm">
-                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 hover:text-brand-brown" fill="none"
-                     stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-                </svg>
-            </button>
-            {% endif %}
         </div>
 
-        <!-- Thumbnail Images -->
-        {% if product.images|length > 1 %}
-        <div class="flex space-x-2 sm:space-x-3 justify-center mb-16 sm:mb-20 overflow-x-auto pb-2">
-            {% for image in product.images[:8] %}
-            <button class="thumbnail-btn w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 overflow-hidden border border-gray-200 hover:border-brand-brown focus:outline-none focus:border-brand-brown"
-                    onclick="changeMainImage('/{{ image.file_path }}', {{ loop.index0 }})">
-                <img src="/{{ image.file_path }}" alt="{{ product.name }}" class="w-full h-full object-cover">
-            </button>
-            {% endfor %}
-            {% if product.images|length > 8 %}
-            <div class="w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 bg-brand-light-gray flex items-center justify-center text-xs text-brand-gray font-light">
-                +{{ product.images|length - 8 }}
+        <!-- Thumbnail Carousel -->
+        {% if product.images and product.images|length > 1 %}
+        <div class="mb-16 sm:mb-20">
+            <div class="f-carousel product-thumbnails" id="thumbnailCarousel">
+                {% for image in product.images %}
+                <div class="f-carousel__slide">
+                    <img src="/{{ image.file_path }}" alt="{{ product.name }} - миниатюра {{ loop.index }}" />
+                </div>
+                {% endfor %}
             </div>
-            {% endif %}
         </div>
-
-        <!-- Hidden gallery links for FSLightbox -->
-        {% for image in product.images[1:] %}
-        <a href="/{{ image.file_path }}" data-fslightbox="product-gallery" style="display: none;"></a>
-        {% endfor %}
         {% endif %}
 
         <!-- Product Information -->
@@ -281,7 +321,7 @@
     </div>
 </div>
 
-<!-- Шаблон для тоста -->
+<!-- Toast Template -->
 <template id="toastTemplate">
     <div class="toast-slide fixed top-8 right-8 bg-white border border-gray-200 shadow-xl px-6 py-4 sm:px-8 sm:py-6 z-50 max-w-sm rounded-lg sm:rounded-none">
         <div class="flex items-start space-x-3 sm:space-x-4">
@@ -294,8 +334,7 @@
             </div>
             <div class="flex-1 min-w-0">
                 <h4 class="font-medium text-brand-dark mb-2 text-sm sm:text-base">Товар добавлен в корзину</h4>
-                <p class="text-xs sm:text-sm text-brand-gray mb-3 font-light">Перейдите в корзину чтобы оформить
-                    заявку</p>
+                <p class="text-xs sm:text-sm text-brand-gray mb-3 font-light">Перейдите в корзину чтобы оформить заявку</p>
                 <a href="/checkout"
                    class="inline-block bg-brand-brown text-white px-3 py-2 sm:px-4 sm:py-2 text-xs font-light uppercase tracking-[0.1em] hover:bg-opacity-90 transition-colors rounded">
                     Перейти в корзину
@@ -311,10 +350,14 @@
     </div>
 </template>
 
-<!-- FSLightbox JS -->
-<script src="https://cdn.jsdelivr.net/npm/fslightbox@3.7.4/index.min.js"></script>
+<!-- Fancybox JS -->
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/fancybox/fancybox.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/carousel/carousel.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/carousel/carousel.lazyload.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/carousel/carousel.arrows.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/carousel/carousel.thumbs.umd.js"></script>
 
-<!-- Cart LocalStorage должен загружаться перед нашим скриптом -->
+<!-- Cart LocalStorage -->
 <script src="/static/js/cart-localstorage.min.js"></script>
 
 <script>
@@ -326,52 +369,95 @@ const productData = {
     image: "{{ product.main_image_url or '' }}"
 };
 
-let currentImageIndex = 0;
-const images = [
-    {% for image in product.images %}
-    "/{{ image.file_path }}"{% if not loop.last %},{% endif %}
-    {% endfor %}
-];
+let mainCarousel = null;
+let thumbnailCarousel = null;
 
-// Main image navigation
-function changeMainImage(imagePath, index) {
-    const mainImageLink = document.querySelector('[data-fslightbox="product-gallery"]');
-    const mainImage = document.getElementById('mainImage');
+// Initialize carousels and lightbox
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize main product carousel
+    const mainCarouselElement = document.getElementById('productCarousel');
+    if (mainCarouselElement && mainCarouselElement.children.length > 0) {
+        mainCarousel = new Carousel(mainCarouselElement, {
+            infinite: true,
+            dots: false,
+            Panzoom: {
+                touch: false,
+            },
+        }, {
+            Lazyload,
+            Arrows: mainCarouselElement.children.length > 1 ? Arrows : null,
+        });
 
-    if (mainImage && mainImageLink) {
-        mainImage.src = imagePath;
-        mainImageLink.href = imagePath;
-    }
-    currentImageIndex = index;
+        // Initialize thumbnail carousel if more than one image
+        const thumbnailElement = document.getElementById('thumbnailCarousel');
+        if (thumbnailElement && thumbnailElement.children.length > 1) {
+            thumbnailCarousel = new Carousel(thumbnailElement, {
+                infinite: false,
+                center: false,
+                fill: false,
+                dragFree: true,
+                slidesPerPage: 'auto',
+                Navigation: false,
+                dots: false,
+                on: {
+                    click: (carousel, event) => {
+                        const clickedIndex = parseInt(event.target.closest('.f-carousel__slide').dataset.index) ||
+                                           Array.from(event.target.closest('.f-carousel__track').children)
+                                               .indexOf(event.target.closest('.f-carousel__slide'));
+                        if (mainCarousel && clickedIndex >= 0) {
+                            mainCarousel.slideTo(clickedIndex);
+                        }
+                    },
+                },
+            });
 
-    // Update active thumbnail
-    document.querySelectorAll('.thumbnail-btn').forEach((btn, i) => {
-        if (i === index) {
-            btn.classList.add('border-brand-brown');
-            btn.classList.remove('border-gray-200');
-        } else {
-            btn.classList.remove('border-brand-brown');
-            btn.classList.add('border-gray-200');
+            // Sync main carousel with thumbnails
+            if (mainCarousel) {
+                mainCarousel.on('change', (carousel) => {
+                    const currentIndex = carousel.page;
+                    // Update thumbnail selection
+                    thumbnailCarousel.slides.forEach((slide, index) => {
+                        if (index === currentIndex) {
+                            slide.el.classList.add('is-selected');
+                        } else {
+                            slide.el.classList.remove('is-selected');
+                        }
+                    });
+                });
+
+                // Set initial thumbnail selection
+                if (thumbnailCarousel.slides.length > 0) {
+                    thumbnailCarousel.slides[0].el.classList.add('is-selected');
+                }
+            }
         }
+    }
+
+    // Initialize Fancybox for lightbox
+    Fancybox.bind('[data-fancybox="product-gallery"]', {
+        groupAttr: 'data-fancybox',
+        animated: true,
+        showClass: 'f-fadeIn',
+        hideClass: 'f-fadeOut',
+        dragToClose: false,
+        Images: {
+            zoom: true,
+        },
+        Toolbar: {
+            display: {
+                left: [],
+                middle: [],
+                right: ['close'],
+            },
+        },
+        Thumbs: {
+            type: 'classic',
+        },
     });
 
-    // Refresh FSLightbox to recognize changes
-    if (typeof refreshFsLightbox !== 'undefined') {
-        refreshFsLightbox();
-    }
-}
-
-function nextMainImage() {
-    if (images.length === 0) return;
-    currentImageIndex = (currentImageIndex + 1) % images.length;
-    changeMainImage(images[currentImageIndex], currentImageIndex);
-}
-
-function previousMainImage() {
-    if (images.length === 0) return;
-    currentImageIndex = currentImageIndex === 0 ? images.length - 1 : currentImageIndex - 1;
-    changeMainImage(images[currentImageIndex], currentImageIndex);
-}
+    // Initialize cart functionality
+    initializeCart();
+});
 
 // Button state management
 function updateButtonState() {
@@ -379,7 +465,6 @@ function updateButtonState() {
     const btnText = document.getElementById('btnText');
 
     if (!window.cartLS) {
-        // Если cartLS еще не загружен, повторяем попытку через небольшую задержку
         setTimeout(updateButtonState, 100);
         return;
     }
@@ -433,7 +518,6 @@ function showConsultationMessage() {
     const toast = template.content.cloneNode(true);
     const toastElement = toast.querySelector('.toast-slide');
 
-    // Добавляем обработчик для кнопки закрытия
     const closeBtn = toast.querySelector('.toast-close');
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
@@ -447,10 +531,8 @@ function showConsultationMessage() {
     }
 
     document.body.appendChild(toast);
-
     setTimeout(() => toastElement.classList.add('show'), 100);
 
-    // Автоматическое скрытие через 6 секунд
     setTimeout(() => {
         if (toastElement.classList.contains('show')) {
             toastElement.classList.remove('show');
@@ -461,14 +543,6 @@ function showConsultationMessage() {
             }, 500);
         }
     }, 6000);
-
-    // Предотвращение скролла на мобильных при показе тоста
-    if (window.innerWidth <= 640) {
-        document.body.style.overflow = 'hidden';
-        setTimeout(() => {
-            document.body.style.overflow = '';
-        }, 500);
-    }
 }
 
 function updateCartCount() {
@@ -476,7 +550,6 @@ function updateCartCount() {
     if (!cartCounter) return;
 
     if (!window.cartLS) {
-        // Если cartLS еще не загружен, повторяем попытку
         setTimeout(updateCartCount, 100);
         return;
     }
@@ -492,7 +565,6 @@ function updateCartCount() {
     }
 }
 
-// Функция для безопасной инициализации после загрузки cartLS
 function initializeCart() {
     if (!window.cartLS) {
         setTimeout(initializeCart, 100);
@@ -503,49 +575,17 @@ function initializeCart() {
     updateButtonState();
 }
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    currentImageIndex = 0;
-
-    // Set first thumbnail as active
-    const firstThumbnail = document.querySelector('.thumbnail-btn');
-    if (firstThumbnail) {
-        firstThumbnail.classList.add('border-brand-brown');
-        firstThumbnail.classList.remove('border-gray-200');
-    }
-
-    // Инициализируем корзину после загрузки DOM
-    initializeCart();
-});
-
-// Закрытие тостов по клику вне их области (только на десктопе)
-document.addEventListener('click', function(e) {
-    if (window.innerWidth > 640) return;
-
-    const toasts = document.querySelectorAll('.toast-slide.show');
-    toasts.forEach(toast => {
-        if (!toast.contains(e.target)) {
-            toast.classList.remove('show');
-            setTimeout(() => {
-                if (document.body.contains(toast)) {
-                    document.body.removeChild(toast);
-                }
-            }, 500);
-        }
-    });
-});
-
-// Добавляем поддержку свайпов для навигации по изображениям на мобильных
+// Touch swipe support for main carousel (as fallback)
 let startX = 0;
 let startY = 0;
 
-document.getElementById('mainImage')?.addEventListener('touchstart', function(e) {
+document.getElementById('productCarousel')?.addEventListener('touchstart', function(e) {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
 });
 
-document.getElementById('mainImage')?.addEventListener('touchend', function(e) {
-    if (!startX || !startY) return;
+document.getElementById('productCarousel')?.addEventListener('touchend', function(e) {
+    if (!startX || !startY || !mainCarousel) return;
 
     const endX = e.changedTouches[0].clientX;
     const endY = e.changedTouches[0].clientY;
@@ -553,12 +593,11 @@ document.getElementById('mainImage')?.addEventListener('touchend', function(e) {
     const diffX = startX - endX;
     const diffY = startY - endY;
 
-    // Проверяем что это горизонтальный свайп
     if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
         if (diffX > 0) {
-            nextMainImage(); // Swipe left - следующее изображение
+            mainCarousel.slideNext();
         } else {
-            previousMainImage(); // Swipe right - предыдущее изображение
+            mainCarousel.slidePrev();
         }
     }
 
