@@ -19,7 +19,9 @@ class TelegramMessenger:
         if order.items:
             message += f"<b>Состав заказа:</b>\n"
             for i, item in enumerate(order.items, 1):
-                product_name = getattr(item.product, 'name', f'Товар ID:{item.product_id}')
+                product_name = getattr(
+                    item.product, "name", f"Товар ID:{item.product_id}"
+                )
                 message += f"{i}. {product_name} — {item.quantity} шт.\n"
                 total_cost += item.product.price * item.quantity
         message += f"<b>Общая сумма:</b> {total_cost} ₽\n\n"
@@ -27,34 +29,30 @@ class TelegramMessenger:
         if order.comment:
             message += f"<b>Комментарий к заказу:</b>\n{order.comment}\n\n"
 
-        message += f"<b>Дата создания:</b> {order.created_at.strftime('%d.%m.%Y в %H:%M')}\n"
+        message += (
+            f"<b>Дата создания:</b> {order.created_at.strftime('%d.%m.%Y в %H:%M')}\n"
+        )
         return message
 
     @staticmethod
     async def send_message(text: str, parse_mode: str = "HTML"):
         bot = Bot(token=TelegramMessenger.BOT_TOKEN)
         return await bot.send_message(
-            chat_id=TelegramMessenger.CHANNEL_ID,
-            text=text,
-            parse_mode=parse_mode
+            chat_id=TelegramMessenger.CHANNEL_ID, text=text, parse_mode=parse_mode
         )
 
     @staticmethod
     async def send_photo(photo_url: str, caption: str = None):
         bot = Bot(token=TelegramMessenger.BOT_TOKEN)
         return await bot.send_photo(
-            chat_id=TelegramMessenger.CHANNEL_ID,
-            photo=photo_url,
-            caption=caption
+            chat_id=TelegramMessenger.CHANNEL_ID, photo=photo_url, caption=caption
         )
 
     @staticmethod
     async def send_document(document_url: str, caption: str = None):
         bot = Bot(token=TelegramMessenger.BOT_TOKEN)
         return await bot.send_document(
-            chat_id=TelegramMessenger.CHANNEL_ID,
-            document=document_url,
-            caption=caption
+            chat_id=TelegramMessenger.CHANNEL_ID, document=document_url, caption=caption
         )
 
     @staticmethod

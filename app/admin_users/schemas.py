@@ -12,10 +12,10 @@ class AdminUserBase(BaseModel):
 class AdminUserCreate(AdminUserBase):
     password: str = Field(..., min_length=8, description="Password")
 
-    @field_validator('password')
+    @field_validator("password")
     def validate_password(cls, v):
         if len(v) < 8:
-            raise ValueError('Password must be at least 8 characters long')
+            raise ValueError("Password must be at least 8 characters long")
         return v
 
 

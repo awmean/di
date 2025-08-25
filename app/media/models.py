@@ -12,7 +12,9 @@ class Media(Base):
     __tablename__ = "media"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    product_id: Mapped[int] = mapped_column(Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
+    product_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=False
+    )
     type: Mapped[str] = mapped_column(String(10), nullable=False)
     filename: Mapped[str] = mapped_column(String(255), nullable=False)
     original_filename: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)

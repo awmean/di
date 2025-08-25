@@ -7,10 +7,17 @@ from app.media.models import Media
 
 class MediaRepository:
     @staticmethod
-    def create(db: Session, product_id: int, type: str, filename: str,
-               file_path: str, original_filename: Optional[str] = None,
-               file_size: Optional[int] = None, mime_type: Optional[str] = None,
-               alt_text: Optional[str] = None) -> Media:
+    def create(
+        db: Session,
+        product_id: int,
+        type: str,
+        filename: str,
+        file_path: str,
+        original_filename: Optional[str] = None,
+        file_size: Optional[int] = None,
+        mime_type: Optional[str] = None,
+        alt_text: Optional[str] = None,
+    ) -> Media:
         """Create new media"""
         media = Media(
             product_id=product_id,
@@ -30,9 +37,14 @@ class MediaRepository:
 
     @staticmethod
     def get_next_sort_order(db: Session, product_id: int) -> Optional[int]:
-        media: Optional[Media] = db.query(Media).filter(
-            Media.product_id == product_id,
-        ).order_by(Media.sort_order.desc()).first()
+        media: Optional[Media] = (
+            db.query(Media)
+            .filter(
+                Media.product_id == product_id,
+            )
+            .order_by(Media.sort_order.desc())
+            .first()
+        )
 
         if not media:
             return 0
@@ -45,7 +57,9 @@ class MediaRepository:
         return db.query(Media).filter(Media.id == media_id).first()
 
     @staticmethod
-    def get_by_product(db: Session, product_id: int, type: Optional[str] = None) -> List[Media]:
+    def get_by_product(
+        db: Session, product_id: int, type: Optional[str] = None
+    ) -> List[Media]:
         """Get media by product ID"""
         query = db.query(Media).filter(Media.product_id == product_id)
 

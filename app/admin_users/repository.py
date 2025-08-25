@@ -23,8 +23,9 @@ class AdminUserRepository:
         return pwd_context.verify(plain_password, hashed_password)
 
     @staticmethod
-    def create(db: Session, username: str, email: str, password: str,
-               is_active: bool = True) -> AdminUser:
+    def create(
+        db: Session, username: str, email: str, password: str, is_active: bool = True
+    ) -> AdminUser:
         """Create new admin user with hashed password"""
         password_hash = AdminUserRepository._hash_password(password)
 
@@ -32,7 +33,7 @@ class AdminUserRepository:
             username=username,
             email=email,
             password_hash=password_hash,
-            is_active=is_active
+            is_active=is_active,
         )
         db.add(user)
         db.commit()
@@ -40,14 +41,19 @@ class AdminUserRepository:
         return user
 
     @staticmethod
-    def create_with_hash(db: Session, username: str, email: str, password_hash: str,
-                         is_active: bool = True) -> AdminUser:
+    def create_with_hash(
+        db: Session,
+        username: str,
+        email: str,
+        password_hash: str,
+        is_active: bool = True,
+    ) -> AdminUser:
         """Create new admin user with pre-hashed password (for migrations/admin creation)"""
         user = AdminUser(
             username=username,
             email=email,
             password_hash=password_hash,
-            is_active=is_active
+            is_active=is_active,
         )
         db.add(user)
         db.commit()
@@ -88,8 +94,9 @@ class AdminUserRepository:
         return db.execute(stmt).scalar_one_or_none()
 
     @staticmethod
-    def get_all(db: Session, skip: int = 0, limit: int = 100,
-                active_only: bool = False) -> Sequence[AdminUser]:
+    def get_all(
+        db: Session, skip: int = 0, limit: int = 100, active_only: bool = False
+    ) -> Sequence[AdminUser]:
         """Get all admin users"""
         stmt = select(AdminUser)
 
@@ -107,8 +114,10 @@ class AdminUserRepository:
             return None
 
         # Handle password update specially
-        if 'password' in kwargs:
-            kwargs['password_hash'] = AdminUserRepository._hash_password(kwargs.pop('password'))
+        if "password" in kwargs:
+            kwargs["password_hash"] = AdminUserRepository._hash_password(
+                kwargs.pop("password")
+            )
 
         for key, value in kwargs.items():
             if hasattr(user, key):
@@ -119,7 +128,9 @@ class AdminUserRepository:
         return user
 
     @staticmethod
-    def update_password(db: Session, user_id: int, new_password: str) -> Optional[AdminUser]:
+    def update_password(
+        db: Session, user_id: int, new_password: str
+    ) -> Optional[AdminUser]:
         """Update user password"""
         user = db.get(AdminUser, user_id)
         if not user:

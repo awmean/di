@@ -8,7 +8,7 @@ from app.core.database import get_db
 from app.web.admin import router, templates
 
 
-@router.get('/')
+@router.get("/")
 def root():
     """Root admin page - require_auth автоматически редиректит на логин если нужно"""
     return RedirectResponse(url="/admin/dashboard", status_code=302)
@@ -17,20 +17,17 @@ def root():
 @router.get("/login", response_class=HTMLResponse)
 def login_page(request: Request, next: str = None):
     """Страница логина - доступна всем"""
-    return templates.TemplateResponse("login.html", {
-        "request": request,
-        "next": next
-    })
+    return templates.TemplateResponse("login.html", {"request": request, "next": next})
 
 
 @router.post("/login")
 def login(
-        request: Request,
-        response: Response,
-        username: str = Form(...),
-        password: str = Form(...),
-        next: str = Form(None),
-        db: Session = Depends(get_db)
+    request: Request,
+    response: Response,
+    username: str = Form(...),
+    password: str = Form(...),
+    next: str = Form(None),
+    db: Session = Depends(get_db),
 ):
     """Обработка логина - доступна всем"""
     user = AdminUserRepository.authenticate(db, username, password)
@@ -38,11 +35,7 @@ def login(
     if not user:
         return templates.TemplateResponse(
             "login.html",
-            {
-                "request": request,
-                "error": "Invalid username or password",
-                "next": next
-            }
+            {"request": request, "error": "Invalid username or password", "next": next},
         )
 
     session_id = create_session(user.id, user.username)
@@ -50,12 +43,7 @@ def login(
     # Редирект на оригинальный URL или dashboard по умолчанию
     redirect_url = next if next else "/admin/dashboard"
     response = RedirectResponse(url=redirect_url, status_code=302)
-    response.set_cookie(
-        key="session_id",
-        value=session_id,
-        httponly=True,
-        max_age=3600
-    )
+    response.set_cookie(key="session_id", value=session_id, httponly=True, max_age=3600)
 
     return response
 

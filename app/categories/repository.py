@@ -7,8 +7,15 @@ from app.categories.models import Category
 
 class CategoryRepository:
     @staticmethod
-    def create(db: Session, name: str, slug: str, description: Optional[str] = None,
-               parent_id: Optional[int] = None, sort_order: int = 0, is_active: bool = True) -> Category:
+    def create(
+        db: Session,
+        name: str,
+        slug: str,
+        description: Optional[str] = None,
+        parent_id: Optional[int] = None,
+        sort_order: int = 0,
+        is_active: bool = True,
+    ) -> Category:
         """Create new category"""
         category = Category(
             name=name,
@@ -16,7 +23,7 @@ class CategoryRepository:
             description=description,
             parent_id=parent_id,
             sort_order=sort_order,
-            is_active=is_active
+            is_active=is_active,
         )
         db.add(category)
         db.commit()
@@ -34,8 +41,13 @@ class CategoryRepository:
         return db.query(Category).filter(Category.slug == slug).first()
 
     @staticmethod
-    def get_all(db: Session, skip: int = 0, limit: int = 100,
-                active_only: bool = False, parent_id: Optional[int] = None) -> List[Category]:
+    def get_all(
+        db: Session,
+        skip: int = 0,
+        limit: int = 100,
+        active_only: bool = False,
+        parent_id: Optional[int] = None,
+    ) -> List[Category]:
         """Get all categories with filters"""
         query = db.query(Category)
 
@@ -45,7 +57,12 @@ class CategoryRepository:
         if parent_id is not None:
             query = query.filter(Category.parent_id == parent_id)
 
-        return query.order_by(Category.sort_order, Category.name).offset(skip).limit(limit).all()
+        return (
+            query.order_by(Category.sort_order, Category.name)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
     @staticmethod
     def get_root_categories(db: Session, active_only: bool = False) -> List[Category]:

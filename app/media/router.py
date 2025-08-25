@@ -15,7 +15,13 @@ from app.products.repository import ProductRepository
 router = APIRouter(prefix="/media", tags=["Media"])
 
 # Configuration - you might want to put these in your settings
-ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"}
+ALLOWED_IMAGE_TYPES = {
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+}
 ALLOWED_VIDEO_TYPES = {"video/mp4", "video/avi", "video/mov", "video/wmv", "video/webm"}
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
 UPLOAD_DIR = "uploads/media"
@@ -28,15 +34,14 @@ def validate_file(file: UploadFile, file_type: str) -> None:
     """Validate uploaded file"""
     if not file.filename:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No file provided"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="No file provided"
         )
 
     # Check file size
     if file.size and file.size > MAX_FILE_SIZE:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"File size too large. Maximum allowed: {MAX_FILE_SIZE // (1024 * 1024)}MB"
+            detail=f"File size too large. Maximum allowed: {MAX_FILE_SIZE // (1024 * 1024)}MB",
         )
 
     # Check file type
@@ -44,7 +49,7 @@ def validate_file(file: UploadFile, file_type: str) -> None:
     if file.content_type not in allowed_types:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid file type. Allowed types: {', '.join(allowed_types)}"
+            detail=f"Invalid file type. Allowed types: {', '.join(allowed_types)}",
         )
 
 
@@ -67,25 +72,26 @@ async def save_file(file: UploadFile, filename: str) -> str:
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to save file: {str(e)}"
+            detail=f"Failed to save file: {str(e)}",
         )
 
 
-@router.post("/upload", response_model=MediaResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/upload", response_model=MediaResponse, status_code=status.HTTP_201_CREATED
+)
 async def upload_media(
-        product_id: int = Form(...),
-        media_type: str = Form(..., regex="^(photo|video)$"),
-        alt_text: str = Form(None),
-        file: UploadFile = File(...),
-        db: Session = Depends(get_db)
+    product_id: int = Form(...),
+    media_type: str = Form(..., regex="^(photo|video)$"),
+    alt_text: str = Form(None),
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
 ):
     """Upload media file for a product"""
     # Validate product exists
     product = ProductRepository.get_by_id(db, product_id)
     if not product:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Product not found"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Product not found"
         )
 
     # Validate file
@@ -108,7 +114,7 @@ async def upload_media(
             file_path=file_path,
             file_size=file.size,
             mime_type=file.content_type,
-            alt_text=alt_text
+            alt_text=alt_text,
         )
 
         return media
@@ -119,30 +125,33 @@ async def upload_media(
             os.remove(file_path)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to create media record: {str(e)}"
+            detail=f"Failed to create media record: {str(e)}",
         )
 
 
-@router.post("/upload/multiple", response_model=List[MediaResponse], status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/upload/multiple",
+    response_model=List[MediaResponse],
+    status_code=status.HTTP_201_CREATED,
+)
 async def upload_multiple_media(
-        product_id: int = Form(...),
-        media_type: str = Form(..., regex="^(photo|video)$"),
-        files: List[UploadFile] = File(...),
-        db: Session = Depends(get_db)
+    product_id: int = Form(...),
+    media_type: str = Form(..., regex="^(photo|video)$"),
+    files: List[UploadFile] = File(...),
+    db: Session = Depends(get_db),
 ):
     """Upload multiple media files for a product"""
     # Validate product exists
     product = ProductRepository.get_by_id(db, product_id)
     if not product:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Product not found"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Product not found"
         )
 
     if len(files) > 10:  # Limit number of files
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Maximum 10 files allowed per upload"
+            detail="Maximum 10 files allowed per upload",
         )
 
     created_media = []
@@ -190,32 +199,33 @@ async def upload_multiple_media(
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to upload files: {str(e)}"
+            detail=f"Failed to upload files: {str(e)}",
         )
 
 
 @router.patch("/{media_id}/move-up", response_model=MediaResponse)
-def move_order_up(
-        media_id: int,
-        db: Session = Depends(get_db)
-):
+def move_order_up(media_id: int, db: Session = Depends(get_db)):
     """Update media sort order"""
     existing_media = MediaRepository.get_by_id(db, media_id)
     if not existing_media:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Media not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Media not found"
         )
 
-    previous_media = db.query(Media).filter(
-        Media.product_id == existing_media.product_id,
-        Media.sort_order < existing_media.sort_order
-    ).order_by(Media.sort_order.desc()).first()
+    previous_media = (
+        db.query(Media)
+        .filter(
+            Media.product_id == existing_media.product_id,
+            Media.sort_order < existing_media.sort_order,
+        )
+        .order_by(Media.sort_order.desc())
+        .first()
+    )
 
     if not previous_media:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Media is already at the top position"
+            detail="Media is already at the top position",
         )
 
     current_sort_order = existing_media.sort_order
@@ -230,29 +240,30 @@ def move_order_up(
 
 
 @router.patch("/{media_id}/move-down", response_model=MediaResponse)
-def move_order_down(
-        media_id: int,
-        db: Session = Depends(get_db)
-):
+def move_order_down(media_id: int, db: Session = Depends(get_db)):
     """Move media sort order down (increase sort_order value)"""
     existing_media = MediaRepository.get_by_id(db, media_id)
     if not existing_media:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Media not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Media not found"
         )
 
     # Find the media item with the next higher sort_order (same product and type)
-    next_media = db.query(Media).filter(
-        Media.product_id == existing_media.product_id,
-        Media.sort_order > existing_media.sort_order
-    ).order_by(Media.sort_order.asc()).first()
+    next_media = (
+        db.query(Media)
+        .filter(
+            Media.product_id == existing_media.product_id,
+            Media.sort_order > existing_media.sort_order,
+        )
+        .order_by(Media.sort_order.asc())
+        .first()
+    )
 
     # If no next media found, this is already at the bottom
     if not next_media:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Media is already at the bottom position"
+            detail="Media is already at the bottom position",
         )
 
     # Swap sort_order values
@@ -268,14 +279,10 @@ def move_order_down(
 
 
 @router.delete("/{media_id}")
-def delete_media(
-        media_id: int,
-        db: Session = Depends(get_db)
-):
+def delete_media(media_id: int, db: Session = Depends(get_db)):
     """Delete media"""
     if not MediaRepository.delete(db, media_id):
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Media not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Media not found"
         )
     return {"message": "Media deleted successfully"}

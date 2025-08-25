@@ -24,8 +24,7 @@ async def index(request: Request, db: Session = Depends(get_db)):
     """Homepage with categories"""
     categories = CategoryRepository.get_root_categories(db, active_only=True)[:8]
     return templates.TemplateResponse(
-        "index.html",
-        {"request": request, "categories": categories}
+        "index.html", {"request": request, "categories": categories}
     )
 
 
@@ -42,7 +41,7 @@ async def catalog(request: Request, db: Session = Depends(get_db)):
             "categories": categories,
             "products": products,
             "current_page": 1,
-        }
+        },
     )
 
 
@@ -52,19 +51,13 @@ async def catalog(request: Request, slug: str, db: Session = Depends(get_db)):
     product = ProductRepository.get_by_slug(db=db, slug=slug)
 
     return templates.TemplateResponse(
-        "product.html",
-        {
-            'request': request,
-            'product': product
-        }
+        "product.html", {"request": request, "product": product}
     )
 
 
 @router.get("/catalog/{category_slug}", response_class=HTMLResponse)
 async def category_detail(
-        category_slug: str,
-        request: Request,
-        db: Session = Depends(get_db)
+    category_slug: str, request: Request, db: Session = Depends(get_db)
 ):
     """Category detail page with products"""
     category = CategoryRepository.get_by_slug(db, category_slug)
@@ -81,16 +74,15 @@ async def category_detail(
             "request": request,
             "category": category,
             "subcategories": subcategories,
-            "products": category.products
-        }
+            "products": category.products,
+        },
     )
 
 
-@router.post("/order", response_model=OrderResponse, status_code=status.HTTP_201_CREATED)
-async def create_order(
-        order_data: OrderCreate,
-        db: Session = Depends(get_db)
-):
+@router.post(
+    "/order", response_model=OrderResponse, status_code=status.HTTP_201_CREATED
+)
+async def create_order(order_data: OrderCreate, db: Session = Depends(get_db)):
     """Create new order with items"""
     # Validate all products exist
     for item in order_data.items:
@@ -98,7 +90,7 @@ async def create_order(
         if not product:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Product with ID {item.product_id} not found"
+                detail=f"Product with ID {item.product_id} not found",
             )
 
     # Create order
@@ -107,7 +99,7 @@ async def create_order(
         customer_name=order_data.customer_name,
         customer_phone=order_data.customer_phone,
         comment=order_data.comment,
-        status=order_data.status
+        status=order_data.status,
     )
 
     # Create order items
@@ -117,7 +109,7 @@ async def create_order(
             order_id=order.id,
             product_id=item_data.product_id,
             quantity=item_data.quantity,
-            price=float(item_data.price)
+            price=float(item_data.price),
         )
 
     # Refresh order to get items and updated total
@@ -132,6 +124,7 @@ async def create_order(
 async def about(request: Request):
     """About page"""
     return templates.TemplateResponse("about.html", {"request": request})
+
 
 @router.get("/checkout", response_class=HTMLResponse)
 async def checkout(request: Request):

@@ -9,6 +9,7 @@ from app.media.router import router as media_router
 from app.models import Base
 from app.orders.router import router as orders_router
 from app.products.router import router as products_router
+
 # Import web routers
 from app.web.admin.auth_routes import router as admin_auth_router
 from app.web.admin.routes import router as admin_router
@@ -30,17 +31,10 @@ def create_app() -> FastAPI:
     app.include_router(admin_auth_router, prefix="/admin")
 
     # Admin web routes (защищенные) - УБИРАЕМ глобальную зависимость
-    app.include_router(
-        admin_router,
-        prefix="/admin",
-        tags=["admin"]
-    )
+    app.include_router(admin_router, prefix="/admin", tags=["admin"])
 
     # Create API router with auth dependency
-    api_router = APIRouter(
-        prefix="/api",
-        dependencies=[Depends(require_auth)]
-    )
+    api_router = APIRouter(prefix="/api", dependencies=[Depends(require_auth)])
 
     # Add domain routers to API router
     api_router.include_router(categories_router)

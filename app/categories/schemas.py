@@ -13,10 +13,12 @@ class CategoryBase(BaseModel):
     sort_order: int = Field(default=0, description="Sort order")
     is_active: bool = Field(default=True, description="Whether category is active")
 
-    @field_validator('slug')
+    @field_validator("slug")
     def validate_slug(cls, v):
-        if not re.match(r'^[a-z0-9-]+$', v):
-            raise ValueError('Slug can only contain lowercase letters, numbers, and hyphens')
+        if not re.match(r"^[a-z0-9-]+$", v):
+            raise ValueError(
+                "Slug can only contain lowercase letters, numbers, and hyphens"
+            )
         return v
 
 
@@ -32,10 +34,12 @@ class CategoryUpdate(BaseModel):
     sort_order: Optional[int] = None
     is_active: Optional[bool] = None
 
-    @field_validator('slug')
+    @field_validator("slug")
     def validate_slug(cls, v):
-        if v is not None and not re.match(r'^[a-z0-9-]+$', v):
-            raise ValueError('Slug can only contain lowercase letters, numbers, and hyphens')
+        if v is not None and not re.match(r"^[a-z0-9-]+$", v):
+            raise ValueError(
+                "Slug can only contain lowercase letters, numbers, and hyphens"
+            )
         return v
 
 
@@ -43,7 +47,7 @@ class CategoryResponse(CategoryBase):
     id: int
     created_at: datetime
     updated_at: datetime
-    children: List['CategoryResponse'] = []
+    children: List["CategoryResponse"] = []
     parent_id: Optional[int] = None
 
     class Config:

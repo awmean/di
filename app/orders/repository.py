@@ -8,14 +8,12 @@ from app.orders.models import OrderItem, Order
 
 class OrderItemRepository:
     @staticmethod
-    def create(db: Session, order_id: int, product_id: int,
-               quantity: int, price: float) -> OrderItem:
+    def create(
+        db: Session, order_id: int, product_id: int, quantity: int, price: float
+    ) -> OrderItem:
         """Create new order item"""
         item = OrderItem(
-            order_id=order_id,
-            product_id=product_id,
-            quantity=quantity,
-            price=price
+            order_id=order_id, product_id=product_id, quantity=quantity, price=price
         )
         db.add(item)
         db.commit()
@@ -72,7 +70,9 @@ class OrderItemRepository:
         return True
 
     @staticmethod
-    def update_quantity(db: Session, item_id: int, quantity: int) -> Optional[OrderItem]:
+    def update_quantity(
+        db: Session, item_id: int, quantity: int
+    ) -> Optional[OrderItem]:
         """Update item quantity"""
         item = db.query(OrderItem).filter(OrderItem.id == item_id).first()
         if not item:
@@ -90,15 +90,20 @@ class OrderItemRepository:
 
 class OrderRepository:
     @staticmethod
-    def create(db: Session, customer_name: str, customer_phone: str,
-               comment: Optional[str] = None, status: str = "new") -> Order:
+    def create(
+        db: Session,
+        customer_name: str,
+        customer_phone: str,
+        comment: Optional[str] = None,
+        status: str = "new",
+    ) -> Order:
         """Create new order"""
         order = Order(
             customer_name=customer_name,
             customer_phone=customer_phone,
             comment=comment,
             status=status,
-            total_amount=0
+            total_amount=0,
         )
         db.add(order)
         db.commit()
@@ -111,9 +116,15 @@ class OrderRepository:
         return db.query(Order).filter(Order.id == order_id).first()
 
     @staticmethod
-    def get_all(db: Session, skip: int = 0, limit: int = 100,
-                status: Optional[str] = None, customer_phone: Optional[str] = None,
-                sort_by: str = 'created_at', sort_order: str = 'desc') -> List[Order]:
+    def get_all(
+        db: Session,
+        skip: int = 0,
+        limit: int = 100,
+        status: Optional[str] = None,
+        customer_phone: Optional[str] = None,
+        sort_by: str = "created_at",
+        sort_order: str = "desc",
+    ) -> List[Order]:
         """Get all orders with filters"""
         query = db.query(Order)
 
@@ -125,7 +136,7 @@ class OrderRepository:
 
         # Sorting
         order_column = getattr(Order, sort_by, Order.created_at)
-        if sort_order.lower() == 'desc':
+        if sort_order.lower() == "desc":
             query = query.order_by(desc(order_column))
         else:
             query = query.order_by(asc(order_column))
@@ -173,9 +184,13 @@ class OrderRepository:
     @staticmethod
     def calculate_total(db: Session, order_id: int) -> float:
         """Calculate and update order total"""
-        total = db.query(OrderItem).filter(OrderItem.order_id == order_id).with_entities(
-            func.sum(OrderItem.price * OrderItem.quantity)
-        ).scalar() or 0
+        total = (
+            db.query(OrderItem)
+            .filter(OrderItem.order_id == order_id)
+            .with_entities(func.sum(OrderItem.price * OrderItem.quantity))
+            .scalar()
+            or 0
+        )
 
         order = db.query(Order).filter(Order.id == order_id).first()
         if order:
