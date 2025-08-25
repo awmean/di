@@ -16,6 +16,9 @@
 {% endblock %}
 
 {% block extra_styles %}
+<!-- Fancybox CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css">
+
 <style>
 /* Улучшенный тост для мобильных */
 .toast-slide {
@@ -44,6 +47,49 @@
         transform: translateY(0) !important;
     }
 }
+
+/* Стили для галереи */
+.gallery-main-image {
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-main-image:hover {
+    opacity: 0.9;
+}
+
+.gallery-thumbnail {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.gallery-thumbnail:hover {
+    opacity: 0.8;
+    border-color: #8B7355;
+}
+
+/* Настройки Fancybox */
+.fancybox__toolbar {
+    background: rgba(0, 0, 0, 0.8) !important;
+}
+
+.fancybox__button {
+    background: transparent !important;
+    color: white !important;
+}
+
+.fancybox__button:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Скрыть лишние кнопки на мобильных */
+@media (max-width: 640px) {
+    .fancybox__button--thumbs,
+    .fancybox__button--slideshow {
+        display: none !important;
+    }
+}
 </style>
 {% endblock %}
 
@@ -66,25 +112,35 @@
                 {{ product.name }}</h1>
         </div>
 
-        <!-- Product Images -->
+        <!-- Product Images with Fancybox Gallery -->
         <div class="mb-12 sm:mb-16">
             {% if product.images %}
                 <div class="grid gap-4 sm:gap-6">
                     <!-- Main Image -->
                     {% if product.main_image_url %}
                     <div class="mx-auto" style="max-width: 800px;">
-                        <img src="{{ product.main_image_url }}" alt="{{ product.name }}"
-                             class="w-full h-auto object-contain">
+                        <a href="{{ product.main_image_url }}"
+                           data-fancybox="gallery"
+                           data-caption="{{ product.name }}"
+                           class="gallery-main-image block">
+                            <img src="{{ product.main_image_url }}" alt="{{ product.name }}"
+                                 class="w-full h-auto object-contain">
+                        </a>
                     </div>
                     {% endif %}
 
-                    <!-- Additional Images -->
+                    <!-- Additional Images as Thumbnails -->
                     {% if product.images|length > 1 %}
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 mt-8">
                         {% for image in product.images[1:] %}
                         <div class="aspect-square overflow-hidden border border-gray-200">
-                            <img src="/{{ image.file_path }}" alt="{{ product.name }}"
-                                 class="w-full h-full object-cover">
+                            <a href="/{{ image.file_path }}"
+                               data-fancybox="gallery"
+                               data-caption="{{ product.name }} - дополнительное фото"
+                               class="gallery-thumbnail block w-full h-full">
+                                <img src="/{{ image.file_path }}" alt="{{ product.name }}"
+                                     class="w-full h-full object-cover">
+                            </a>
                         </div>
                         {% endfor %}
                     </div>
@@ -249,10 +305,44 @@
     </div>
 </template>
 
+<!-- Fancybox JS -->
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+
 <!-- Cart LocalStorage должен загружаться перед нашим скриптом -->
 <script src="/static/js/cart-localstorage.min.js"></script>
 
 <script>
+// Initialize Fancybox with minimal controls
+Fancybox.bind('[data-fancybox="gallery"]', {
+    // Убираем лишние элементы управления
+    Toolbar: {
+        display: {
+            left: [],
+            middle: ["zoomIn", "zoomOut", "rotateCCW", "rotateCW"],
+            right: ["close"]
+        }
+    },
+    // Настройки для мобильных
+    hideClass: "f-fadeOut",
+    showClass: "f-fadeIn",
+    animationEffect: "fade",
+    animationDuration: 300,
+    // Отключаем миниатюры и слайдшоу для простоты
+    Thumbs: false,
+    // Настройки изображений
+    Images: {
+        zoom: true,
+        Panzoom: {
+            maxScale: 3
+        }
+    },
+    // Настройки для мобильных устройств
+    touch: {
+        vertical: false,
+        momentum: false
+    }
+});
+
 // Product data for cart
 const productData = {
     id: {{ product.id }},
