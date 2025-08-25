@@ -313,6 +313,10 @@
 
 <!-- FSLightbox JS -->
 <script src="https://cdn.jsdelivr.net/npm/fslightbox@3.7.4/index.min.js"></script>
+
+<!-- Cart LocalStorage должен загружаться перед нашим скриптом -->
+<script src="/static/js/cart-localstorage.min.js"></script>
+
 <script>
 // Product data for cart
 const productData = {
@@ -374,9 +378,13 @@ function updateButtonState() {
     const btn = document.getElementById('mainActionBtn');
     const btnText = document.getElementById('btnText');
 
-    if (!cartLS) return;
+    if (!window.cartLS) {
+        // Если cartLS еще не загружен, повторяем попытку через небольшую задержку
+        setTimeout(updateButtonState, 100);
+        return;
+    }
 
-    const isInCart = cartLS.exists(productData.id);
+    const isInCart = window.cartLS.exists(productData.id);
 
     if (isInCart) {
         btn.className = 'inline-block bg-brand-light-gray text-brand-dark border border-brand-gray py-3 px-8 sm:py-4 sm:px-16 font-light tracking-[0.2em] text-xs uppercase hover:bg-gray-200 transition-all duration-300';
@@ -388,9 +396,12 @@ function updateButtonState() {
 }
 
 function handleMainAction() {
-    if (!cartLS) return;
+    if (!window.cartLS) {
+        console.warn('CartLS not loaded yet');
+        return;
+    }
 
-    const isInCart = cartLS.exists(productData.id);
+    const isInCart = window.cartLS.exists(productData.id);
     if (isInCart) {
         window.location.href = '/checkout';
     } else {
@@ -399,7 +410,10 @@ function handleMainAction() {
 }
 
 function requestConsultation() {
-    if (!cartLS) return;
+    if (!window.cartLS) {
+        console.warn('CartLS not loaded yet');
+        return;
+    }
 
     const cartItem = {
         id: productData.id,
@@ -408,7 +422,7 @@ function requestConsultation() {
         image: productData.image
     };
 
-    cartLS.add(cartItem, 1);
+    window.cartLS.add(cartItem, 1);
     updateButtonState();
     showConsultationMessage();
     updateCartCount();
@@ -459,18 +473,38 @@ function showConsultationMessage() {
 
 function updateCartCount() {
     const cartCounter = document.querySelector('.cart-counter');
-    if (cartCounter && cartLS) {
-        const cartItems = cartLS.list();
-        const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-        cartCounter.textContent = totalItems;
-        if (totalItems > 0) cartCounter.classList.remove('hidden');
+    if (!cartCounter) return;
+
+    if (!window.cartLS) {
+        // Если cartLS еще не загружен, повторяем попытку
+        setTimeout(updateCartCount, 100);
+        return;
     }
+
+    const cartItems = window.cartLS.list();
+    const totalItems = cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
+    cartCounter.textContent = totalItems;
+
+    if (totalItems > 0) {
+        cartCounter.classList.remove('hidden');
+    } else {
+        cartCounter.classList.add('hidden');
+    }
+}
+
+// Функция для безопасной инициализации после загрузки cartLS
+function initializeCart() {
+    if (!window.cartLS) {
+        setTimeout(initializeCart, 100);
+        return;
+    }
+
+    updateCartCount();
+    updateButtonState();
 }
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    updateCartCount();
-    updateButtonState();
     currentImageIndex = 0;
 
     // Set first thumbnail as active
@@ -479,6 +513,9 @@ document.addEventListener('DOMContentLoaded', function() {
         firstThumbnail.classList.add('border-brand-brown');
         firstThumbnail.classList.remove('border-gray-200');
     }
+
+    // Инициализируем корзину после загрузки DOM
+    initializeCart();
 });
 
 // Закрытие тостов по клику вне их области (только на десктопе)
