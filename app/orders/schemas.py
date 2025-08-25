@@ -70,9 +70,3 @@ class OrderResponse(OrderBase):
 
     class Config:
         from_attributes = True
-
-
-class OrderDetailResponse(OrderResponse):
-    """Extended order response with full item details"""
-
-    pass  # You can extend this to include full product details in items

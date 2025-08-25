@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional, List
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, validator, field_validator
 
 from app.categories.schemas import CategoryResponse
 from app.media.schemas import MediaResponse
@@ -76,7 +76,7 @@ class ProductBase(BaseModel):
     is_featured: bool = Field(default=False, description="Whether product is featured")
     sort_order: int = Field(default=0, description="Sort order")
 
-    @validator("slug")
+    @field_validator("slug")
     def validate_slug(cls, v):
         if not re.match(r"^[a-z0-9-]+$", v):
             raise ValueError(
@@ -84,7 +84,7 @@ class ProductBase(BaseModel):
             )
         return v
 
-    @validator("old_price")
+    @field_validator("old_price")
     def validate_old_price(cls, v, values):
         if v is not None and "price" in values and values["price"] is not None:
             if v <= values["price"]:
@@ -154,34 +154,3 @@ class ProductResponse(ProductBase):
 
     class Config:
         from_attributes = True
-
-
-class ProductDetailResponse(ProductResponse):
-    """Extended product response with children and parent"""
-
-    children: List[ProductResponse] = []
-    parent: Optional[ProductResponse] = None
-
-
-class ProductListResponse(BaseModel):
-    """Simplified product response for lists"""
-
-    id: int
-    name: str
-    slug: str
-    short_description: Optional[str]
-    price: Optional[Decimal]
-    old_price: Optional[Decimal]
-    is_featured: bool
-    main_image: Optional[str] = Field(None, description="Main image URL")
-    category_name: str
-    is_set: bool
-
-    class Config:
-        from_attributes = True
-
-
-class ProductSetResponse(ProductResponse):
-    """Response for furniture sets with all pieces"""
-
-    pieces: List[ProductResponse] = Field(description="Individual pieces in the set")
