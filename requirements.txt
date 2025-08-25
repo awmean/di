@@ -28,3 +28,4 @@ python-multipart
 
 # ASGI Server Dependencies
 starlette
+python-telegram-bot
