@@ -31,10 +31,15 @@
                     <!-- Phone Field -->
                     <div class="relative">
                         <div class="absolute left-0 top-0 h-full flex items-center px-4 bg-gray-50 border-r border-gray-300">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAyNCAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjE2IiBmaWxsPSIjZmZmIi8+CjxyZWN0IHdpZHRoPSIyNCIgaGVpZ2h0PSI1LjMzMyIgZmlsbD0iIzAwNTJGRiIvPgo8cmVjdCB5PSI1LjMzMyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjUuMzM0IiBmaWxsPSIjRkZGRkZGIi8+CjxyZWN0IHk9IjEwLjY2NyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjUuMzMzIiBmaWxsPSIjRkY1MjUyIi8+Cjwvc3ZnPgo="
-                                 alt="RU" class="w-6 h-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 6" width="24" height="16">
+                                <path d="m0 0h9v2H0" fill="#fff"/>
+                                <path d="m0 2h9v2H0" fill="#0039a6"/>
+                                <path d="m0 4h9v2H0" fill="#d52b1e"/>
+                            </svg>
                             <span class="ml-2 text-gray-700">+7</span>
                         </div>
+
+
                         <input type="tel"
                                id="customerPhone"
                                name="customer_phone"
@@ -92,7 +97,7 @@
                         <path fill-rule="evenodd" d="M10 2L3 7v11a2 2 0 002 2h10a2 2 0 002-2V7l-7-5zM8 15a1 1 0 100-2 1 1 0 000 2zm4-2a1 1 0 11-2 0 1 1 0 012 0z" clip-rule="evenodd"></path>
                     </svg>
                     <p class="text-gray-500 mb-4">Ваша корзина пуста</p>
-                    <a href="/" class="text-black underline hover:no-underline">Перейти к каталогу</a>
+                    <a href="{{ url_for('catalog') }}" class="text-black underline hover:no-underline">Перейти к каталогу</a>
                 </div>
 
                 <div id="orderTotal" class="border-t border-gray-200 pt-6 mt-6">
