@@ -19,7 +19,7 @@ def get_db():
 
 def create_admin(login='adm1n', password='testerluce'):
     AdminUserRepository.create(
-        db=SessionLocal,
+        db=SessionLocal(),
         username=login,
         email='test@example.ru',
         password=password
