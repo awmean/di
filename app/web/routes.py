@@ -11,7 +11,7 @@ from app.core.database import get_db
 from app.orders.repository import OrderRepository, OrderItemRepository
 from app.orders.schemas import OrderResponse, OrderCreate
 from app.products.repository import ProductRepository
-from app.telegram import TelegramMessenger
+from app.telegram.messenger import TelegramMessenger
 
 router = APIRouter(tags=["Web"])
 templates = Jinja2Templates(directory="templates")
