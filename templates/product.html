@@ -16,21 +16,9 @@
 {% endblock %}
 
 {% block extra_styles %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/fancybox/fancybox.css" />
+
 <style>
-/* FSLightbox styles */
-.fslightbox-container {
-    background-color: white !important;
-}
-
-.fslightbox-absoluted {
-    background-color: white !important;
-}
-
-.fslightbox-fade-in,
-.fslightbox-fade-out {
-    background-color: white !important;
-}
-
 .thumbnail-btn {
     transition: all 0.3s ease;
 }
@@ -39,7 +27,6 @@
     transform: translateY(-1px);
 }
 
-/* Убираем дергание стрелок при нажатии */
 .nav-arrow {
     transition: all 0.2s ease;
     user-select: none;
@@ -52,10 +39,9 @@
 }
 
 .nav-arrow:active {
-    transform: scale(1.05); /* Не изменяем scale при нажатии */
+    transform: scale(1.05);
 }
 
-/* Улучшенный тост для мобильных */
 .toast-slide {
     transform: translateX(100%);
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -65,7 +51,6 @@
     transform: translateX(0);
 }
 
-/* Мобильные стили для тоста */
 @media (max-width: 640px) {
     .toast-slide {
         position: fixed !important;
@@ -107,7 +92,7 @@
         <!-- Main Image Section -->
         <div class="mb-12 sm:mb-16 relative">
             {% if product.main_image_url %}
-            <a href="{{ product.main_image_url }}" data-fslightbox="product-gallery" class="block cursor-zoom-in mx-auto"
+            <a href="{{ product.main_image_url }}" data-fancybox="product-gallery" class="block cursor-zoom-in mx-auto"
                style="max-width: 800px;">
                 <img id="mainImage" src="{{ product.main_image_url }}" alt="{{ product.name }}"
                      class="w-full h-auto object-contain">
@@ -157,9 +142,9 @@
             {% endif %}
         </div>
 
-        <!-- Hidden gallery links for FSLightbox -->
+        <!-- Hidden gallery links for Fancybox -->
         {% for image in product.images[1:] %}
-        <a href="/{{ image.file_path }}" data-fslightbox="product-gallery" style="display: none;"></a>
+        <a href="/{{ image.file_path }}" data-fancybox="product-gallery" style="display: none;"></a>
         {% endfor %}
         {% endif %}
 
@@ -281,7 +266,7 @@
     </div>
 </div>
 
-<!-- Шаблон для тоста -->
+<!-- Toast Template -->
 <template id="toastTemplate">
     <div class="toast-slide fixed top-8 right-8 bg-white border border-gray-200 shadow-xl px-6 py-4 sm:px-8 sm:py-6 z-50 max-w-sm rounded-lg sm:rounded-none">
         <div class="flex items-start space-x-3 sm:space-x-4">
@@ -294,8 +279,7 @@
             </div>
             <div class="flex-1 min-w-0">
                 <h4 class="font-medium text-brand-dark mb-2 text-sm sm:text-base">Товар добавлен в корзину</h4>
-                <p class="text-xs sm:text-sm text-brand-gray mb-3 font-light">Перейдите в корзину чтобы оформить
-                    заявку</p>
+                <p class="text-xs sm:text-sm text-brand-gray mb-3 font-light">Перейдите в корзину чтобы оформить заявку</p>
                 <a href="/checkout"
                    class="inline-block bg-brand-brown text-white px-3 py-2 sm:px-4 sm:py-2 text-xs font-light uppercase tracking-[0.1em] hover:bg-opacity-90 transition-colors rounded">
                     Перейти в корзину
@@ -311,10 +295,7 @@
     </div>
 </template>
 
-<!-- FSLightbox JS -->
-<script src="https://cdn.jsdelivr.net/npm/fslightbox@3.7.4/index.min.js"></script>
-
-<!-- Cart LocalStorage должен загружаться перед нашим скриптом -->
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.0/dist/fancybox/fancybox.umd.js"></script>
 <script src="/static/js/cart-localstorage.min.js"></script>
 
 <script>
@@ -335,7 +316,7 @@ const images = [
 
 // Main image navigation
 function changeMainImage(imagePath, index) {
-    const mainImageLink = document.querySelector('[data-fslightbox="product-gallery"]');
+    const mainImageLink = document.querySelector('[data-fancybox="product-gallery"]');
     const mainImage = document.getElementById('mainImage');
 
     if (mainImage && mainImageLink) {
@@ -354,11 +335,6 @@ function changeMainImage(imagePath, index) {
             btn.classList.add('border-gray-200');
         }
     });
-
-    // Refresh FSLightbox to recognize changes
-    if (typeof refreshFsLightbox !== 'undefined') {
-        refreshFsLightbox();
-    }
 }
 
 function nextMainImage() {
@@ -379,7 +355,6 @@ function updateButtonState() {
     const btnText = document.getElementById('btnText');
 
     if (!window.cartLS) {
-        // Если cartLS еще не загружен, повторяем попытку через небольшую задержку
         setTimeout(updateButtonState, 100);
         return;
     }
@@ -433,7 +408,6 @@ function showConsultationMessage() {
     const toast = template.content.cloneNode(true);
     const toastElement = toast.querySelector('.toast-slide');
 
-    // Добавляем обработчик для кнопки закрытия
     const closeBtn = toast.querySelector('.toast-close');
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
@@ -447,10 +421,8 @@ function showConsultationMessage() {
     }
 
     document.body.appendChild(toast);
-
     setTimeout(() => toastElement.classList.add('show'), 100);
 
-    // Автоматическое скрытие через 6 секунд
     setTimeout(() => {
         if (toastElement.classList.contains('show')) {
             toastElement.classList.remove('show');
@@ -461,14 +433,6 @@ function showConsultationMessage() {
             }, 500);
         }
     }, 6000);
-
-    // Предотвращение скролла на мобильных при показе тоста
-    if (window.innerWidth <= 640) {
-        document.body.style.overflow = 'hidden';
-        setTimeout(() => {
-            document.body.style.overflow = '';
-        }, 500);
-    }
 }
 
 function updateCartCount() {
@@ -476,7 +440,6 @@ function updateCartCount() {
     if (!cartCounter) return;
 
     if (!window.cartLS) {
-        // Если cartLS еще не загружен, повторяем попытку
         setTimeout(updateCartCount, 100);
         return;
     }
@@ -492,7 +455,6 @@ function updateCartCount() {
     }
 }
 
-// Функция для безопасной инициализации после загрузки cartLS
 function initializeCart() {
     if (!window.cartLS) {
         setTimeout(initializeCart, 100);
@@ -514,28 +476,15 @@ document.addEventListener('DOMContentLoaded', function() {
         firstThumbnail.classList.remove('border-gray-200');
     }
 
-    // Инициализируем корзину после загрузки DOM
+    // Initialize Fancybox
+    Fancybox.bind("[data-fancybox='product-gallery']", {
+        // Your custom options
+    });
+
     initializeCart();
 });
 
-// Закрытие тостов по клику вне их области (только на десктопе)
-document.addEventListener('click', function(e) {
-    if (window.innerWidth > 640) return;
-
-    const toasts = document.querySelectorAll('.toast-slide.show');
-    toasts.forEach(toast => {
-        if (!toast.contains(e.target)) {
-            toast.classList.remove('show');
-            setTimeout(() => {
-                if (document.body.contains(toast)) {
-                    document.body.removeChild(toast);
-                }
-            }, 500);
-        }
-    });
-});
-
-// Добавляем поддержку свайпов для навигации по изображениям на мобильных
+// Touch swipe support for mobile
 let startX = 0;
 let startY = 0;
 
@@ -553,12 +502,11 @@ document.getElementById('mainImage')?.addEventListener('touchend', function(e) {
     const diffX = startX - endX;
     const diffY = startY - endY;
 
-    // Проверяем что это горизонтальный свайп
     if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
         if (diffX > 0) {
-            nextMainImage(); // Swipe left - следующее изображение
+            nextMainImage();
         } else {
-            previousMainImage(); // Swipe right - предыдущее изображение
+            previousMainImage();
         }
     }
 
