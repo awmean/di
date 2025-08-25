@@ -1,7 +1,7 @@
-# app/core/database.py
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from app.admin_users.repository import AdminUserRepository
 from app.core.config import settings
 
 engine = create_engine(settings.DATABASE_URL)
@@ -15,3 +15,12 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def create_admin(login='adm1n', password='testerluce'):
+    AdminUserRepository.create(
+        db=SessionLocal,
+        username=login,
+        email='test@example.ru',
+        password=password
+    )
