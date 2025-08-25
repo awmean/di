@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -85,7 +87,7 @@ async def category_detail(
 
 
 @router.post("/order", response_model=OrderResponse, status_code=status.HTTP_201_CREATED)
-def create_order(
+async def create_order(
         order_data: OrderCreate,
         db: Session = Depends(get_db)
 ):
@@ -121,7 +123,8 @@ def create_order(
     # Refresh order to get items and updated total
     db.refresh(order)
 
-    TelegramMessenger.send_order(order)
+    asyncio.create_task(TelegramMessenger.send_order(order))
+
     return order
 
 
