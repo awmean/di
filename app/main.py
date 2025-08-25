@@ -26,14 +26,14 @@ def create_app() -> FastAPI:
 
     # Web routes (public)
     app.include_router(web_router)
+
     app.include_router(admin_auth_router, prefix="/admin")
 
-    # Admin web routes (protected)
+    # Admin web routes (защищенные) - УБИРАЕМ глобальную зависимость
     app.include_router(
         admin_router,
         prefix="/admin",
-        tags=["admin"],
-        dependencies=[Depends(require_auth)]
+        tags=["admin"]
     )
 
     # Create API router with auth dependency

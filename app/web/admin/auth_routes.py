@@ -3,32 +3,23 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.orm import Session
 
 from app.admin_users.repository import AdminUserRepository
-from app.core.auth import create_session, delete_session, get_session
+from app.core.auth import create_session, delete_session, require_auth
 from app.core.database import get_db
 from app.web.admin import router, templates
 
 
-@router.get('/', response_class=RedirectResponse)
-def root(request: Request):
-    session_id = request.cookies.get("session_id")
-    if session_id and get_session(session_id):
-        return RedirectResponse(url="/admin/dashboard", status_code=302)
-    else:
-        return RedirectResponse(url="/admin/login", status_code=302)
+@router.get('/')
+def root():
+    """Root admin page - require_auth автоматически редиректит на логин если нужно"""
+    return RedirectResponse(url="/admin/dashboard", status_code=302)
 
 
-# Updated login routes
 @router.get("/login", response_class=HTMLResponse)
 def login_page(request: Request, next: str = None):
-    session_id = request.cookies.get("session_id")
-    if session_id and get_session(session_id):
-        # If already logged in, redirect to 'next' URL or default dashboard
-        redirect_url = next if next else "/admin/dashboard"
-        return RedirectResponse(url=redirect_url, status_code=302)
-
+    """Страница логина - доступна всем"""
     return templates.TemplateResponse("login.html", {
         "request": request,
-        "next": next  # Pass the next parameter to template
+        "next": next
     })
 
 
@@ -38,9 +29,10 @@ def login(
         response: Response,
         username: str = Form(...),
         password: str = Form(...),
-        next: str = Form(None),  # Capture next parameter from form
+        next: str = Form(None),
         db: Session = Depends(get_db)
 ):
+    """Обработка логина - доступна всем"""
     user = AdminUserRepository.authenticate(db, username, password)
 
     if not user:
@@ -49,13 +41,13 @@ def login(
             {
                 "request": request,
                 "error": "Invalid username or password",
-                "next": next  # Preserve next parameter on error
+                "next": next
             }
         )
 
     session_id = create_session(user.id, user.username)
 
-    # Redirect to the original URL or default dashboard
+    # Редирект на оригинальный URL или dashboard по умолчанию
     redirect_url = next if next else "/admin/dashboard"
     response = RedirectResponse(url=redirect_url, status_code=302)
     response.set_cookie(
@@ -69,7 +61,8 @@ def login(
 
 
 @router.post("/logout")
-def logout(request: Request):
+def logout(request: Request, session=Depends(require_auth)):
+    """Логаут - только для авторизованных пользователей"""
     session_id = request.cookies.get("session_id")
     if session_id:
         delete_session(session_id)

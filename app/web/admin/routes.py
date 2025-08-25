@@ -34,7 +34,7 @@ def admin_products(request: Request, session=Depends(require_auth), db: Session 
 
 
 @router.get('/products/create', response_class=HTMLResponse)
-def admin_products(request: Request, session=Depends(require_auth), db: Session = Depends(get_db)):
+def admin_create_products(request: Request, session=Depends(require_auth), db: Session = Depends(get_db)):
     user = AdminUserRepository.get_by_id(db, session['user_id'])
     products = ProductRepository.get_all(db)
     categories = CategoryRepository.get_all(db)
@@ -45,7 +45,7 @@ def admin_products(request: Request, session=Depends(require_auth), db: Session 
 
 
 @router.get('/products/{product_id}/edit', response_class=HTMLResponse)
-def admin_products(product_id: int, request: Request, session=Depends(require_auth), db: Session = Depends(get_db)):
+def admin_edit_products(product_id: int, request: Request, session=Depends(require_auth), db: Session = Depends(get_db)):
     user = AdminUserRepository.get_by_id(db, session['user_id'])
     product = ProductRepository.get_by_id(db, product_id=product_id)
     categories = CategoryRepository.get_all(db)
@@ -66,7 +66,7 @@ def admin_categories(request: Request, session=Depends(require_auth), db: Sessio
 
 
 @router.get('/categories/create', response_class=HTMLResponse)
-def admin_categories(request: Request, session=Depends(require_auth), db: Session = Depends(get_db)):
+def admin_create_categories(request: Request, session=Depends(require_auth), db: Session = Depends(get_db)):
     user = AdminUserRepository.get_by_id(db, session['user_id'])
     categories = CategoryRepository.get_all(db)
     return templates.TemplateResponse(
@@ -76,7 +76,7 @@ def admin_categories(request: Request, session=Depends(require_auth), db: Sessio
 
 
 @router.get('/categories/{category_id}/edit', response_class=HTMLResponse)
-def admin_categories(category_id: int, request: Request, session=Depends(require_auth), db: Session = Depends(get_db)):
+def admin_edit_categories(category_id: int, request: Request, session=Depends(require_auth), db: Session = Depends(get_db)):
     user = AdminUserRepository.get_by_id(db, session['user_id'])
     category = CategoryRepository.get_by_id(db, category_id)
     categories = CategoryRepository.get_all(db)
@@ -87,7 +87,7 @@ def admin_categories(category_id: int, request: Request, session=Depends(require
 
 
 @router.get('/orders', response_class=HTMLResponse)
-def admin_categories(request: Request, session=Depends(require_auth), db: Session = Depends(get_db)):
+def admin_orders(request: Request, session=Depends(require_auth), db: Session = Depends(get_db)):
     user = AdminUserRepository.get_by_id(db, session['user_id'])
     orders = OrderRepository.get_all(db)
     return templates.TemplateResponse(
