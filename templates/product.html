@@ -18,6 +18,7 @@
 {% block extra_styles %}
 <!-- Fancybox CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/carousel/carousel.css">
 
 <style>
 /* Улучшенный тост для мобильных */
@@ -48,25 +49,104 @@
     }
 }
 
-/* Стили для галереи */
-.gallery-main-image {
+/* Стили для карусели */
+.product-carousel {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.f-carousel {
+    --f-carousel-spacing: 0px;
+}
+
+.f-carousel__viewport {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.f-carousel__slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     transition: opacity 0.3s ease;
 }
 
-.gallery-main-image:hover {
+.f-carousel__slide:hover {
     opacity: 0.9;
 }
 
-.gallery-thumbnail {
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
+.f-carousel__slide img {
+    max-width: 100%;
+    max-height: 600px;
+    height: auto;
+    object-fit: contain;
 }
 
-.gallery-thumbnail:hover {
-    opacity: 0.8;
-    border-color: #8B7355;
+/* Стрелки навигации */
+.f-carousel__button {
+    background: rgba(255, 255, 255, 0.9) !important;
+    color: #333 !important;
+    border: none !important;
+    width: 44px;
+    height: 44px;
+    border-radius: 50% !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.3s ease !important;
+}
+
+.f-carousel__button:hover {
+    background: white !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+.f-carousel__button svg {
+    width: 20px !important;
+    height: 20px !important;
+}
+
+/* Точки навигации */
+.f-carousel__dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.f-carousel__dot {
+    width: 12px !important;
+    height: 12px !important;
+    border-radius: 50% !important;
+    background: #d1d5db !important;
+    border: none !important;
+    cursor: pointer;
+    transition: all 0.3s ease !important;
+}
+
+.f-carousel__dot:hover {
+    background: #9ca3af !important;
+}
+
+.f-carousel__dot.is-selected {
+    background: #8B7355 !important;
+    transform: scale(1.2);
+}
+
+/* Мобильные стили для карусели */
+@media (max-width: 640px) {
+    .f-carousel__slide img {
+        max-height: 400px;
+    }
+
+    .f-carousel__button {
+        width: 36px;
+        height: 36px;
+    }
+
+    .f-carousel__button svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
 }
 
 /* Настройки Fancybox */
@@ -112,40 +192,52 @@
                 {{ product.name }}</h1>
         </div>
 
-        <!-- Product Images with Fancybox Gallery -->
+        <!-- Product Images with Carousel and Fancybox Gallery -->
         <div class="mb-12 sm:mb-16">
             {% if product.images %}
-                <div class="grid gap-4 sm:gap-6">
-                    <!-- Main Image -->
-                    {% if product.main_image_url %}
-                    <div class="mx-auto" style="max-width: 800px;">
-                        <a href="{{ product.main_image_url }}"
-                           data-fancybox="gallery"
-                           data-caption="{{ product.name }}"
-                           class="gallery-main-image block">
-                            <img src="{{ product.main_image_url }}" alt="{{ product.name }}"
-                                 class="w-full h-auto object-contain">
-                        </a>
-                    </div>
-                    {% endif %}
+                {% if product.images|length > 1 %}
+                <!-- Multiple Images - Show as Carousel -->
+                <div class="product-carousel">
+                    <div class="f-carousel" id="productCarousel">
+                        <!-- Main Image -->
+                        {% if product.main_image_url %}
+                        <div class="f-carousel__slide">
+                            <a href="{{ product.main_image_url }}"
+                               data-fancybox="gallery"
+                               data-caption="{{ product.name }}"
+                               class="block">
+                                <img src="{{ product.main_image_url }}" alt="{{ product.name }}">
+                            </a>
+                        </div>
+                        {% endif %}
 
-                    <!-- Additional Images as Thumbnails -->
-                    {% if product.images|length > 1 %}
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 mt-8">
+                        <!-- Additional Images -->
                         {% for image in product.images[1:] %}
-                        <div class="aspect-square overflow-hidden border border-gray-200">
+                        <div class="f-carousel__slide">
                             <a href="/{{ image.file_path }}"
                                data-fancybox="gallery"
                                data-caption="{{ product.name }} - дополнительное фото"
-                               class="gallery-thumbnail block w-full h-full">
-                                <img src="/{{ image.file_path }}" alt="{{ product.name }}"
-                                     class="w-full h-full object-cover">
+                               class="block">
+                                <img src="/{{ image.file_path }}" alt="{{ product.name }}">
                             </a>
                         </div>
                         {% endfor %}
                     </div>
+                </div>
+                {% else %}
+                <!-- Single Image - Show normally -->
+                <div class="mx-auto" style="max-width: 800px;">
+                    {% if product.main_image_url %}
+                    <a href="{{ product.main_image_url }}"
+                       data-fancybox="gallery"
+                       data-caption="{{ product.name }}"
+                       class="block">
+                        <img src="{{ product.main_image_url }}" alt="{{ product.name }}"
+                             class="w-full h-auto object-contain">
+                    </a>
                     {% endif %}
                 </div>
+                {% endif %}
             {% else %}
             <!-- No Image Placeholder -->
             <div class="relative flex items-center justify-center text-gray-300 mx-auto bg-brand-light-gray"
@@ -307,11 +399,25 @@
 
 <!-- Fancybox JS -->
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/carousel/carousel.umd.js"></script>
 
 <!-- Cart LocalStorage должен загружаться перед нашим скриптом -->
 <script src="/static/js/cart-localstorage.min.js"></script>
 
 <script>
+// Initialize Product Carousel only if there are multiple images
+const carouselElement = document.querySelector("#productCarousel");
+if (carouselElement) {
+    const carousel = new Carousel(carouselElement, {
+        infinite: true,
+        center: true,
+        Dots: true,
+        Navigation: true,
+        transition: "slide",
+        slidesPerPage: 1
+    });
+}
+
 // Initialize Fancybox with minimal controls
 Fancybox.bind('[data-fancybox="gallery"]', {
     // Убираем лишние элементы управления
