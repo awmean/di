@@ -13,6 +13,7 @@ from pydantic.v1 import BaseSettings
 class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/luce-di-villa"
+    REDIS_URL: str = "redis://localhost:6379"
 
     # Security
     SECRET_KEY: str = "your-secret-key-here"
