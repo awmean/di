@@ -4,15 +4,8 @@
 
 {% block extra_head %}
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 <style>
-    .file-drop-zone {
-        border: 2px dashed #d1d5db;
-        transition: all 0.3s ease;
-    }
-    .file-drop-zone.drag-over {
-        border-color: #3b82f6;
-        background-color: #eff6ff;
-    }
     .media-preview img {
         max-width: 150px;
         max-height: 150px;
@@ -387,198 +380,26 @@
     <div class="bg-white shadow rounded-lg p-6">
         <h3 class="text-lg font-medium text-gray-900 mb-6">Медиа товара</h3>
 
-        <!-- Форма загрузки медиа -->
-        <div class="mb-6">
-            <form id="media-upload-form"
-                  hx-post="/api/media/upload/multiple"
-                  hx-encoding="multipart/form-data"
-                  hx-target="#upload-status"
-                  hx-swap="innerHTML"
-                  hx-indicator="#upload-spinner"
-                  class="space-y-4">
-
-                <input type="hidden" id="upload-product-id" name="product_id" value="">
-                <input type="hidden" name="media_type" value="photo">
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Загрузить фото</label>
-                    <div class="file-drop-zone rounded-lg p-8 text-center">
-                        <input type="file"
-                               name="files"
-                               id="media-files"
-                               multiple
-                               accept="image/*"
-                               class="hidden">
-                        <div class="cursor-pointer" onclick="document.getElementById('media-files').click()">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            <p class="mt-2 text-sm text-gray-600">
-                                <span class="font-medium text-blue-600">Нажмите для загрузки</span> или перетащите файлы
-                            </p>
-                            <p class="text-xs text-gray-500">PNG, JPG, JPEG до 10МБ каждый (максимум 10 файлов)</p>
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit"
-                        id="upload-button"
-                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:opacity-50">
-                    <span id="upload-spinner" class="htmx-indicator hidden">
-                        <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Загрузка...
-                    </span>
-                    <span id="upload-text">Загрузить медиа</span>
-                </button>
-            </form>
-        </div>
+        <!-- Dropzone для загрузки медиа -->
+        <form action="/api/media/upload/multiple" class="dropzone" id="media-dropzone">
+            <input type="hidden" id="upload-product-id" name="product_id" value="">
+            <input type="hidden" name="media_type" value="photo">
+        </form>
 
         <!-- Предпросмотр медиа -->
-        <div id="media-preview" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div id="media-preview" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-6">
             <!-- Загруженные медиа появятся здесь -->
         </div>
-
-        <!-- Статус загрузки -->
-        <div id="upload-status" class="mt-4"></div>
     </div>
 </div>
 
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
 <script>
-// Handle media upload responses
-document.body.addEventListener('htmx:beforeRequest', function(event) {
-    if (event.target.id === 'media-upload-form') {
-        // Show loading state
-        const uploadButton = document.getElementById('upload-button');
-        const uploadText = document.getElementById('upload-text');
-        const uploadSpinner = document.getElementById('upload-spinner');
+// Disable Dropzone auto discover
+Dropzone.autoDiscover = false;
 
-        uploadButton.disabled = true;
-        uploadText.style.display = 'none';
-        uploadSpinner.classList.remove('hidden');
-    }
-});
-
-document.body.addEventListener('htmx:afterRequest', function(event) {
-    if (event.target.id === 'media-upload-form') {
-        // Reset button state
-        const uploadButton = document.getElementById('upload-button');
-        const uploadText = document.getElementById('upload-text');
-        const uploadSpinner = document.getElementById('upload-spinner');
-
-        uploadButton.disabled = false;
-        uploadText.style.display = 'inline';
-        uploadSpinner.classList.add('hidden');
-
-        const statusDiv = document.getElementById('upload-status');
-
-        if (event.detail.xhr.status === 201) {
-            // Success
-            try {
-                const response = JSON.parse(event.detail.xhr.response);
-                statusDiv.innerHTML = `
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                        <strong>Success!</strong> Uploaded ${response.length} file(s).
-                    </div>
-                `;
-
-                // Add media previews
-                const mediaPreview = document.getElementById('media-preview');
-                response.forEach(media => {
-                    const mediaDiv = document.createElement('div');
-                    mediaDiv.className = 'relative bg-gray-100 rounded-lg overflow-hidden';
-                    mediaDiv.innerHTML = `
-                        <img src="/uploads/media/${media.filename}" alt="${media.original_filename}"
-                             class="w-full h-32 object-cover">
-                        <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2 truncate">
-                            ${media.original_filename}
-                        </div>
-                        <div class="absolute top-2 right-2">
-                            <button onclick="removeMedia(${media.id})"
-                                    class="bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
-                                ×
-                            </button>
-                        </div>
-                    `;
-                    mediaPreview.appendChild(mediaDiv);
-                });
-
-                // Reset form
-                document.getElementById('media-upload-form').reset();
-
-            } catch (e) {
-                console.error('Error parsing response:', e);
-                statusDiv.innerHTML = `
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                        <strong>Error:</strong> Could not parse upload response.
-                    </div>
-                `;
-            }
-        } else {
-            // Error
-            let errorMessage = 'Upload failed';
-            try {
-                const errorResponse = JSON.parse(event.detail.xhr.response);
-                errorMessage = errorResponse.detail || errorMessage;
-            } catch (e) {
-                errorMessage = `Upload failed with status: ${event.detail.xhr.status}`;
-            }
-
-            statusDiv.innerHTML = `
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                    <strong>Error:</strong> ${errorMessage}
-                </div>
-            `;
-        }
-
-        // Clear status after 5 seconds
-        setTimeout(() => {
-            const currentStatus = statusDiv.innerHTML;
-            if (currentStatus.includes('Success!') || currentStatus.includes('Error:')) {
-                statusDiv.innerHTML = '';
-            }
-        }, 5000);
-    }
-});
-
-// Function to remove media (placeholder - you'll need to implement the delete API)
-function removeMedia(mediaId) {
-    if (confirm('Are you sure you want to delete this media?')) {
-        fetch(`/api/media/${mediaId}`, {
-            method: 'DELETE'
-        })
-        .then(response => {
-            if (response.ok) {
-                // Remove the media element from DOM
-                event.target.closest('.relative').remove();
-            } else {
-                alert('Failed to delete media');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to delete media');
-        });
-    }
-}
-
-// Show file names when selected
-document.getElementById('media-files').addEventListener('change', function() {
-    const files = this.files;
-    const fileInfo = document.getElementById('file-info') || document.createElement('div');
-    fileInfo.id = 'file-info';
-    fileInfo.className = 'mt-2 text-sm text-gray-600';
-
-    if (files.length > 0) {
-        const fileNames = Array.from(files).map(file => file.name).join(', ');
-        fileInfo.innerHTML = `Selected: ${fileNames} (${files.length} file${files.length > 1 ? 's' : ''})`;
-        this.parentNode.appendChild(fileInfo);
-    } else {
-        fileInfo.remove();
-    }
-});
+// Initialize Dropzone only after product is created
+let myDropzone = null;
 
 // Convert form data to JSON and handle submission
 document.getElementById('product-form').addEventListener('submit', function(e) {
@@ -627,6 +448,40 @@ document.getElementById('product-form').addEventListener('submit', function(e) {
                     <strong>Product created successfully!</strong> Product ID: ${data.id}. Now you can upload media files.
                 </div>
             `;
+
+            // Initialize Dropzone
+            myDropzone = new Dropzone("#media-dropzone", {
+                paramName: "files",
+                maxFilesize: 10,
+                acceptedFiles: "image/*",
+                maxFiles: 10,
+                addRemoveLinks: true,
+                sending: function(file, xhr, formData) {
+                    formData.append("product_id", document.getElementById('upload-product-id').value);
+                    formData.append("media_type", "photo");
+                },
+                success: function(file, response) {
+                    // Add media preview
+                    const mediaPreview = document.getElementById('media-preview');
+                    const media = response[0]; // Assuming response is an array
+                    const mediaDiv = document.createElement('div');
+                    mediaDiv.className = 'relative bg-gray-100 rounded-lg overflow-hidden';
+                    mediaDiv.innerHTML = `
+                        <img src="/uploads/media/${media.filename}" alt="${media.original_filename}"
+                             class="w-full h-32 object-cover">
+                        <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2 truncate">
+                            ${media.original_filename}
+                        </div>
+                        <div class="absolute top-2 right-2">
+                            <button onclick="removeMedia(${media.id})"
+                                    class="bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                                ×
+                            </button>
+                        </div>
+                    `;
+                    mediaPreview.appendChild(mediaDiv);
+                }
+            });
         } else {
             throw new Error('Product creation failed');
         }
@@ -641,58 +496,25 @@ document.getElementById('product-form').addEventListener('submit', function(e) {
     });
 });
 
-// Show media upload section after successful product creation
-document.body.addEventListener('htmx:afterRequest', function(event) {
-    if (event.detail.xhr.status === 201 && event.target.tagName === 'FORM') {
-        // Product created successfully
-        const response = JSON.parse(event.detail.xhr.response);
-        if (response.id) {
-            document.getElementById('upload-product-id').value = response.id;
-            document.getElementById('media-upload-section').style.display = 'block';
-            document.querySelector('form').style.display = 'none';
-
-            // Show success message
-            const successDiv = document.createElement('div');
-            successDiv.className = 'bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4';
-            successDiv.innerHTML = '<strong>Product created successfully!</strong> Now you can upload media files.';
-            document.querySelector('#media-upload-section').insertBefore(successDiv, document.querySelector('#media-upload-section').firstChild);
-        }
+// Function to remove media
+function removeMedia(mediaId) {
+    if (confirm('Are you sure you want to delete this media?')) {
+        fetch(`/api/media/${mediaId}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                // Remove the media element from DOM
+                event.target.closest('.relative').remove();
+            } else {
+                alert('Failed to delete media');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to delete media');
+        });
     }
-});
-
-// Handle file drop
-const dropZone = document.querySelector('.file-drop-zone');
-['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    dropZone.addEventListener(eventName, preventDefaults, false);
-});
-
-function preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
-}
-
-['dragenter', 'dragover'].forEach(eventName => {
-    dropZone.addEventListener(eventName, highlight, false);
-});
-
-['dragleave', 'drop'].forEach(eventName => {
-    dropZone.addEventListener(eventName, unhighlight, false);
-});
-
-function highlight(e) {
-    dropZone.classList.add('drag-over');
-}
-
-function unhighlight(e) {
-    dropZone.classList.remove('drag-over');
-}
-
-dropZone.addEventListener('drop', handleDrop, false);
-
-function handleDrop(e) {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-    document.getElementById('media-files').files = files;
 }
 
 // Auto-generate slug from name
