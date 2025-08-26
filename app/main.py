@@ -16,7 +16,7 @@ from app.web.routes import router as web_router
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Luce di Villa")
+app = FastAPI(title="Luce di Villa", docs_url=None, redoc_url=None)
 
 # Static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -41,7 +41,6 @@ api_router.include_router(media_router)
 
 # Include the API router in main app
 app.include_router(api_router)
-
 
 if __name__ == "__main__":
     import uvicorn
