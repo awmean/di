@@ -2,18 +2,18 @@
     {% for product in products %}
     <div class="furniture-card cursor-pointer" data-category="{{ product.category.slug }}">
         <a href="/product/{{ product.slug }}" class="block">
-            <div class="h-80 bg-white mb-8 overflow-hidden relative group">
+            <div class="aspect-[3/2] bg-white mb-8 overflow-hidden relative group">
                 {% if product.main_image %}
                 <!-- Main image - always visible -->
                 <img src="{{ product.main_image_url }}"
                      alt="{{ product.name }}"
-                     class="w-full h-full object-contain absolute inset-0 transition-opacity duration-300">
+                     class="w-full h-full object-cover absolute inset-0 transition-opacity duration-300">
 
                 <!-- Secondary image - shows on hover if available -->
                 {% if product.secondary_image_url %}
                 <img src="{{ product.secondary_image_url }}"
                      alt="{{ product.name }}"
-                     class="w-full h-full object-contain absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                     class="w-full h-full object-cover absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 {% endif %}
                 {% endif %}
             </div>
