@@ -71,6 +71,7 @@
     justify-content: center;
     cursor: pointer;
     transition: opacity 0.3s ease;
+    aspect-ratio: 3/2;
 }
 
 .f-carousel__slide:hover {
@@ -78,10 +79,9 @@
 }
 
 .f-carousel__slide img {
-    max-width: 100%;
-    max-height: 600px;
-    height: auto;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /* Стрелки навигации */
@@ -144,7 +144,7 @@
 
 .f-carousel__thumb {
     width: 80px !important;
-    height: 80px !important;
+    height: 53px !important; /* 80px / 1.5 для пропорций 3:2 */
     border: 2px solid transparent !important;
     border-radius: 4px !important;
     overflow: hidden !important;
@@ -170,8 +170,8 @@
 
 /* Мобильные стили для карусели и миниатюр */
 @media (max-width: 640px) {
-    .f-carousel__slide img {
-        max-height: 400px;
+    .f-carousel__slide {
+        aspect-ratio: 3/2; /* Сохраняем 3:2 и на мобильных */
     }
 
     .f-carousel__button {
@@ -192,7 +192,7 @@
 
     .f-carousel__thumb {
         width: 60px !important;
-        height: 60px !important;
+        height: 40px !important; /* 60px / 1.5 для пропорций 3:2 */
     }
 }
 
@@ -253,7 +253,7 @@
                             <a href="{{ product.main_image_url }}"
                                data-fancybox="gallery"
                                data-caption="{{ product.name }}"
-                               class="block">
+                               class="block w-full h-full">
                                 <img src="{{ product.main_image_url }}" alt="{{ product.name }}">
                             </a>
                         </div>
@@ -266,7 +266,7 @@
                             <a href="/{{ image.file_path }}"
                                data-fancybox="gallery"
                                data-caption="{{ product.name }} - дополнительное фото"
-                               class="block">
+                               class="block w-full h-full">
                                 <img src="/{{ image.file_path }}" alt="{{ product.name }}">
                             </a>
                         </div>
@@ -274,23 +274,23 @@
                     </div>
                 </div>
                 {% else %}
-                <!-- Single Image - Show normally -->
-                <div class="mx-auto" style="max-width: 800px;">
+                <!-- Single Image - Show with 3:2 aspect ratio -->
+                <div class="mx-auto aspect-[3/2] bg-white overflow-hidden" style="max-width: 800px;">
                     {% if product.main_image_url %}
                     <a href="{{ product.main_image_url }}"
                        data-fancybox="gallery"
                        data-caption="{{ product.name }}"
-                       class="block">
+                       class="block w-full h-full">
                         <img src="{{ product.main_image_url }}" alt="{{ product.name }}"
-                             class="w-full h-auto object-contain">
+                             class="w-full h-full object-cover">
                     </a>
                     {% endif %}
                 </div>
                 {% endif %}
             {% else %}
             <!-- No Image Placeholder -->
-            <div class="relative flex items-center justify-center text-gray-300 mx-auto bg-brand-light-gray"
-                 style="max-width: 800px; height: 400px;">
+            <div class="relative flex items-center justify-center text-gray-300 mx-auto bg-brand-light-gray aspect-[3/2]"
+                 style="max-width: 800px;">
                 <svg class="w-16 h-16 sm:w-24 sm:h-24" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
                 </svg>
@@ -379,7 +379,7 @@
                 {% for child in product.children %}
                 <div class="group text-center">
                     <a href="/product/{{ child.slug }}" class="block">
-                        <div class="aspect-square bg-brand-light-gray overflow-hidden mb-3 sm:mb-4 transition-all duration-300">
+                        <div class="aspect-[3/2] bg-brand-light-gray overflow-hidden mb-3 sm:mb-4 transition-all duration-300">
                             {% if child.main_image_url %}
                             <img src="{{ child.main_image_url }}" alt="{{ child.name }}"
                                  class="w-full h-full object-cover transition-transform duration-300">
