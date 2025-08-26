@@ -28,6 +28,7 @@ async def create_session(user_id: int, username: str) -> str:
         3600,  # 1 час в секундах
         json.dumps(session_data)
     )
+    print(f'Created session {session_id}')
 
     return session_id
 
