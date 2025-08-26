@@ -137,9 +137,7 @@ async def contacts(request: Request):
     """Contacts page"""
     return templates.TemplateResponse("contacts.html", {"request": request})
 
-
-@router.post("/subscribe")
-async def subscribe(phone: str, db: Session = Depends(get_db)):
-    """Handle newsletter subscription"""
-    # TODO: Implement subscription logic
-    return {"message": "Спасибо! Мы свяжемся с вами."}
+@router.get("/privacy", response_class=HTMLResponse)
+async def privacy(request: Request):
+    """Contacts page"""
+    return templates.TemplateResponse("privacy.html", {"request": request})
