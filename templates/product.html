@@ -610,42 +610,11 @@ function showConsultationMessage() {
     }
 }
 
-function updateCartCount() {
-    const cartCounter = document.querySelector('.cart-counter');
-    if (!cartCounter) return;
-
-    if (!window.cartLS) {
-        // Если cartLS еще не загружен, повторяем попытку
-        setTimeout(updateCartCount, 100);
-        return;
-    }
-
-    const cartItems = window.cartLS.list();
-    const totalItems = cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
-    cartCounter.textContent = totalItems;
-
-    if (totalItems > 0) {
-        cartCounter.classList.remove('hidden');
-    } else {
-        cartCounter.classList.add('hidden');
-    }
-}
-
-// Функция для безопасной инициализации после загрузки cartLS
-function initializeCart() {
-    if (!window.cartLS) {
-        setTimeout(initializeCart, 100);
-        return;
-    }
-
-    updateCartCount();
-    updateButtonState();
-}
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     // Инициализируем корзину после загрузки DOM
-    initializeCart();
+    updateButtonState();
 });
 
 // Закрытие тостов по клику вне их области (только на десктопе)

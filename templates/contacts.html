@@ -161,26 +161,6 @@
             </div>
         </div>
     </section>
-
-    <!-- CTA Section -->
-    <section>
-        <div class="max-w-4xl mx-auto px-8">
-            <div class="bg-brand-brown text-white p-16 text-center">
-                <h2 class="text-2xl font-light mb-8">Есть вопросы? Мы поможем!</h2>
-                <p class="text-gray-200 font-light mb-12 max-w-lg mx-auto leading-loose">
-                    Свяжитесь с нами любым удобным способом или приезжайте в наш шоу-рум
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button class="bg-white text-brand-brown px-12 py-4 text-xs uppercase tracking-[0.2em] hover:bg-gray-100 transition-all font-light">
-                        Записаться на встречу
-                    </button>
-                    <button class="border border-white text-white px-12 py-4 text-xs uppercase tracking-[0.2em] hover:bg-white hover:text-brand-brown transition-all font-light">
-                        Заказать звонок
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
 </main>
 
 <!-- Yandex Maps API -->
@@ -188,14 +168,14 @@
 <script type="text/javascript">
     ymaps.ready(function () {
         // Создаем карту с центром в Москве
-        var myMap = new ymaps.Map('map', {
+        const myMap = new ymaps.Map('map', {
             center: [55.7558, 37.6173], // Координаты центра Москвы (Тверская)
             zoom: 15,
             controls: ['zoomControl', 'fullscreenControl']
         });
 
         // Создаем метку для главного офиса
-        var mainOffice = new ymaps.Placemark([55.7558, 37.6173], {
+        const mainOffice = new ymaps.Placemark([55.7558, 37.6173], {
             balloonContentHeader: 'Luce di Villa',
             balloonContentBody: '<strong>Главный офис</strong><br>г. Москва, ул. Тверская, д. 15<br>БЦ "Центральный", этаж 7<br><br>Телефон: +7 (966) 872-12-02<br>Email: info@lucedivilla.com',
             balloonContentFooter: 'Пн-Пт: 9:00 - 18:00<br>Сб: 10:00 - 16:00',
@@ -205,7 +185,7 @@
         });
 
         // Создаем метку для шоу-рума
-        var showroom = new ymaps.Placemark([55.7387, 37.6032], {
+        const showroom = new ymaps.Placemark([55.7387, 37.6032], {
             balloonContentHeader: 'Luce di Villa',
             balloonContentBody: '<strong>Шоу-рум</strong><br>г. Москва, Садовническая ул., д. 82<br>ТЦ "Дизайн Центр"<br><br>Телефон: +7 (966) 872-12-02',
             balloonContentFooter: 'Ежедневно: 10:00 - 21:00<br>Предварительная запись',
@@ -215,7 +195,7 @@
         });
 
         // Создаем метку для производства
-        var production = new ymaps.Placemark([55.8206, 37.3306], {
+        const production = new ymaps.Placemark([55.8206, 37.3306], {
             balloonContentHeader: 'Luce di Villa',
             balloonContentBody: '<strong>Производство</strong><br>Московская область<br>г. Красногорск, ул. Заводская, д. 12<br><br>Телефон: +7 (966) 872-12-02',
             balloonContentFooter: 'Пн-Пт: 8:00 - 17:00<br>Только по согласованию',
