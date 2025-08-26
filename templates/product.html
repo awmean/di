@@ -223,7 +223,7 @@
 {% block content %}
 <div class="min-h-screen">
     <!-- Back Navigation -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 pt-8 pb-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 pt-6 pb-2">
         <a href="/catalog" class="text-gray-600 hover:text-brand-brown flex items-center space-x-2 text-sm uppercase tracking-[0.1em] font-light transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -232,15 +232,15 @@
         </a>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8">
         <!-- Product Name -->
-        <div class="mb-12 sm:mb-16">
+        <div class="mb-8 sm:mb-10">
             <h1 class="text-2xl sm:text-3xl lg:text-4xl font-light text-brand-dark text-center uppercase tracking-[0.1em]">
                 {{ product.name }}</h1>
         </div>
 
         <!-- Product Images with Carousel and Fancybox Gallery -->
-        <div class="mb-12 sm:mb-16">
+        <div class="mb-8 sm:mb-10">
             {% if product.images %}
                 {% if product.images|length > 1 %}
                 <!-- Multiple Images - Show as Carousel -->
@@ -302,7 +302,7 @@
         <div class="max-w-3xl mx-auto">
             <!-- Price -->
             {% if product.price %}
-            <div class="text-center mb-8 sm:mb-12">
+            <div class="text-center mb-6 sm:mb-8">
                 <span class="text-2xl sm:text-3xl font-light text-brand-dark">{{ product.price|round(0)|int }} ₽</span>
                 {% if product.old_price and product.old_price > product.price %}
                 <span class="text-lg sm:text-xl text-brand-gray line-through ml-4 font-light">{{ product.old_price|round(0)|int }} ₽</span>
@@ -314,17 +314,17 @@
             {% endif %}
 
             <!-- Action Button -->
-            <div class="text-center mb-12 sm:mb-16">
+            <div class="text-center mb-8 sm:mb-10">
                 <button id="mainActionBtn" onclick="handleMainAction()"
                         class="inline-block py-3 px-8 sm:py-4 sm:px-16 font-light tracking-[0.2em] text-xs uppercase transition-all duration-300">
-                    <span id="btnText">Консультация</span>
+                    <span id="btnText">ДОБАВИТЬ В КОРЗИНУ</span>
                 </button>
             </div>
 
             <!-- Parent Product Link -->
             {% if product.parent %}
-            <div class="mb-12 sm:mb-16 p-6 sm:p-8 bg-brand-light-gray text-center">
-                <p class="text-brand-gray mb-4 font-light">Этот товар входит в:</p>
+            <div class="mb-8 sm:mb-10 p-4 sm:p-6 bg-brand-light-gray text-center">
+                <p class="text-brand-gray mb-3 font-light">Этот товар входит в:</p>
                 <a href="/product/{{ product.parent.slug }}"
                    class="text-brand-dark font-medium text-lg hover:text-brand-brown transition-colors">
                     {{ product.parent.name }}
@@ -334,9 +334,9 @@
 
             <!-- Product Description -->
             {% if product.short_description or product.description %}
-            <div class="mb-12 sm:mb-16 text-center">
+            <div class="mb-8 sm:mb-10 text-center">
                 {% if product.short_description %}
-                <p class="text-lg sm:text-xl font-light mb-6 sm:mb-8 leading-relaxed text-brand-dark">{{
+                <p class="text-lg sm:text-xl font-light mb-4 sm:mb-6 leading-relaxed text-brand-dark">{{
                     product.short_description }}</p>
                 {% endif %}
                 {% if product.description %}
@@ -355,8 +355,8 @@
             {% if product.material %}{% set _ = specs.append(('Применение', product.material)) %}{% endif %}
 
             {% if specs %}
-            <div class="mb-16 sm:mb-20">
-                <h3 class="text-xl sm:text-2xl font-light text-brand-dark mb-6 sm:mb-8 text-center uppercase tracking-[0.1em]">
+            <div class="mb-10 sm:mb-12">
+                <h3 class="text-xl sm:text-2xl font-light text-brand-dark mb-4 sm:mb-6 text-center uppercase tracking-[0.1em]">
                     Характеристики</h3>
                 <div class="max-w-xl mx-auto space-y-3 sm:space-y-4">
                     {% for label, value in specs %}
@@ -372,10 +372,10 @@
 
         <!-- Set Components -->
         {% if product.is_set and product.children %}
-        <div class="mt-16 sm:mt-24">
-            <h2 class="text-xl sm:text-2xl font-light text-brand-dark mb-8 sm:mb-12 text-center uppercase tracking-[0.1em]">
+        <div class="mt-10 sm:mt-16">
+            <h2 class="text-xl sm:text-2xl font-light text-brand-dark mb-6 sm:mb-8 text-center uppercase tracking-[0.1em]">
                 Комплект включает</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-8">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
                 {% for child in product.children %}
                 <div class="group text-center">
                     <a href="/product/{{ child.slug }}" class="block">
@@ -405,8 +405,8 @@
 
         <!-- Full Description -->
         {% if not product.is_set and (product.description and product.description|length > 200) %}
-        <div class="mt-16 sm:mt-24 max-w-3xl mx-auto">
-            <h2 class="text-xl sm:text-2xl font-light text-brand-dark mb-8 sm:mb-12 text-center uppercase tracking-[0.1em]">
+        <div class="mt-10 sm:mt-16 max-w-3xl mx-auto">
+            <h2 class="text-xl sm:text-2xl font-light text-brand-dark mb-6 sm:mb-8 text-center uppercase tracking-[0.1em]">
                 Подробное описание</h2>
             <div class="text-sm sm:text-base font-light leading-loose text-gray-700">
                 {{ product.description|nl2br|safe }}
@@ -530,7 +530,7 @@ function updateButtonState() {
         btnText.textContent = 'ПЕРЕЙТИ В КОРЗИНУ';
     } else {
         btn.className = 'inline-block bg-brand-brown text-white py-3 px-8 sm:py-4 sm:px-16 font-light tracking-[0.2em] text-xs uppercase hover:bg-opacity-90 transition-all duration-300';
-        btnText.textContent = 'КОНСУЛЬТАЦИЯ';
+        btnText.textContent = 'ДОБАВИТЬ В КОРЗИНУ';
     }
 }
 
