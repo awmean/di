@@ -63,6 +63,8 @@ def admin_edit_products(
     user = AdminUserRepository.get_by_id(db, session["user_id"])
     product = ProductRepository.get_by_id(db, product_id=product_id)
     categories = CategoryRepository.get_all(db)
+    products = ProductRepository.get_all(db)
+
     return templates.TemplateResponse(
         "product_edit.html",
         {
@@ -70,6 +72,7 @@ def admin_edit_products(
             "user": user,
             "product": product,
             "categories": categories,
+            "products": products
         },
     )
 

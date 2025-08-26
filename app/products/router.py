@@ -86,21 +86,29 @@ def update_product(
             )
 
     # Validate parent_id if being updated
-    if product_data.parent_id and product_data.parent_id != existing_product.parent_id:
-        if product_data.parent_id == product_id:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Product cannot be its own parent",
-            )
+    if product_data.parent_id:
+        if product_data.parent_id != existing_product.parent_id:
+            if product_data.parent_id == product_id:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Product cannot be its own parent",
+                )
 
-        parent = ProductRepository.get_by_id(db, product_data.parent_id)
-        if not parent:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Parent product not found",
-            )
+            parent = ProductRepository.get_by_id(db, product_data.parent_id)
+            if not parent:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Parent product not found",
+                )
+    else:
+        product_data.parent_id = None
+
 
     update_data = product_data.model_dump(exclude_unset=True)
+
+    if not product_data.parent_id:
+        update_data["parent_id"] = None
+
     product = ProductRepository.update(db, product_id, **update_data)
     return product
 

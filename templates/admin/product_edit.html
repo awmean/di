@@ -104,19 +104,32 @@
                 <select id="parent_id"
                         name="parent_id"
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Нет (отдельный/комплект)</option>
-                    {% for potential_parent in products %}
-                        {% if potential_parent.is_active and (potential_parent.is_set or potential_parent.is_standalone_product) and potential_parent.id != product.id %}
-                        <option value="{{ potential_parent.id }}" {% if potential_parent.id == product.parent_id %}selected{% endif %}>
-                            {{ potential_parent.name }}
-                            {% if potential_parent.is_set %}
-                                (Комплект - {{ potential_parent.set_piece_count or potential_parent.children|length }} предметов)
-                            {% endif %}
-                        </option>
+                    <option value="" {% if not product.parent_id %}selected{% endif %}>Нет (отдельный/комплект)</option>
+
+                    {% if product.parent_id and product.parent %}
+                    <option value="{{ product.parent.id }}" selected>
+                        {{ product.parent.name }}
+                        {% if product.parent.is_set %}
+                        (Комплект - {{ product.parent.set_piece_count|default(product.parent.children|length, true) }}
+                        предметов)
                         {% endif %}
+                    </option>
+                    {% endif %}
+
+                    {# Потом показываем все остальные доступные родители #}
+                    {% for potential_parent in products %}
+                    {% if potential_parent.is_active and potential_parent.id != product.id %}
+                    {% if (potential_parent.is_set or potential_parent.is_standalone_product) and potential_parent.id !=
+                    product.parent_id %}
+                    <option value="{{ potential_parent.id }}">
+                        {{ potential_parent.name }}
+                    </option>
+                    {% endif %}
+                    {% endif %}
                     {% endfor %}
                 </select>
-                <p class="mt-1 text-sm text-gray-500">Выберите родительский товар, если это отдельная часть комплекта</p>
+                <p class="mt-1 text-sm text-gray-500">Выберите родительский товар, если это отдельная часть
+                    комплекта</p>
             </div>
         </div>
 
