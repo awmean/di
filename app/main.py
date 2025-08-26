@@ -16,7 +16,7 @@ from app.web.routes import router as web_router
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Luce di Villa", docs_url=None, redoc_url=None)
+app = FastAPI(title="Luce di Villa", docs_url=None, redoc_url=None, openapi_url=None)
 
 # Static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
