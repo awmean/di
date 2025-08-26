@@ -21,7 +21,7 @@ def login_page(request: Request, next: str = None):
 
 
 @router.post("/login")
-def login(
+async def login(
     request: Request,
     response: Response,
     username: str = Form(...),
@@ -38,7 +38,7 @@ def login(
             {"request": request, "error": "Invalid username or password", "next": next},
         )
 
-    session_id = create_session(user.id, user.username)
+    session_id = await create_session(user.id, user.username)
 
     # Редирект на оригинальный URL или dashboard по умолчанию
     redirect_url = next if next else "/admin/dashboard"
