@@ -153,7 +153,7 @@
 </header>
 
 <script>
-// Update cart count function
+
 function updateCartCount() {
     if (typeof cartLS !== 'undefined') {
         const count = cartLS.list().length;
@@ -163,7 +163,7 @@ function updateCartCount() {
         if (desktopBadge) desktopBadge.textContent = count;
         if (mobileBadge) mobileBadge.textContent = count;
 
-        // Hide badge if count is 0
+
         if (count === 0) {
             if (desktopBadge) desktopBadge.style.display = 'none';
             if (mobileBadge) mobileBadge.style.display = 'none';
@@ -174,11 +174,11 @@ function updateCartCount() {
     }
 }
 
-// Initialize cart count on load
+
 document.addEventListener('DOMContentLoaded', function() {
     updateCartCount();
 
-    // Mobile menu functionality
+
     const menuToggle = document.getElementById('menu-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
     const menuOverlay = document.getElementById('menu-overlay');
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (closeMenu) closeMenu.addEventListener('click', closeMenuFunc);
     if (menuOverlay) menuOverlay.addEventListener('click', closeMenuFunc);
 
-    // Header scroll effect
+
     const header = document.getElementById('main-header');
     let lastScrollY = window.scrollY;
 
@@ -215,6 +215,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Export updateCartCount function to global scope so it can be called from other scripts
+
 window.updateCartCount = updateCartCount;
 </script>

@@ -204,7 +204,7 @@
 {% endif %}
 
 <script>
-    // Фильтрация заказов по статусу
+
     function filterByStatus(status) {
         const rows = document.querySelectorAll('[data-status]');
 
@@ -216,7 +216,7 @@
             }
         });
 
-        // Обновляем параметр URL для возможности сохранения в закладки
+
         const url = new URL(window.location);
         if (status) {
             url.searchParams.set('status', status);
@@ -226,7 +226,7 @@
         window.history.replaceState({}, '', url);
     }
 
-    // Устанавливаем фильтр из параметра URL при загрузке страницы
+
     document.addEventListener('DOMContentLoaded', function() {
         const urlParams = new URLSearchParams(window.location.search);
         const statusFilter = urlParams.get('status');
@@ -236,10 +236,10 @@
         }
     });
 
-    // Обработка ответов на обновление статуса
+
     document.body.addEventListener('htmx:afterRequest', function(event) {
         if (event.detail.xhr.status === 200 && event.target.tagName === 'BUTTON') {
-            // Успех - показываем краткое уведомление
+
             const notification = document.createElement('div');
             notification.className = 'fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded z-50';
             notification.innerHTML = '<strong>Успех!</strong> Статус заказа обновлен.';
@@ -251,10 +251,10 @@
         }
     });
 
-    // Автообновление заказов каждые 30 секунд (опционально)
+
     /*
     setInterval(function() {
-        // Обновляем только если не выполняется действие
+
         if (!document.querySelector('.htmx-request')) {
             location.reload();
         }

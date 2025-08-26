@@ -171,7 +171,7 @@
 
 <script src="/static/js/cart-localstorage.min.js"></script>
 <script>
-// Phone number formatting
+
 function formatPhoneNumber(value) {
     const digits = value.replace(/\D/g, '');
 
@@ -185,14 +185,14 @@ function formatPhoneNumber(value) {
     return digits;
 }
 
-// Create cart item element from template
+
 function createCartItemElement(item) {
     const template = document.getElementById('cartItemTemplate');
     const element = template.content.cloneNode(true);
 
     const itemTotal = (item.price || 0) * (item.quantity || 1);
 
-    // Fill in data
+
     const image = element.querySelector('.cart-item-image');
     const placeholder = element.querySelector('.cart-item-placeholder');
     const name = element.querySelector('.cart-item-name');
@@ -217,7 +217,7 @@ function createCartItemElement(item) {
     quantity.textContent = item.quantity;
     total.textContent = `${Math.round(itemTotal).toLocaleString()} р.`;
 
-    // Add event listeners
+
     const decreaseBtn = element.querySelector('.decrease-btn');
     const increaseBtn = element.querySelector('.increase-btn');
     const removeBtn = element.querySelector('.remove-btn');
@@ -229,21 +229,21 @@ function createCartItemElement(item) {
     return element;
 }
 
-// Initialize page
+
 document.addEventListener('DOMContentLoaded', function() {
     loadCartItems();
     setupEventListeners();
 });
 
 function setupEventListeners() {
-    // Phone formatting
+
     const phoneInput = document.getElementById('customerPhone');
     phoneInput.addEventListener('input', function(e) {
         const formatted = formatPhoneNumber(e.target.value);
         e.target.value = formatted;
     });
 
-    // Form submission
+
     document.getElementById('orderForm').addEventListener('submit', handleFormSubmit);
 }
 
@@ -264,7 +264,7 @@ function loadCartItems() {
     emptyCart.classList.add('hidden');
     orderTotal.classList.remove('hidden');
 
-    // Clear container
+
     cartContainer.innerHTML = '';
 
     let total = 0;
@@ -302,7 +302,7 @@ async function handleFormSubmit(e) {
     const btnText = document.getElementById('submitBtnText');
     const loader = document.getElementById('submitLoader');
 
-    // Disable form and show loading
+
     submitBtn.disabled = true;
     btnText.classList.add('hidden');
     loader.classList.remove('hidden');
@@ -316,7 +316,7 @@ async function handleFormSubmit(e) {
             return;
         }
 
-        // Prepare order data
+
         const orderData = {
             customer_name: formData.get('customer_name'),
             customer_phone: '+7' + formData.get('customer_phone').replace(/\D/g, ''),
@@ -329,7 +329,7 @@ async function handleFormSubmit(e) {
             }))
         };
 
-        // Send order
+
         const response = await fetch('/order', {
             method: 'POST',
             headers: {
@@ -339,7 +339,7 @@ async function handleFormSubmit(e) {
         });
 
         if (response.ok) {
-            // Success - clear cart and show success modal
+
             cartLS.destroy();
             showSuccessModal();
         } else {
@@ -350,7 +350,7 @@ async function handleFormSubmit(e) {
         console.error('Error submitting order:', error);
         alert('Произошла ошибка при отправке заявки. Пожалуйста, попробуйте еще раз.');
     } finally {
-        // Re-enable form
+
         submitBtn.disabled = false;
         btnText.classList.remove('hidden');
         loader.classList.add('hidden');
@@ -359,27 +359,27 @@ async function handleFormSubmit(e) {
 
 function showSuccessModal() {
     document.getElementById('successModal').classList.remove('hidden');
-    // Prevent body scrolling when modal is open
+
     document.body.style.overflow = 'hidden';
 }
 
 function closeSuccessModal() {
     document.getElementById('successModal').classList.add('hidden');
     document.body.style.overflow = '';
-    // Redirect to home page
+
     setTimeout(() => {
         window.location.href = '/';
     }, 500);
 }
 
-// Close modal on outside click
+
 document.getElementById('successModal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeSuccessModal();
     }
 });
 
-// Close modal on escape key
+
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         const modal = document.getElementById('successModal');

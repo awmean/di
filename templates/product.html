@@ -455,13 +455,13 @@
 <script src="/static/js/cart-localstorage.min.js"></script>
 
 <script>
-// Initialize Product Carousel only if there are multiple images
+
 const carouselElement = document.querySelector("#productCarousel");
 if (carouselElement) {
     const carousel = new Carousel(carouselElement, {
         infinite: true,
         center: true,
-        Dots: false, // Отключаем точки, так как используем миниатюры
+        Dots: false,
         Navigation: true,
         transition: "crossfade",
         slidesPerPage: 1,
@@ -473,9 +473,9 @@ if (carouselElement) {
     });
 }
 
-// Initialize Fancybox with minimal controls
+
 Fancybox.bind('[data-fancybox="gallery"]', {
-    // Убираем лишние элементы управления
+
     Toolbar: {
         display: {
             left: [],
@@ -483,28 +483,28 @@ Fancybox.bind('[data-fancybox="gallery"]', {
             right: ["close"]
         }
     },
-    // Настройки для мобильных
+
     hideClass: "f-fadeOut",
     showClass: "f-fadeIn",
     animationEffect: "fade",
     animationDuration: 300,
-    // Отключаем миниатюры и слайдшоу для простоты
+
     Thumbs: false,
-    // Настройки изображений
+
     Images: {
         zoom: true,
         Panzoom: {
             maxScale: 3
         }
     },
-    // Настройки для мобильных устройств
+
     touch: {
         vertical: false,
         momentum: false
     }
 });
 
-// Product data for cart
+
 const productData = {
     id: {{ product.id }},
     name: "{{ product.name }}",
@@ -512,13 +512,13 @@ const productData = {
     image: "{{ product.main_image_url or '' }}"
 };
 
-// Button state management
+
 function updateButtonState() {
     const btn = document.getElementById('mainActionBtn');
     const btnText = document.getElementById('btnText');
 
     if (!window.cartLS) {
-        // Если cartLS еще не загружен, повторяем попытку через небольшую задержку
+
         setTimeout(updateButtonState, 100);
         return;
     }
@@ -572,7 +572,7 @@ function showConsultationMessage() {
     const toast = template.content.cloneNode(true);
     const toastElement = toast.querySelector('.toast-slide');
 
-    // Добавляем обработчик для кнопки закрытия
+
     const closeBtn = toast.querySelector('.toast-close');
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
@@ -589,7 +589,7 @@ function showConsultationMessage() {
 
     setTimeout(() => toastElement.classList.add('show'), 100);
 
-    // Автоматическое скрытие через 6 секунд
+
     setTimeout(() => {
         if (toastElement.classList.contains('show')) {
             toastElement.classList.remove('show');
@@ -601,7 +601,7 @@ function showConsultationMessage() {
         }
     }, 6000);
 
-    // Предотвращение скролла на мобильных при показе тоста
+
     if (window.innerWidth <= 640) {
         document.body.style.overflow = 'hidden';
         setTimeout(() => {
@@ -611,13 +611,13 @@ function showConsultationMessage() {
 }
 
 
-// Initialize on page load
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Инициализируем корзину после загрузки DOM
+
     updateButtonState();
 });
 
-// Закрытие тостов по клику вне их области (только на десктопе)
+
 document.addEventListener('click', function(e) {
     if (window.innerWidth > 640) return;
 

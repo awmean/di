@@ -196,29 +196,29 @@
 </form>
 
 <script>
-    // Обработка отправки формы редактирования категории
+
     document.getElementById('category-edit-form').addEventListener('submit', function(e) {
         e.preventDefault();
 
         const formData = new FormData(this);
         const jsonData = {};
 
-        // Конвертируем данные формы в JSON
+
         for (let [key, value] of formData.entries()) {
-            // Обрабатываем числовые поля
+
             if (['sort_order', 'parent_id'].includes(key) && value) {
                 jsonData[key] = parseInt(value);
             } else if (['is_active'].includes(key)) {
-                jsonData[key] = true; // Чекбокс присутствует только если отмечен
+                jsonData[key] = true;
             } else if (value) {
                 jsonData[key] = value;
             }
         }
 
-        // Устанавливаем значения по умолчанию для чекбоксов, если не отмечены
+
         if (!jsonData.is_active) jsonData.is_active = false;
 
-        // Делаем API вызов
+
         fetch('/api/categories/{{ category.id }}', {
             method: 'PUT',
             headers: {
@@ -229,14 +229,14 @@
         .then(response => response.json())
         .then(data => {
             if (data.id) {
-                // Успех
+
                 document.getElementById('form-response').innerHTML = `
                     <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
                         <strong>Категория успешно обновлена!</strong>
                     </div>
                 `;
 
-                // Очищаем сообщение через 3 секунды
+
                 setTimeout(() => {
                     document.getElementById('form-response').innerHTML = '';
                 }, 3000);
@@ -254,7 +254,7 @@
         });
     });
 
-    // Показываем/скрываем подсказку для родительской категории в зависимости от выбора
+
     document.getElementById('parent_id').addEventListener('change', function() {
         const helpText = this.parentNode.querySelector('.text-gray-500');
         if (this.value) {
@@ -264,7 +264,7 @@
         }
     });
 
-    // Предотвращаем выбор самой себя в качестве родителя (дополнительная клиентская валидация)
+
     document.getElementById('parent_id').addEventListener('change', function() {
         if (this.value == '{{ category.id }}') {
             alert('Категория не может быть своим собственным родителем!');

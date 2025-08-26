@@ -83,7 +83,7 @@
 
 {% block scripts %}
 <script>
-    // Mobile menu functionality
+
     const menuToggle = document.getElementById('menu-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
     const menuOverlay = document.getElementById('menu-overlay');
@@ -107,7 +107,7 @@
     if(closeMenu) closeMenu.addEventListener('click', closeMenuFunc);
     if(menuOverlay) menuOverlay.addEventListener('click', closeMenuFunc);
 
-    // Header scroll effect
+
     window.addEventListener('scroll', function() {
         const header = document.getElementById('main-header');
         if (window.scrollY > 100) {

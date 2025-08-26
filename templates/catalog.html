@@ -128,20 +128,17 @@
 {{ super() }}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Получаем все кнопки фильтров и товары
         const filterButtons = document.querySelectorAll('.filter-btn');
         const products = document.querySelectorAll('.furniture-card');
 
-        // Функция для фильтрации товаров
         function filterProducts(category) {
             products.forEach(product => {
                 const productCategory = product.getAttribute('data-category');
 
                 if (category === 'all' || productCategory === category) {
                     product.classList.remove('hidden');
-                    // Добавляем анимацию появления
                     product.style.animation = 'none';
-                    product.offsetHeight; // Trigger reflow
+                    product.offsetHeight; 
                     product.style.animation = 'fadeIn 0.3s ease-out';
                 } else {
                     product.classList.add('hidden');
@@ -149,31 +146,28 @@
             });
         }
 
-        // Функция для обновления активной кнопки
         function updateActiveButton(activeButton) {
-            // Убираем класс active со всех кнопок
             filterButtons.forEach(btn => {
                 btn.classList.remove('active');
             });
 
-            // Добавляем класс active только к выбранной кнопке
             activeButton.classList.add('active');
         }
 
-        // Обработчики событий для кнопок фильтров
+        
         filterButtons.forEach(button => {
             button.addEventListener('click', function (e) {
                 e.preventDefault();
 
                 const filter = this.getAttribute('data-filter');
 
-                // Обновляем активную кнопку
+                
                 updateActiveButton(this);
 
-                // Фильтруем товары
+                
                 filterProducts(filter);
 
-                // Обновляем URL без перезагрузки страницы
+                
                 const url = new URL(window.location);
                 if (filter === 'all') {
                     url.searchParams.delete('category');
@@ -184,11 +178,11 @@
             });
         });
 
-        // Инициализация при загрузке страницы
+        
         const urlParams = new URLSearchParams(window.location.search);
         const currentCategory = urlParams.get('category') || 'all';
 
-        // Находим активную кнопку по URL параметру
+        
         const activeButton = document.querySelector(`[data-filter="${currentCategory}"]`);
         if (activeButton) {
             updateActiveButton(activeButton);

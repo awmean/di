@@ -167,14 +167,14 @@
 <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=YOUR_API_KEY" type="text/javascript"></script>
 <script type="text/javascript">
     ymaps.ready(function () {
-        // Создаем карту с центром в Москве
+
         const myMap = new ymaps.Map('map', {
-            center: [55.7558, 37.6173], // Координаты центра Москвы (Тверская)
+            center: [55.7558, 37.6173],
             zoom: 15,
             controls: ['zoomControl', 'fullscreenControl']
         });
 
-        // Создаем метку для главного офиса
+
         const mainOffice = new ymaps.Placemark([55.7558, 37.6173], {
             balloonContentHeader: 'Luce di Villa',
             balloonContentBody: '<strong>Главный офис</strong><br>г. Москва, ул. Тверская, д. 15<br>БЦ "Центральный", этаж 7<br><br>Телефон: +7 (966) 872-12-02<br>Email: info@lucedivilla.com',
@@ -184,7 +184,7 @@
             preset: 'islands#brownDotIcon'
         });
 
-        // Создаем метку для шоу-рума
+
         const showroom = new ymaps.Placemark([55.7387, 37.6032], {
             balloonContentHeader: 'Luce di Villa',
             balloonContentBody: '<strong>Шоу-рум</strong><br>г. Москва, Садовническая ул., д. 82<br>ТЦ "Дизайн Центр"<br><br>Телефон: +7 (966) 872-12-02',
@@ -194,7 +194,7 @@
             preset: 'islands#brownShoppingIcon'
         });
 
-        // Создаем метку для производства
+
         const production = new ymaps.Placemark([55.8206, 37.3306], {
             balloonContentHeader: 'Luce di Villa',
             balloonContentBody: '<strong>Производство</strong><br>Московская область<br>г. Красногорск, ул. Заводская, д. 12<br><br>Телефон: +7 (966) 872-12-02',
@@ -204,26 +204,26 @@
             preset: 'islands#brownFactoryIcon'
         });
 
-        // Добавляем метки на карту
+
         myMap.geoObjects.add(mainOffice);
         myMap.geoObjects.add(showroom);
         myMap.geoObjects.add(production);
 
-        // Устанавливаем область показа карты так, чтобы были видны все метки
+
         myMap.setBounds(myMap.geoObjects.getBounds(), {
             checkZoomRange: true,
             zoomMargin: 50
         });
 
-        // Отключаем скролл карты при прокрутке страницы
+
         myMap.behaviors.disable('scrollZoom');
 
-        // Включаем скролл карты при клике на карту
+
         myMap.events.add('click', function() {
             myMap.behaviors.enable('scrollZoom');
         });
 
-        // Отключаем скролл карты при уходе курсора с карты
+
         myMap.events.add('mouseleave', function() {
             myMap.behaviors.disable('scrollZoom');
         });

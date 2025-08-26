@@ -483,10 +483,10 @@
 
 <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
 <script>
-// Disable Dropzone auto discover
+
 Dropzone.autoDiscover = false;
 
-// Initialize Dropzone
+
 const myDropzone = new Dropzone("#media-dropzone", {
     paramName: "files",
     maxFilesize: 10,
@@ -498,7 +498,7 @@ const myDropzone = new Dropzone("#media-dropzone", {
         formData.append("media_type", "photo");
     },
     success: function(file, response) {
-        // Reload page to show new media
+
         location.reload();
     }
 });
@@ -517,16 +517,16 @@ function moveMedia(mediaId, direction) {
    });
 }
 
-// Update product form submission
+
 document.getElementById('product-edit-form').addEventListener('submit', function(e) {
    e.preventDefault();
 
    const formData = new FormData(this);
    const jsonData = {};
 
-   // Convert form data to JSON
+
    for (let [key, value] of formData.entries()) {
-       // Handle numeric fields
+
        if (['price', 'old_price', 'weight'].includes(key) && value) {
            jsonData[key] = parseFloat(value);
        } else if (['width', 'height', 'depth', 'fabric_density', 'set_piece_count', 'piece_quantity', 'sort_order', 'category_id', 'parent_id'].includes(key) && value) {
@@ -538,11 +538,11 @@ document.getElementById('product-edit-form').addEventListener('submit', function
        }
    }
 
-   // Set default values for checkboxes if not checked
+
    if (!jsonData.is_active) jsonData.is_active = false;
    if (!jsonData.is_featured) jsonData.is_featured = false;
 
-   // Make the API call
+
    fetch('/api/products/{{ product.id }}', {
        method: 'PUT',
        headers: {
@@ -576,7 +576,7 @@ document.getElementById('product-edit-form').addEventListener('submit', function
    });
 });
 
-// Function to remove existing media
+
 function removeExistingMedia(mediaId) {
    if (confirm('Are you sure you want to delete this media?')) {
        fetch(`/api/media/${mediaId}`, {
