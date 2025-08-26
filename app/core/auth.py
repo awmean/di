@@ -4,10 +4,15 @@ from datetime import datetime, timedelta
 from typing import Dict, Optional
 from urllib.parse import quote
 
+import redis.asyncio as redis
 from fastapi import HTTPException, Request, status
 
-from app.core.redis import get_redis
+from app.core.config import settings
 
+redis_client = redis.from_url(
+    settings.REDIS_URL,
+    decode_responses=True
+)
 
 async def create_session(user_id: int, username: str) -> str:
     """Create session and return session ID"""
@@ -18,7 +23,6 @@ async def create_session(user_id: int, username: str) -> str:
         "expires_at": (datetime.utcnow() + timedelta(hours=1)).isoformat(),
     }
 
-    redis_client = await get_redis()
     await redis_client.setex(
         f"session:{session_id}",
         3600,  # 1 час в секундах
@@ -30,7 +34,6 @@ async def create_session(user_id: int, username: str) -> str:
 
 async def get_session(session_id: str) -> Optional[Dict]:
     """Get session if valid"""
-    redis_client = await get_redis()
     session_data = await redis_client.get(f"session:{session_id}")
 
     if not session_data:
@@ -48,7 +51,6 @@ async def get_session(session_id: str) -> Optional[Dict]:
 
 async def delete_session(session_id: str):
     """Delete session"""
-    redis_client = await get_redis()
     await redis_client.delete(f"session:{session_id}")
 
 
@@ -83,7 +85,6 @@ async def extend_session(session_id: str, hours: int = 1):
     session = await get_session(session_id)
     if session:
         session["expires_at"] = (datetime.utcnow() + timedelta(hours=hours)).isoformat()
-        redis_client = await get_redis()
         await redis_client.setex(
             f"session:{session_id}",
             hours * 3600,
@@ -93,7 +94,6 @@ async def extend_session(session_id: str, hours: int = 1):
 
 async def get_all_user_sessions(user_id: int) -> list:
     """Получить все активные сессии пользователя"""
-    redis_client = await get_redis()
     session_keys = await redis_client.keys("session:*")
 
     user_sessions = []
@@ -113,7 +113,6 @@ async def get_all_user_sessions(user_id: int) -> list:
 async def delete_all_user_sessions(user_id: int):
     """Удалить все сессии пользователя (например, при смене пароля)"""
     user_sessions = await get_all_user_sessions(user_id)
-    redis_client = await get_redis()
 
     for session in user_sessions:
         await redis_client.delete(f"session:{session['session_id']}")
