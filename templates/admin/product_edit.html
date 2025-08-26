@@ -596,13 +596,11 @@ function removeExistingMedia(mediaId) {
    }
 }
 
-// Auto-generate slug from name
-document.getElementById('name').addEventListener('input', function() {
-    const name = this.value;
-    const slug = name.toLowerCase()
-                     .replace(/[^a-z0-9]+/g, '-')
-                     .replace(/(^-|-$)/g, '');
-    document.getElementById('slug').value = slug;
+document.getElementById('update-product-btn').addEventListener('click', function(e) {
+    setTimeout(() => {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }, 100);
 });
+
 </script>
 {% endblock %}
