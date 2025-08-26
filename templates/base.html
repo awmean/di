@@ -36,16 +36,16 @@
                     },
                     keyframes: {
                         slideIn: {
-                            '0%': { transform: 'translateX(100%)' },
-                            '100%': { transform: 'translateX(0)' }
+                            '0%': {transform: 'translateX(100%)'},
+                            '100%': {transform: 'translateX(0)'}
                         },
                         fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' }
+                            '0%': {opacity: '0'},
+                            '100%': {opacity: '1'}
                         },
                         fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(40px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                            '0%': {opacity: '0', transform: 'translateY(40px)'},
+                            '100%': {opacity: '1', transform: 'translateY(0)'}
                         }
                     }
                 }
@@ -67,6 +67,10 @@
 
         main {
             flex: 1;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Prata', serif;
         }
     </style>
 
@@ -103,12 +107,12 @@
         document.body.style.overflow = '';
     }
 
-    if(menuToggle) menuToggle.addEventListener('click', openMenu);
-    if(closeMenu) closeMenu.addEventListener('click', closeMenuFunc);
-    if(menuOverlay) menuOverlay.addEventListener('click', closeMenuFunc);
+    if (menuToggle) menuToggle.addEventListener('click', openMenu);
+    if (closeMenu) closeMenu.addEventListener('click', closeMenuFunc);
+    if (menuOverlay) menuOverlay.addEventListener('click', closeMenuFunc);
 
 
-    window.addEventListener('scroll', function() {
+    window.addEventListener('scroll', function () {
         const header = document.getElementById('main-header');
         if (window.scrollY > 100) {
             header.classList.add('sticky-header');
