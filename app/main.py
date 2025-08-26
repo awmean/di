@@ -1,5 +1,3 @@
-from contextlib import asynccontextmanager
-
 from fastapi import FastAPI, APIRouter, Depends
 from fastapi.staticfiles import StaticFiles
 
@@ -7,7 +5,6 @@ from fastapi.staticfiles import StaticFiles
 from app.categories.router import router as categories_router
 from app.core.auth import require_auth
 from app.core.database import engine
-from app.core.redis import init_redis, close_redis
 from app.media.router import router as media_router
 from app.models import Base
 from app.orders.router import router as orders_router
@@ -19,30 +16,7 @@ from app.web.routes import router as web_router
 
 Base.metadata.create_all(bind=engine)
 
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Code to run on application startup
-    print("Application is starting up...")
-
-    # Initialize Redis connection
-    await init_redis()
-    print("Redis connection initialized")
-
-    # Example: Initialize a database connection pool
-    # app.state.db_connection = await connect_to_database()
-
-    yield
-
-    # Code to run on application shutdown
-    print("Application is shutting down...")
-
-    await close_redis()
-    # Example: Close the database connection pool
-    # await app.state.db_connection.close()
-
-
-app = FastAPI(title="Luce di Villa", lifespan=lifespan)
+app = FastAPI(title="Luce di Villa")
 
 # Static files
 app.mount("/static", StaticFiles(directory="static"), name="static")

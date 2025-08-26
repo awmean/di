@@ -1,4 +1,3 @@
-# app/core/config.py
 import os
 from typing import List
 
