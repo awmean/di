@@ -379,10 +379,10 @@
                 {% for child in product.children %}
                 <div class="group text-center">
                     <a href="/product/{{ child.slug }}" class="block">
-                        <div class="aspect-square bg-brand-light-gray overflow-hidden mb-3 sm:mb-4 transition-all duration-300 hover:shadow-sm">
+                        <div class="aspect-square bg-brand-light-gray overflow-hidden mb-3 sm:mb-4 transition-all duration-300">
                             {% if child.main_image_url %}
                             <img src="{{ child.main_image_url }}" alt="{{ child.name }}"
-                                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                                 class="w-full h-full object-cover transition-transform duration-300">
                             {% else %}
                             <div class="w-full h-full flex items-center justify-center text-gray-300">
                                 <svg class="w-6 h-6 sm:w-8 sm:h-8" fill="currentColor" viewBox="0 0 20 20">
