@@ -22,7 +22,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/carousel/carousel.thumbs.css">
 
 <style>
-/* Улучшенный тост для мобильных */
 .toast-slide {
     transform: translateX(100%);
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -32,7 +31,7 @@
     transform: translateX(0);
 }
 
-/* Мобильные стили для тоста */
+/* Mobile toast styles */
 @media (max-width: 640px) {
     .toast-slide {
         position: fixed !important;
@@ -50,7 +49,7 @@
     }
 }
 
-/* Стили для карусели */
+/* Carousel styles */
 .product-carousel {
     max-width: 800px;
     margin: 0 auto;
@@ -84,7 +83,7 @@
     object-fit: cover;
 }
 
-/* Стрелки навигации */
+/* Navigation arrows */
 .f-carousel__button {
     background: rgba(255, 255, 255, 0.9) !important;
     color: #333 !important;
@@ -106,7 +105,7 @@
     height: 20px !important;
 }
 
-/* Точки навигации */
+/* Dots navigation */
 .f-carousel__dots {
     display: flex;
     justify-content: center;
@@ -133,7 +132,7 @@
     transform: scale(1.2);
 }
 
-/* Стили для миниатюр */
+/* Thumbnail styles */
 .f-carousel__thumbs {
     display: flex;
     justify-content: center;
@@ -144,7 +143,7 @@
 
 .f-carousel__thumb {
     width: 80px !important;
-    height: 53px !important; /* 80px / 1.5 для пропорций 3:2 */
+    height: 53px !important;
     border: 2px solid transparent !important;
     border-radius: 4px !important;
     overflow: hidden !important;
@@ -168,10 +167,10 @@
     object-fit: cover !important;
 }
 
-/* Мобильные стили для карусели и миниатюр */
+/* Mobile carousel styles */
 @media (max-width: 640px) {
     .f-carousel__slide {
-        aspect-ratio: 3/2; /* Сохраняем 3:2 и на мобильных */
+        aspect-ratio: 3/2;
     }
 
     .f-carousel__button {
@@ -192,11 +191,11 @@
 
     .f-carousel__thumb {
         width: 60px !important;
-        height: 40px !important; /* 60px / 1.5 для пропорций 3:2 */
+        height: 40px !important;
     }
 }
 
-/* Настройки Fancybox */
+/* Fancybox settings */
 .fancybox__toolbar {
     background: rgba(0, 0, 0, 0.8) !important;
 }
@@ -210,12 +209,111 @@
     background: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Скрыть лишние кнопки на мобильных */
+/* Hide unnecessary buttons on mobile */
 @media (max-width: 640px) {
     .fancybox__button--thumbs,
     .fancybox__button--slideshow {
         display: none !important;
     }
+}
+
+/* Description content styles */
+.desc-h1 {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #374151;
+    margin-top: 0.75rem;
+    margin-bottom: 0.375rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1.3;
+    text-align: center;
+}
+
+.desc-h1:first-child {
+    margin-top: 0;
+}
+
+.desc-ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.desc-ul .desc-li {
+    position: relative;
+    padding-left: 1.25rem;
+    margin-bottom: 0;
+    line-height: 1.2;
+    color: #4b5563;
+}
+
+.desc-ul .desc-li:before {
+    content: "•";
+    color: #8B7355;
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-weight: bold;
+}
+
+.desc-strong {
+    font-weight: 600;
+    color: #374151;
+}
+
+@media (max-width: 640px) {
+    .desc-h1 {
+        font-size: 1rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .desc-ul .desc-li {
+        padding-left: 1rem;
+        font-size: 0.875rem;
+        line-height: 1.15;
+    }
+}
+
+/* Product info section styling */
+.product-info-section {
+    border-bottom: 1px solid #f3f4f6;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+}
+
+.product-info-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.spec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+@media (max-width: 640px) {
+    .spec-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+}
+
+.spec-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.spec-item:last-child {
+    border-bottom: none;
 }
 </style>
 {% endblock %}
@@ -236,153 +334,155 @@
         <!-- Product Name -->
         <div class="mb-8 sm:mb-10">
             <h1 class="text-2xl sm:text-3xl lg:text-4xl font-light text-brand-dark text-center uppercase tracking-[0.1em]">
-                {{ product.name }}</h1>
+                {{ product.name }}
+            </h1>
         </div>
 
-        <!-- Product Images with Carousel and Fancybox Gallery -->
-        <div class="mb-8 sm:mb-10">
-            {% if product.images %}
-                {% if product.images|length > 1 %}
-                <!-- Multiple Images - Show as Carousel -->
-                <div class="product-carousel">
-                    <div class="f-carousel" id="productCarousel">
-                        <!-- Main Image -->
-                        {% if product.main_image_url %}
-                        <div class="f-carousel__slide"
-                             data-thumb-src="{{ product.main_image_url }}">
-                            <a href="{{ product.main_image_url }}"
-                               data-fancybox="gallery"
-                               data-caption="{{ product.name }}"
-                               class="block w-full h-full">
-                                <img src="{{ product.main_image_url }}" alt="{{ product.name }}">
+        <!-- Main Product Section -->
+        <div class="max-w-6xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
+                <!-- Product Images -->
+                <div class="lg:sticky lg:top-8">
+                    {% if product.images %}
+                        {% if product.images|length > 1 %}
+                        <!-- Multiple Images - Carousel -->
+                        <div class="product-carousel">
+                            <div class="f-carousel" id="productCarousel">
+                                {% if product.main_image_url %}
+                                <div class="f-carousel__slide" data-thumb-src="{{ product.main_image_url }}">
+                                    <a href="{{ product.main_image_url }}" data-fancybox="gallery" data-caption="{{ product.name }}" class="block w-full h-full">
+                                        <img src="{{ product.main_image_url }}" alt="{{ product.name }}">
+                                    </a>
+                                </div>
+                                {% endif %}
+
+                                {% for image in product.images[1:] %}
+                                <div class="f-carousel__slide" data-thumb-src="/{{ image.file_path }}">
+                                    <a href="/{{ image.file_path }}" data-fancybox="gallery" data-caption="{{ product.name }} - дополнительное фото" class="block w-full h-full">
+                                        <img src="/{{ image.file_path }}" alt="{{ product.name }}">
+                                    </a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% else %}
+                        <!-- Single Image -->
+                        <div class="aspect-[3/2] bg-white overflow-hidden rounded-lg">
+                            {% if product.main_image_url %}
+                            <a href="{{ product.main_image_url }}" data-fancybox="gallery" data-caption="{{ product.name }}" class="block w-full h-full">
+                                <img src="{{ product.main_image_url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
                             </a>
+                            {% endif %}
                         </div>
                         {% endif %}
-
-                        <!-- Additional Images -->
-                        {% for image in product.images[1:] %}
-                        <div class="f-carousel__slide"
-                             data-thumb-src="/{{ image.file_path }}">
-                            <a href="/{{ image.file_path }}"
-                               data-fancybox="gallery"
-                               data-caption="{{ product.name }} - дополнительное фото"
-                               class="block w-full h-full">
-                                <img src="/{{ image.file_path }}" alt="{{ product.name }}">
-                            </a>
-                        </div>
-                        {% endfor %}
+                    {% else %}
+                    <!-- No Image Placeholder -->
+                    <div class="relative flex items-center justify-center text-gray-300 bg-brand-light-gray aspect-[3/2] rounded-lg">
+                        <svg class="w-16 h-16 sm:w-24 sm:h-24" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                        </svg>
                     </div>
-                </div>
-                {% else %}
-                <!-- Single Image - Show with 3:2 aspect ratio -->
-                <div class="mx-auto aspect-[3/2] bg-white overflow-hidden" style="max-width: 800px;">
-                    {% if product.main_image_url %}
-                    <a href="{{ product.main_image_url }}"
-                       data-fancybox="gallery"
-                       data-caption="{{ product.name }}"
-                       class="block w-full h-full">
-                        <img src="{{ product.main_image_url }}" alt="{{ product.name }}"
-                             class="w-full h-full object-cover">
-                    </a>
                     {% endif %}
                 </div>
-                {% endif %}
-            {% else %}
-            <!-- No Image Placeholder -->
-            <div class="relative flex items-center justify-center text-gray-300 mx-auto bg-brand-light-gray aspect-[3/2]"
-                 style="max-width: 800px;">
-                <svg class="w-16 h-16 sm:w-24 sm:h-24" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
-                </svg>
-            </div>
-            {% endif %}
-        </div>
 
-        <!-- Product Information -->
-        <div class="max-w-3xl mx-auto">
-            <!-- Price -->
-            {% if product.price %}
-            <div class="text-center mb-6 sm:mb-8">
-                <span class="text-2xl sm:text-3xl font-light text-brand-dark">{{ product.price|round(0)|int }} ₽</span>
-                {% if product.old_price and product.old_price > product.price %}
-                <span class="text-lg sm:text-xl text-brand-gray line-through ml-4 font-light">{{ product.old_price|round(0)|int }} ₽</span>
-                {% endif %}
-                {% if product.is_set %}
-                <p class="text-sm text-brand-gray mt-2 font-light uppercase tracking-[0.1em]">Цена за комплект</p>
-                {% endif %}
-            </div>
-            {% endif %}
-
-            <!-- Action Button -->
-            <div class="text-center mb-8 sm:mb-10">
-                <button id="mainActionBtn" onclick="handleMainAction()"
-                        class="inline-block py-3 px-8 sm:py-4 sm:px-16 font-light tracking-[0.2em] text-xs uppercase transition-all duration-300">
-                    <span id="btnText">ДОБАВИТЬ В КОРЗИНУ</span>
-                </button>
-            </div>
-
-            <!-- Parent Product Link -->
-            {% if product.parent %}
-            <div class="mb-8 sm:mb-10 p-4 sm:p-6 bg-brand-light-gray text-center">
-                <p class="text-brand-gray mb-3 font-light">Этот товар входит в:</p>
-                <a href="/product/{{ product.parent.slug }}"
-                   class="text-brand-dark font-medium text-lg hover:text-brand-brown transition-colors">
-                    {{ product.parent.name }}
-                </a>
-            </div>
-            {% endif %}
-
-            <!-- Product Description -->
-            {% if product.short_description or product.description %}
-            <div class="mb-8 sm:mb-10 text-center">
-                {% if product.short_description %}
-                <p class="text-lg sm:text-xl font-light mb-4 sm:mb-6 leading-relaxed text-brand-dark">{{
-                    product.short_description }}</p>
-                {% endif %}
-                {% if product.description %}
-                <div class="text-sm sm:text-base font-light leading-loose text-gray-700 text-left">
-                    {{ product.description|nl2br|safe }}
-                </div>
-                {% endif %}
-            </div>
-            {% endif %}
-
-            <!-- Product Specifications -->
-            {% set specs = [] %}
-            {% if product.width %}{% set _ = specs.append(('Диаметр, мм', product.width)) %}{% endif %}
-            {% if product.height %}{% set _ = specs.append(('Высота, мм', product.height)) %}{% endif %}
-            {% if product.color %}{% set _ = specs.append(('Варианты исполнения', product.color)) %}{% endif %}
-            {% if product.material %}{% set _ = specs.append(('Применение', product.material)) %}{% endif %}
-
-            {% if specs %}
-            <div class="mb-10 sm:mb-12">
-                <h3 class="text-xl sm:text-2xl font-light text-brand-dark mb-4 sm:mb-6 text-center uppercase tracking-[0.1em]">
-                    Характеристики</h3>
-                <div class="max-w-xl mx-auto space-y-3 sm:space-y-4">
-                    {% for label, value in specs %}
-                    <div class="flex justify-between items-center border-b border-gray-100 pb-3">
-                        <span class="text-brand-gray font-light text-sm sm:text-base">{{ label }}</span>
-                        <span class="text-brand-dark font-normal text-sm sm:text-base">{{ value }}</span>
+                <!-- Product Info -->
+                <div class="space-y-8">
+                    <!-- Price Section -->
+                    {% if product.price %}
+                    <div class="product-info-section">
+                        <div class="text-center lg:text-left">
+                            <span class="text-3xl sm:text-4xl font-light text-brand-dark">{{ product.price|round(0)|int }} ₽</span>
+                            {% if product.old_price and product.old_price > product.price %}
+                            <span class="text-xl sm:text-2xl text-brand-gray line-through ml-4 font-light">{{ product.old_price|round(0)|int }} ₽</span>
+                            {% endif %}
+                        </div>
+                        {% if product.is_set %}
+                        <p class="text-sm text-brand-gray mt-2 font-light uppercase tracking-[0.1em] text-center lg:text-left">Цена за комплект</p>
+                        {% endif %}
                     </div>
-                    {% endfor %}
+                    {% endif %}
+
+                    <!-- Parent Product Link -->
+                    {% if product.parent %}
+                    <div class="product-info-section">
+                        <div class="p-4 sm:p-6 bg-brand-light-gray rounded-lg text-center">
+                            <p class="text-brand-gray mb-3 font-light">Этот товар входит в:</p>
+                            <a href="/product/{{ product.parent.slug }}" class="text-brand-dark font-medium text-lg hover:text-brand-brown transition-colors">
+                                {{ product.parent.name }}
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Short Description -->
+                    {% if product.description and product.description|length <= 200 %}
+                    <div class="product-info-section">
+                        <div class="text-sm sm:text-base font-light leading-relaxed text-gray-700">
+                            {{ product.description|format_desc|safe }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Specifications -->
+                    {% set specs = [] %}
+                    {% if product.width %}{% set _ = specs.append(('Диаметр, мм', product.width)) %}{% endif %}
+                    {% if product.height %}{% set _ = specs.append(('Высота, мм', product.height)) %}{% endif %}
+                    {% if product.color %}{% set _ = specs.append(('Варианты исполнения', product.color)) %}{% endif %}
+                    {% if product.material %}{% set _ = specs.append(('Применение', product.material)) %}{% endif %}
+
+                    {% if specs %}
+                    <div class="product-info-section">
+                        <h3 class="text-lg sm:text-xl font-light text-brand-dark mb-4 uppercase tracking-[0.1em] text-center lg:text-left">
+                            Характеристики
+                        </h3>
+                        <div class="space-y-3">
+                            {% for label, value in specs %}
+                            <div class="spec-item">
+                                <span class="text-brand-gray font-light text-sm sm:text-base">{{ label }}</span>
+                                <span class="text-brand-dark font-normal text-sm sm:text-base">{{ value }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Action Button -->
+                    <div class="product-info-section">
+                        <div class="text-center lg:text-left">
+                            <button id="mainActionBtn" onclick="handleMainAction()" class="inline-block py-3 px-8 sm:py-4 sm:px-12 font-light tracking-[0.2em] text-xs uppercase transition-all duration-300">
+                                <span id="btnText">ДОБАВИТЬ В КОРЗИНУ</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            {% endif %}
         </div>
+
+        <!-- Full Description (for longer descriptions) -->
+        {% if not product.is_set and (product.description and product.description|length > 200) %}
+        <div class="mt-12 sm:mt-16 max-w-4xl mx-auto">
+            <h3 class="text-xl sm:text-2xl font-light text-brand-dark mb-6 text-center uppercase tracking-[0.1em]">
+                Описание
+            </h3>
+            <div class="prose prose-gray max-w-none text-sm sm:text-base font-light leading-relaxed">
+                {{ product.description|format_desc|safe }}
+            </div>
+        </div>
+        {% endif %}
 
         <!-- Set Components -->
         {% if product.is_set and product.children %}
-        <div class="mt-10 sm:mt-16">
+        <div class="mt-12 sm:mt-16">
             <h2 class="text-xl sm:text-2xl font-light text-brand-dark mb-6 sm:mb-8 text-center uppercase tracking-[0.1em]">
-                Комплект включает</h2>
+                Комплект включает
+            </h2>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
                 {% for child in product.children %}
                 <div class="group text-center">
                     <a href="/product/{{ child.slug }}" class="block">
-                        <div class="aspect-[3/2] bg-brand-light-gray overflow-hidden mb-3 sm:mb-4 transition-all duration-300">
+                        <div class="aspect-[3/2] bg-brand-light-gray overflow-hidden mb-3 sm:mb-4 rounded-lg transition-all duration-300 group-hover:shadow-lg">
                             {% if child.main_image_url %}
-                            <img src="{{ child.main_image_url }}" alt="{{ child.name }}"
-                                 class="w-full h-full object-cover transition-transform duration-300">
+                            <img src="{{ child.main_image_url }}" alt="{{ child.name }}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
                             {% else %}
                             <div class="w-full h-full flex items-center justify-center text-gray-300">
                                 <svg class="w-6 h-6 sm:w-8 sm:h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -392,7 +492,7 @@
                             {% endif %}
                         </div>
 
-                        <h3 class="font-light text-brand-dark mb-1 text-xs sm:text-sm">{{ child.name }}</h3>
+                        <h3 class="font-light text-brand-dark mb-1 text-xs sm:text-sm group-hover:text-brand-brown transition-colors">{{ child.name }}</h3>
                         {% if child.piece_quantity > 1 %}
                         <p class="text-brand-gray mb-2 text-xs font-light">{{ child.piece_quantity }} шт.</p>
                         {% endif %}
@@ -402,60 +502,42 @@
             </div>
         </div>
         {% endif %}
-
-        <!-- Full Description -->
-        {% if not product.is_set and (product.description and product.description|length > 200) %}
-        <div class="mt-10 sm:mt-16 max-w-3xl mx-auto">
-            <h2 class="text-xl sm:text-2xl font-light text-brand-dark mb-6 sm:mb-8 text-center uppercase tracking-[0.1em]">
-                Подробное описание</h2>
-            <div class="text-sm sm:text-base font-light leading-loose text-gray-700">
-                {{ product.description|nl2br|safe }}
-            </div>
-        </div>
-        {% endif %}
     </div>
 </div>
 
-<!-- Шаблон для тоста -->
+<!-- Toast Template -->
 <template id="toastTemplate">
     <div class="toast-slide fixed top-8 right-8 bg-white border border-gray-200 shadow-xl px-6 py-4 sm:px-8 sm:py-6 z-50 max-w-sm rounded-lg sm:rounded-none">
         <div class="flex items-start space-x-3 sm:space-x-4">
             <div class="w-8 h-8 bg-green-100 flex items-center justify-center flex-shrink-0 rounded-full">
                 <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clip-rule="evenodd"></path>
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                 </svg>
             </div>
             <div class="flex-1 min-w-0">
                 <h4 class="font-medium text-brand-dark mb-2 text-sm sm:text-base">Товар добавлен в корзину</h4>
-                <p class="text-xs sm:text-sm text-brand-gray mb-3 font-light">Перейдите в корзину чтобы оформить
-                    заявку</p>
-                <a href="/checkout"
-                   class="inline-block bg-brand-brown text-white px-3 py-2 sm:px-4 sm:py-2 text-xs font-light uppercase tracking-[0.1em] hover:bg-opacity-90 transition-colors rounded">
+                <p class="text-xs sm:text-sm text-brand-gray mb-3 font-light">Перейдите в корзину чтобы оформить заявку</p>
+                <a href="/checkout" class="inline-block bg-brand-brown text-white px-3 py-2 sm:px-4 sm:py-2 text-xs font-light uppercase tracking-[0.1em] hover:bg-opacity-90 transition-colors rounded">
                     Перейти в корзину
                 </a>
             </div>
             <button class="toast-close text-gray-400 hover:text-gray-600 transition-colors sm:hidden">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M6 18L18 6M6 6l12 12"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
         </div>
     </div>
 </template>
 
-<!-- Fancybox JS -->
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/carousel/carousel.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/carousel/carousel.thumbs.umd.js"></script>
-
-<!-- Cart LocalStorage должен загружаться перед нашим скриптом -->
 <script src="/static/js/cart-localstorage.min.js"></script>
 
 <script>
-
+// Initialize carousel
 const carouselElement = document.querySelector("#productCarousel");
 if (carouselElement) {
     const carousel = new Carousel(carouselElement, {
@@ -473,9 +555,8 @@ if (carouselElement) {
     });
 }
 
-
+// Initialize Fancybox
 Fancybox.bind('[data-fancybox="gallery"]', {
-
     Toolbar: {
         display: {
             left: [],
@@ -483,28 +564,24 @@ Fancybox.bind('[data-fancybox="gallery"]', {
             right: ["close"]
         }
     },
-
     hideClass: "f-fadeOut",
     showClass: "f-fadeIn",
     animationEffect: "fade",
     animationDuration: 300,
-
     Thumbs: false,
-
     Images: {
         zoom: true,
         Panzoom: {
             maxScale: 3
         }
     },
-
     touch: {
         vertical: false,
         momentum: false
     }
 });
 
-
+// Product data
 const productData = {
     id: {{ product.id }},
     name: "{{ product.name }}",
@@ -512,13 +589,12 @@ const productData = {
     image: "{{ product.main_image_url or '' }}"
 };
 
-
+// Button state management
 function updateButtonState() {
     const btn = document.getElementById('mainActionBtn');
     const btnText = document.getElementById('btnText');
 
     if (!window.cartLS) {
-
         setTimeout(updateButtonState, 100);
         return;
     }
@@ -526,10 +602,10 @@ function updateButtonState() {
     const isInCart = window.cartLS.exists(productData.id);
 
     if (isInCart) {
-        btn.className = 'inline-block bg-brand-light-gray text-brand-dark border border-brand-gray py-3 px-8 sm:py-4 sm:px-16 font-light tracking-[0.2em] text-xs uppercase hover:bg-gray-200 transition-all duration-300';
+        btn.className = 'inline-block bg-brand-light-gray text-brand-dark border border-brand-gray py-3 px-8 sm:py-4 sm:px-12 font-light tracking-[0.2em] text-xs uppercase hover:bg-gray-200 transition-all duration-300';
         btnText.textContent = 'ПЕРЕЙТИ В КОРЗИНУ';
     } else {
-        btn.className = 'inline-block bg-brand-brown text-white py-3 px-8 sm:py-4 sm:px-16 font-light tracking-[0.2em] text-xs uppercase hover:bg-opacity-90 transition-all duration-300';
+        btn.className = 'inline-block bg-brand-brown text-white py-3 px-8 sm:py-4 sm:px-12 font-light tracking-[0.2em] text-xs uppercase hover:bg-opacity-90 transition-all duration-300';
         btnText.textContent = 'ДОБАВИТЬ В КОРЗИНУ';
     }
 }
@@ -572,7 +648,6 @@ function showConsultationMessage() {
     const toast = template.content.cloneNode(true);
     const toastElement = toast.querySelector('.toast-slide');
 
-
     const closeBtn = toast.querySelector('.toast-close');
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
@@ -586,9 +661,7 @@ function showConsultationMessage() {
     }
 
     document.body.appendChild(toast);
-
     setTimeout(() => toastElement.classList.add('show'), 100);
-
 
     setTimeout(() => {
         if (toastElement.classList.contains('show')) {
@@ -601,7 +674,6 @@ function showConsultationMessage() {
         }
     }, 6000);
 
-
     if (window.innerWidth <= 640) {
         document.body.style.overflow = 'hidden';
         setTimeout(() => {
@@ -610,14 +682,12 @@ function showConsultationMessage() {
     }
 }
 
-
-
+// Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', function() {
-
     updateButtonState();
 });
 
-
+// Mobile toast dismissal
 document.addEventListener('click', function(e) {
     if (window.innerWidth > 640) return;
 

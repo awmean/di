@@ -8,6 +8,7 @@ from starlette import status
 
 from app.categories.repository import CategoryRepository
 from app.core.database import get_db
+from app.core.formatters import format_text
 from app.orders.repository import OrderRepository, OrderItemRepository
 from app.orders.schemas import OrderResponse, OrderCreate
 from app.products.repository import ProductRepository
@@ -15,6 +16,7 @@ from app.telegram.messenger import TelegramMessenger
 
 router = APIRouter(tags=["Web"])
 templates = Jinja2Templates(directory="templates")
+templates.env.filters['format_desc'] = format_text
 
 PRODUCTS_PER_PAGE = 36
 
@@ -57,7 +59,7 @@ async def catalog(request: Request, slug: str, db: Session = Depends(get_db)):
 
 @router.get("/catalog/{category_slug}", response_class=HTMLResponse)
 async def category_detail(
-    category_slug: str, request: Request, db: Session = Depends(get_db)
+        category_slug: str, request: Request, db: Session = Depends(get_db)
 ):
     """Category detail page with products"""
     category = CategoryRepository.get_by_slug(db, category_slug)
@@ -136,6 +138,7 @@ async def checkout(request: Request):
 async def contacts(request: Request):
     """Contacts page"""
     return templates.TemplateResponse("contacts.html", {"request": request})
+
 
 @router.get("/privacy", response_class=HTMLResponse)
 async def privacy(request: Request):
