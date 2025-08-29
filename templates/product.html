@@ -414,15 +414,6 @@
                     </div>
                     {% endif %}
 
-                    <!-- Short Description -->
-                    {% if product.description and product.description|length <= 200 %}
-                    <div class="product-info-section">
-                        <div class="text-sm sm:text-base font-light leading-relaxed text-gray-700">
-                            {{ product.description|format_desc|safe }}
-                        </div>
-                    </div>
-                    {% endif %}
-
                     <!-- Specifications -->
                     {% set specs = [] %}
                     {% if product.width %}{% set _ = specs.append(('Диаметр, мм', product.width)) %}{% endif %}
@@ -459,7 +450,7 @@
         </div>
 
         <!-- Full Description (for longer descriptions) -->
-        {% if not product.is_set and (product.description and product.description|length > 200) %}
+        {% if product.description %}
         <div class="mt-12 sm:mt-16 max-w-4xl mx-auto">
             <h3 class="text-xl sm:text-2xl font-light text-brand-dark mb-6 text-center uppercase tracking-[0.1em]">
                 Описание
