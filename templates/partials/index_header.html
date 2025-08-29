@@ -1,0 +1,293 @@
+<style>
+    .sticky-header {
+        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.85);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .mobile-menu {
+        transform: translateX(100%);
+        transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .mobile-menu.active {
+        transform: translateX(0);
+    }
+
+    .menu-overlay {
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .menu-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .hamburger-line {
+        transition: all 0.3s ease;
+    }
+
+    .hamburger.active .hamburger-line:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+    }
+
+    .hamburger.active .hamburger-line:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger.active .hamburger-line:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    .cart-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #8B4513;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 11px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 18px;
+        padding: 0 1px;
+    }
+
+    .cart-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .header-transparent {
+        background: transparent;
+        transition: background-color 0.5s ease, backdrop-filter 0.5s ease, border-bottom 0.5s ease;
+    }
+
+    .header-white {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    /* Logo text color transitions */
+    .header-transparent h1 {
+        color: white !important;
+        transition: color 0.5s ease;
+    }
+
+    .header-white h1 {
+        color: #2D1B1B !important;
+        transition: color 0.5s ease;
+    }
+
+    /* Navigation links */
+    .header-transparent nav a {
+        color: white !important;
+        transition: color 0.5s ease;
+    }
+
+    .header-white nav a {
+        color: #1f2937 !important;
+        transition: color 0.5s ease;
+    }
+
+    /* Cart icon stroke color only */
+    .header-transparent .cart-container svg {
+        stroke: white;
+        transition: stroke 0.5s ease;
+    }
+
+    .header-white .cart-container svg {
+        stroke: #1f2937;
+        transition: stroke 0.5s ease;
+    }
+
+    /* Hamburger menu lines background only */
+    .header-transparent .hamburger-line {
+        background-color: white;
+        transition: background-color 0.5s ease;
+    }
+
+    .header-white .hamburger-line {
+        background-color: #1f2937;
+        transition: background-color 0.5s ease;
+    }
+</style>
+
+<!-- Mobile Menu Overlay -->
+<div id="menu-overlay" class="menu-overlay fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"></div>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-80 bg-white z-50 shadow-2xl lg:hidden">
+    <div class="p-8 h-full flex flex-col">
+        <!-- Mobile Menu Header -->
+        <div class="flex justify-between items-center mb-12">
+            <h2 class="text-xl font-bold text-brand-dark">Luce di Villa</h2>
+            <button id="close-menu" class="text-gray-600 hover:text-brand-brown transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <nav class="flex-1">
+            <div class="space-y-8">
+                <a href="/"
+                   class="block text-base font-medium text-gray-800 hover:text-brand-brown transition-colors uppercase tracking-[0.15em]">ГЛАВНАЯ</a>
+                <a href="/catalog"
+                   class="block text-base font-medium text-gray-800 hover:text-brand-brown transition-colors uppercase tracking-[0.15em]">КАТАЛОГ</a>
+                <a href="/about"
+                   class="block text-base font-medium text-gray-800 hover:text-brand-brown transition-colors uppercase tracking-[0.15em]">О
+                    БРЕНДЕ</a>
+                <a href="/contacts"
+                   class="block text-base font-medium text-gray-800 hover:text-brand-brown transition-colors uppercase tracking-[0.15em]">КОНТАКТЫ</a>
+            </div>
+        </nav>
+
+        <!-- Mobile Contact -->
+        <div class="border-t border-gray-200 pt-8">
+            <div class="text-xl font-light mb-4 text-brand-dark">+7 (966) 872-12-02</div>
+            <div class="space-y-2 text-sm text-gray-600 font-light">
+                <div class="uppercase tracking-[0.15em]">НАПИСАТЬ В WHATSAPP</div>
+                <div class="uppercase tracking-[0.15em]">НАПИСАТЬ В TELEGRAM</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Header -->
+<header id="main-header" class="header-transparent fixed top-0 z-30 w-full">
+    <div class="max-w-7xl mx-auto px-8">
+        <div class="flex items-center justify-between h-20">
+            <!-- Logo -->
+            <div class="flex-shrink-0">
+                <a href="/">
+                    <h1 class="text-2xl font-bold text-brand-dark tracking-tight">Luce di Villa</h1>
+                </a>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden lg:flex space-x-16">
+                <a href="/"
+                   class="text-gray-800 hover:text-brand-brown transition-colors uppercase text-xs font-medium tracking-[0.25em]">ГЛАВНАЯ</a>
+                <a href="/catalog"
+                   class="text-gray-800 hover:text-brand-brown transition-colors uppercase text-xs font-medium tracking-[0.25em]">КАТАЛОГ</a>
+                <a href="/about"
+                   class="text-gray-800 hover:text-brand-brown transition-colors uppercase text-xs font-medium tracking-[0.25em]">О
+                    БРЕНДЕ</a>
+                <a href="/contacts"
+                   class="text-gray-800 hover:text-brand-brown transition-colors uppercase text-xs font-medium tracking-[0.25em]">КОНТАКТЫ</a>
+            </nav>
+
+            <!-- Desktop Cart -->
+            <div class="hidden lg:flex items-center">
+                <a href="/checkout" class="cart-container text-gray-800 hover:text-brand-brown transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 10H6L5 9z"></path>
+                    </svg>
+                    <span id="cart-count" class="cart-badge">0</span>
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="flex lg:hidden items-center space-x-4">
+                <!-- Mobile Cart -->
+                <a href="/checkout" class="cart-container text-gray-800 hover:text-brand-brown transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 10H6L5 9z"></path>
+                    </svg>
+                    <span id="mobile-cart-count" class="cart-badge">0</span>
+                </a>
+
+                <button id="menu-toggle" class="hamburger flex flex-col justify-center items-center w-6 h-6 space-y-1">
+                    <span class="hamburger-line w-5 h-0.5 bg-gray-800"></span>
+                    <span class="hamburger-line w-5 h-0.5 bg-gray-800"></span>
+                    <span class="hamburger-line w-5 h-0.5 bg-gray-800"></span>
+            </div>
+        </div>
+    </div>
+    </div>
+</header>
+
+<script>
+
+    function updateCartCount() {
+        if (typeof cartLS !== 'undefined') {
+            const count = cartLS.list().length;
+            const desktopBadge = document.getElementById('cart-count');
+            const mobileBadge = document.getElementById('mobile-cart-count');
+
+            if (desktopBadge) desktopBadge.textContent = count;
+            if (mobileBadge) mobileBadge.textContent = count;
+
+
+            if (count === 0) {
+                if (desktopBadge) desktopBadge.style.display = 'none';
+                if (mobileBadge) mobileBadge.style.display = 'none';
+            } else {
+                if (desktopBadge) desktopBadge.style.display = 'flex';
+                if (mobileBadge) mobileBadge.style.display = 'flex';
+            }
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        updateCartCount();
+
+
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const closeMenu = document.getElementById('close-menu');
+
+        function openMenu() {
+            mobileMenu.classList.add('active');
+            menuOverlay.classList.add('active');
+            menuToggle.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenuFunc() {
+            mobileMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            menuToggle.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        if (menuToggle) menuToggle.addEventListener('click', openMenu);
+        if (closeMenu) closeMenu.addEventListener('click', closeMenuFunc);
+        if (menuOverlay) menuOverlay.addEventListener('click', closeMenuFunc);
+
+
+        const header = document.getElementById('main-header');
+        let lastScrollY = window.scrollY;
+
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+
+            if (currentScrollY > 50) {
+                // Add white background when scrolled
+                header.classList.remove('header-transparent');
+                header.classList.add('header-white');
+            } else {
+                // Keep transparent when at top
+                header.classList.remove('header-white');
+                header.classList.add('header-transparent');
+            }
+        });
+    });
+
+
+    window.updateCartCount = updateCartCount;
+</script>
