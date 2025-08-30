@@ -489,13 +489,12 @@ Dropzone.autoDiscover = false;
 
 const myDropzone = new Dropzone("#media-dropzone", {
     paramName: "files",
-    maxFilesize: 10,
-    acceptedFiles: "image/*",
+    maxFilesize: 100,
+    acceptedFiles: "image/*,video/*",
     maxFiles: 10,
     addRemoveLinks: true,
     sending: function(file, xhr, formData) {
         formData.append("product_id", "{{ product.id }}");
-        formData.append("media_type", "photo");
     },
     success: function(file, response) {
 

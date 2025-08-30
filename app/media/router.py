@@ -1,7 +1,7 @@
 import os
 import uuid
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
 from sqlalchemy.orm import Session
@@ -23,14 +23,16 @@ ALLOWED_IMAGE_TYPES = {
     "image/gif",
 }
 ALLOWED_VIDEO_TYPES = {"video/mp4", "video/avi", "video/mov", "video/wmv", "video/webm"}
-MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
+
+ALLOWED_TYPES = ALLOWED_IMAGE_TYPES | ALLOWED_VIDEO_TYPES
+MAX_FILE_SIZE = 100 * 1024 * 1024  # 50MB
 UPLOAD_DIR = "uploads/media"
 
 # Ensure upload directory exists
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
-def validate_file(file: UploadFile, file_type: str) -> None:
+def validate_file(file: UploadFile) -> Optional[str]:
     """Validate uploaded file"""
     if not file.filename:
         raise HTTPException(
@@ -45,12 +47,13 @@ def validate_file(file: UploadFile, file_type: str) -> None:
         )
 
     # Check file type
-    allowed_types = ALLOWED_IMAGE_TYPES if file_type == "photo" else ALLOWED_VIDEO_TYPES
-    if file.content_type not in allowed_types:
+    if file.content_type not in ALLOWED_TYPES:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid file type. Allowed types: {', '.join(allowed_types)}",
+            detail=f"Invalid file type. Allowed types: {', '.join(ALLOWED_TYPES)}",
         )
+
+    return 'photo' if file.content_type in ALLOWED_IMAGE_TYPES else 'video' if file.content_type in ALLOWED_VIDEO_TYPES else None
 
 
 def generate_filename(original_filename: str) -> str:
@@ -80,11 +83,10 @@ async def save_file(file: UploadFile, filename: str) -> str:
     "/upload", response_model=MediaResponse, status_code=status.HTTP_201_CREATED
 )
 async def upload_media(
-    product_id: int = Form(...),
-    media_type: str = Form(..., regex="^(photo|video)$"),
-    alt_text: str = Form(None),
-    file: UploadFile = File(...),
-    db: Session = Depends(get_db),
+        product_id: int = Form(...),
+        alt_text: str = Form(None),
+        file: UploadFile = File(...),
+        db: Session = Depends(get_db),
 ):
     """Upload media file for a product"""
     # Validate product exists
@@ -95,7 +97,7 @@ async def upload_media(
         )
 
     # Validate file
-    validate_file(file, media_type)
+    media_type = validate_file(file)
 
     # Generate unique filename
     filename = generate_filename(file.filename)
@@ -135,10 +137,9 @@ async def upload_media(
     status_code=status.HTTP_201_CREATED,
 )
 async def upload_multiple_media(
-    product_id: int = Form(...),
-    media_type: str = Form(..., regex="^(photo|video)$"),
-    files: List[UploadFile] = File(...),
-    db: Session = Depends(get_db),
+        product_id: int = Form(...),
+        files: List[UploadFile] = File(...),
+        db: Session = Depends(get_db),
 ):
     """Upload multiple media files for a product"""
     # Validate product exists
@@ -160,7 +161,7 @@ async def upload_multiple_media(
     try:
         for i, file in enumerate(files):
             # Validate file
-            validate_file(file, media_type)
+            media_type = validate_file(file)
 
             # Generate unique filename
             filename = generate_filename(file.filename)

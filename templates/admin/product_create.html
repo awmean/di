@@ -452,13 +452,12 @@ document.getElementById('product-form').addEventListener('submit', function(e) {
 
             myDropzone = new Dropzone("#media-dropzone", {
                 paramName: "files",
-                maxFilesize: 10,
-                acceptedFiles: "image/*",
+                maxFilesize: 100,
+                acceptedFiles: "image/*,video/*",
                 maxFiles: 10,
                 addRemoveLinks: true,
                 sending: function(file, xhr, formData) {
                     formData.append("product_id", document.getElementById('upload-product-id').value);
-                    formData.append("media_type", "photo");
                 },
                 success: function(file, response) {
 
