@@ -11,4 +11,5 @@ jinja2
 python-multipart
 starlette
 python-telegram-bot
-redisPillow
+redis
+Pillow
