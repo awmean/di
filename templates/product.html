@@ -416,10 +416,34 @@
 
                     <!-- Specifications -->
                     {% set specs = [] %}
-                    {% if product.width %}{% set _ = specs.append(('Диаметр, мм', product.width)) %}{% endif %}
-                    {% if product.height %}{% set _ = specs.append(('Высота, мм', product.height)) %}{% endif %}
-                    {% if product.color %}{% set _ = specs.append(('Варианты исполнения', product.color)) %}{% endif %}
-                    {% if product.material %}{% set _ = specs.append(('Применение', product.material)) %}{% endif %}
+
+                    {# Dimensions #}
+                    {% if product.width %}{% set _ = specs.append(('Ширина, см', product.width)) %}{% endif %}
+                    {% if product.height %}{% set _ = specs.append(('Высота, см', product.height)) %}{% endif %}
+                    {% if product.depth %}{% set _ = specs.append(('Глубина, см', product.depth)) %}{% endif %}
+                    {% if product.weight %}{% set _ = specs.append(('Вес, кг', product.weight)) %}{% endif %}
+
+                    {# Basic characteristics #}
+                    {% if product.color %}{% set _ = specs.append(('Цвет', product.color)) %}{% endif %}
+                    {% if product.material %}{% set _ = specs.append(('Основной материал', product.material)) %}{% endif
+                    %}
+
+                    {# Furniture-specific characteristics #}
+                    {% if product.frame_material %}{% set _ = specs.append(('Материал каркаса', product.frame_material))
+                    %}{% endif %}
+                    {% if product.fabric_material %}{% set _ = specs.append(('Материал обивки',
+                    product.fabric_material)) %}{% endif %}
+                    {% if product.fabric_density %}{% set _ = specs.append(('Плотность ткани, г/м²',
+                    product.fabric_density)) %}{% endif %}
+                    {% if product.cushion_filling %}{% set _ = specs.append(('Наполнение подушек',
+                    product.cushion_filling)) %}{% endif %}
+
+                    {# Set information #}
+                    {% if product.set_piece_count %}{% set _ = specs.append(('Количество предметов в комплекте',
+                    product.set_piece_count)) %}{% endif %}
+
+                    {# Product identification #}
+                    {% if product.sku %}{% set _ = specs.append(('Артикул', product.sku)) %}{% endif %}
 
                     {% if specs %}
                     <div class="product-info-section">
