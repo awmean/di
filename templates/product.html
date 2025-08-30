@@ -295,7 +295,7 @@
     gap: 1rem;
     padding: 0.75rem 0;
     border-bottom: 1px solid #f3f4f6;
-    font-size: 0.875rem; /* Уменьшили размер шрифта */
+    font-size: 0.875rem;
     align-items: start;
 }
 
@@ -306,7 +306,7 @@
 .spec-item .label {
     color: #6b7280;
     font-weight: 300;
-    font-size: 0.8rem; /* Еще меньше для лейблов */
+    font-size: 0.8rem;
 }
 
 .spec-item .value {
@@ -317,12 +317,47 @@
     overflow-wrap: break-word;
 }
 
+/* Price and Button Section Styles */
+.price-button-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .price-button-section {
+        align-items: flex-start;
+    }
+}
+
+.price-container {
+    text-align: center;
+}
+
+@media (min-width: 1024px) {
+    .price-container {
+        text-align: left;
+    }
+}
+
+.button-container {
+    width: 100%;
+    text-align: center;
+}
+
+@media (min-width: 1024px) {
+    .button-container {
+        text-align: left;
+    }
+}
+
 /* Мобильная адаптация */
 @media (max-width: 640px) {
     .spec-item {
         grid-template-columns: 1fr;
         gap: 0.25rem;
-        font-size: 0.8125rem; /* Еще меньше на мобильных */
+        font-size: 0.8125rem;
     }
 
     .spec-item .label {
@@ -332,6 +367,10 @@
 
     .spec-item .value {
         font-size: 0.8125rem;
+    }
+
+    .price-button-section {
+        gap: 1rem;
     }
 }
 </style>
@@ -406,18 +445,26 @@
 
                 <!-- Product Info -->
                 <div class="space-y-8">
-                    <!-- Price Section -->
+                    <!-- Price and Button Section -->
                     {% if product.price %}
                     <div class="product-info-section">
-                        <div class="text-center lg:text-left">
-                            <span class="text-3xl sm:text-4xl font-light text-brand-dark">{{ product.price|round(0)|int }} ₽</span>
-                            {% if product.old_price and product.old_price > product.price %}
-                            <span class="text-xl sm:text-2xl text-brand-gray line-through ml-4 font-light">{{ product.old_price|round(0)|int }} ₽</span>
-                            {% endif %}
+                        <div class="price-button-section">
+                            <div class="price-container">
+                                <span class="text-3xl sm:text-4xl font-light text-brand-dark" id="productPrice">{{ "{:,}".format(product.price|round(0)|int).replace(',', ' ') }} ₽</span>
+                                {% if product.old_price and product.old_price > product.price %}
+                                <span class="text-xl sm:text-2xl text-brand-gray line-through ml-4 font-light" id="productOldPrice">{{ "{:,}".format(product.old_price|round(0)|int).replace(',', ' ') }} ₽</span>
+                                {% endif %}
+                                {% if product.is_set %}
+                                <p class="text-sm text-brand-gray mt-2 font-light uppercase tracking-[0.1em]">Цена за комплект</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="button-container">
+                                <button id="mainActionBtn" onclick="handleMainAction()" class="inline-block py-3 px-8 sm:py-4 sm:px-12 font-light tracking-[0.2em] text-xs uppercase transition-all duration-300">
+                                    <span id="btnText">ДОБАВИТЬ В КОРЗИНУ</span>
+                                </button>
+                            </div>
                         </div>
-                        {% if product.is_set %}
-                        <p class="text-sm text-brand-gray mt-2 font-light uppercase tracking-[0.1em] text-center lg:text-left">Цена за комплект</p>
-                        {% endif %}
                     </div>
                     {% endif %}
 
@@ -470,7 +517,6 @@
                         <h3 class="text-lg sm:text-xl font-light text-brand-dark mb-4 uppercase tracking-[0.1em] text-center lg:text-left">
                             Характеристики
                         </h3>
-                        <!-- Убираем div с классом spec-grid и space-y-3 -->
                         <div>
                             {% for label, value in specs %}
                             <div class="spec-item">
@@ -481,15 +527,6 @@
                         </div>
                     </div>
                     {% endif %}
-
-                    <!-- Action Button -->
-                    <div class="product-info-section">
-                        <div class="text-center lg:text-left">
-                            <button id="mainActionBtn" onclick="handleMainAction()" class="inline-block py-3 px-8 sm:py-4 sm:px-12 font-light tracking-[0.2em] text-xs uppercase transition-all duration-300">
-                                <span id="btnText">ДОБАВИТЬ В КОРЗИНУ</span>
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
