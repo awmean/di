@@ -1,32 +1,14 @@
-# Web Framework
+alembic
 fastapi
 uvicorn
-
-# Database
 sqlalchemy
 psycopg2-binary
-
-# Validation and Data Processing
 pydantic
-
-# Password Hashing
 passlib
-
-# Environment Variables
 python-dotenv
-
-# HTTP Requests
 requests
-
-# File Handling
-
-# Template Engine
 jinja2
-
-# Static Files and Forms
 python-multipart
-
-# ASGI Server Dependencies
 starlette
 python-telegram-bot
 redis
