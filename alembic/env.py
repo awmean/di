@@ -11,6 +11,7 @@ from app.products.models import Product
 from app.admin_users.models import AdminUser
 from app.media.models import Media
 from app.orders.models import Order
+from app.categories.models import Category
 
 config = context.config
 
