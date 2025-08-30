@@ -276,17 +276,148 @@
     }
 }
 
-/* Product info section styling */
-.product-info-section {
-    border-bottom: 1px solid #f3f4f6;
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
+/* New centered content section styles */
+.content-section {
+    max-width: 4xl;
+    margin: 0 auto;
+    text-align: center;
 }
 
-.product-info-section:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
+.content-section > h3 {
+    font-size: 1.25rem;
+    font-weight: 300;
+    color: #374151;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+@media (min-width: 640px) {
+    .content-section > h3 {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+    }
+}
+
+/* Price and Button Section Styles - now centered */
+.price-section {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.price-container {
+    margin-bottom: 2rem;
+}
+
+.price-container .main-price {
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: #374151;
+    display: block;
+}
+
+.price-container .old-price {
+    font-size: 1.5rem;
+    color: #9ca3af;
+    text-decoration: line-through;
+    font-weight: 300;
+    margin-left: 1rem;
+}
+
+.price-container .set-note {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    margin-top: 0.5rem;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+@media (min-width: 640px) {
+    .price-container .main-price {
+        font-size: 3rem;
+    }
+
+    .price-container .old-price {
+        font-size: 2rem;
+    }
+
+    .price-section {
+        margin-bottom: 4rem;
+    }
+}
+
+/* Parent product section */
+.parent-product-section {
+    margin-bottom: 3rem;
+}
+
+.parent-product-card {
+    background-color: #f9fafb;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    max-width: 28rem;
+    margin: 0 auto;
+}
+
+.parent-product-card p {
+    color: #9ca3af;
+    margin-bottom: 0.75rem;
+    font-weight: 300;
+}
+
+.parent-product-card a {
+    color: #374151;
+    font-weight: 500;
+    font-size: 1.125rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.parent-product-card a:hover {
+    color: #8B7355;
+}
+
+.description-section {
+    margin-bottom: 4rem;
+}
+
+.description-content {
+    max-width: 600px; /* Вместо 2xl - намного уже */
+    margin: 0 auto;
+    font-size: 0.875rem;
+    font-weight: 300;
+    line-height: 1.6;
+    color: #4b5563;
+    text-align: left;
+}
+
+@media (min-width: 640px) {
+    .description-content {
+        font-size: 1rem;
+        line-height: 1.7;
+        max-width: 700px; /* Увеличиваем чуть больше на больших экранах, но все равно узко */
+    }
+}
+
+/* Specifications section - еще более узкая */
+.specs-section {
+    margin-bottom: 4rem;
+}
+
+.specs-grid {
+    max-width: 500px; /* Очень узкая для характеристик */
+    margin: 0 auto;
+    display: grid;
+    gap: 1rem;
+    text-align: left;
+}
+
+@media (min-width: 640px) {
+    .specs-grid {
+        max-width: 550px; /* Немного шире на больших экранах, но все равно узко */
+    }
 }
 
 .spec-item {
@@ -317,43 +448,15 @@
     overflow-wrap: break-word;
 }
 
-/* Price and Button Section Styles */
-.price-button-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-@media (min-width: 1024px) {
-    .price-button-section {
-        align-items: flex-start;
-    }
-}
-
-.price-container {
-    text-align: center;
-}
-
-@media (min-width: 1024px) {
-    .price-container {
-        text-align: left;
-    }
-}
-
-.button-container {
-    width: 100%;
-    text-align: center;
-}
-
-@media (min-width: 1024px) {
-    .button-container {
-        text-align: left;
-    }
-}
-
-/* Мобильная адаптация */
 @media (max-width: 640px) {
+    .description-content {
+        max-width: none; /* На мобильных используем всю ширину */
+    }
+
+    .specs-grid {
+        max-width: none; /* На мобильных используем всю ширину */
+    }
+
     .spec-item {
         grid-template-columns: 1fr;
         gap: 0.25rem;
@@ -367,10 +470,6 @@
 
     .spec-item .value {
         font-size: 0.8125rem;
-    }
-
-    .price-button-section {
-        gap: 1rem;
     }
 }
 </style>
@@ -396,159 +495,135 @@
             </h1>
         </div>
 
-        <!-- Main Product Section -->
-        <div class="max-w-6xl mx-auto">
-            <div class="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
-                <!-- Product Images -->
-                <div class="lg:sticky lg:top-8">
-                    {% if product.images %}
-                        {% if product.images|length > 1 %}
-                        <!-- Multiple Images - Carousel -->
-                        <div class="product-carousel">
-                            <div class="f-carousel" id="productCarousel">
-                                {% if product.main_image_url %}
-                                <div class="f-carousel__slide" data-thumb-src="{{ product.main_image_url }}">
-                                    <a href="{{ product.main_image_url }}" data-fancybox="gallery" data-caption="{{ product.name }}" class="block w-full h-full">
-                                        <img src="{{ product.main_image_url }}" alt="{{ product.name }}">
-                                    </a>
-                                </div>
-                                {% endif %}
-
-                                {% for image in product.images[1:] %}
-                                <div class="f-carousel__slide" data-thumb-src="/{{ image.file_path }}">
-                                    <a href="/{{ image.file_path }}" data-fancybox="gallery" data-caption="{{ product.name }} - дополнительное фото" class="block w-full h-full">
-                                        <img src="/{{ image.file_path }}" alt="{{ product.name }}">
-                                    </a>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        {% else %}
-                        <!-- Single Image -->
-                        <div class="aspect-[3/2] bg-white overflow-hidden rounded-lg">
-                            {% if product.main_image_url %}
+        <!-- 1. Product Images -->
+        <div class="mb-8 sm:mb-12">
+            {% if product.images %}
+                {% if product.images|length > 1 %}
+                <!-- Multiple Images - Carousel -->
+                <div class="product-carousel max-w-4xl mx-auto">
+                    <div class="f-carousel" id="productCarousel">
+                        {% if product.main_image_url %}
+                        <div class="f-carousel__slide" data-thumb-src="{{ product.main_image_url }}">
                             <a href="{{ product.main_image_url }}" data-fancybox="gallery" data-caption="{{ product.name }}" class="block w-full h-full">
-                                <img src="{{ product.main_image_url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                                <img src="{{ product.main_image_url }}" alt="{{ product.name }}">
                             </a>
-                            {% endif %}
                         </div>
                         {% endif %}
-                    {% else %}
-                    <!-- No Image Placeholder -->
-                    <div class="relative flex items-center justify-center text-gray-300 bg-brand-light-gray aspect-[3/2] rounded-lg">
-                        <svg class="w-16 h-16 sm:w-24 sm:h-24" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                    {% endif %}
-                </div>
 
-                <!-- Product Info -->
-                <div class="space-y-8">
-                    <!-- Price and Button Section -->
-                    {% if product.price %}
-                    <div class="product-info-section">
-                        <div class="price-button-section">
-                            <div class="price-container">
-                                <span class="text-3xl sm:text-4xl font-light text-brand-dark" id="productPrice">{{ "{:,}".format(product.price|round(0)|int).replace(',', ' ') }} ₽</span>
-                                {% if product.old_price and product.old_price > product.price %}
-                                <span class="text-xl sm:text-2xl text-brand-gray line-through ml-4 font-light" id="productOldPrice">{{ "{:,}".format(product.old_price|round(0)|int).replace(',', ' ') }} ₽</span>
-                                {% endif %}
-                                {% if product.is_set %}
-                                <p class="text-sm text-brand-gray mt-2 font-light uppercase tracking-[0.1em]">Цена за комплект</p>
-                                {% endif %}
-                            </div>
-
-                            <div class="button-container">
-                                <button id="mainActionBtn" onclick="handleMainAction()" class="inline-block py-3 px-8 sm:py-4 sm:px-12 font-light tracking-[0.2em] text-xs uppercase transition-all duration-300">
-                                    <span id="btnText">ДОБАВИТЬ В КОРЗИНУ</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <!-- Parent Product Link -->
-                    {% if product.parent %}
-                    <div class="product-info-section">
-                        <div class="p-4 sm:p-6 bg-brand-light-gray rounded-lg text-center">
-                            <p class="text-brand-gray mb-3 font-light">Этот товар входит в:</p>
-                            <a href="/product/{{ product.parent.slug }}" class="text-brand-dark font-medium text-lg hover:text-brand-brown transition-colors">
-                                {{ product.parent.name }}
+                        {% for image in product.images[1:] %}
+                        <div class="f-carousel__slide" data-thumb-src="/{{ image.file_path }}">
+                            <a href="/{{ image.file_path }}" data-fancybox="gallery" data-caption="{{ product.name }} - дополнительное фото" class="block w-full h-full">
+                                <img src="/{{ image.file_path }}" alt="{{ product.name }}">
                             </a>
                         </div>
+                        {% endfor %}
                     </div>
+                </div>
+                {% else %}
+                <!-- Single Image -->
+                <div class="aspect-[3/2] bg-white overflow-hidden rounded-lg max-w-3xl mx-auto">
+                    {% if product.main_image_url %}
+                    <a href="{{ product.main_image_url }}" data-fancybox="gallery" data-caption="{{ product.name }}" class="block w-full h-full">
+                        <img src="{{ product.main_image_url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                    </a>
                     {% endif %}
+                </div>
+                {% endif %}
+            {% else %}
+            <!-- No Image Placeholder -->
+            <div class="relative flex items-center justify-center text-gray-300 bg-brand-light-gray aspect-[3/2] rounded-lg max-w-3xl mx-auto">
+                <svg class="w-16 h-16 sm:w-24 sm:h-24" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                </svg>
+            </div>
+            {% endif %}
+        </div>
 
-                    <!-- Specifications -->
-                    {% set specs = [] %}
+        <!-- 2. Price and Add to Cart -->
+        {% if product.price %}
+        <div class="price-section">
+            <div class="price-container">
+                <span class="main-price" id="productPrice">{{ "{:,}".format(product.price|round(0)|int).replace(',', ' ') }} ₽</span>
+                {% if product.old_price and product.old_price > product.price %}
+                <span class="old-price" id="productOldPrice">{{ "{:,}".format(product.old_price|round(0)|int).replace(',', ' ') }} ₽</span>
+                {% endif %}
+                {% if product.is_set %}
+                <p class="set-note">Цена за комплект</p>
+                {% endif %}
+            </div>
 
-                    {# Dimensions #}
-                    {% if product.width %}{% set _ = specs.append(('Ширина, см', product.width)) %}{% endif %}
-                    {% if product.height %}{% set _ = specs.append(('Высота, см', product.height)) %}{% endif %}
-                    {% if product.depth %}{% set _ = specs.append(('Глубина, см', product.depth)) %}{% endif %}
-                    {% if product.weight %}{% set _ = specs.append(('Вес, кг', product.weight)) %}{% endif %}
+            <div>
+                <button id="mainActionBtn" onclick="handleMainAction()" class="inline-block py-3 px-8 sm:py-4 sm:px-12 font-light tracking-[0.2em] text-xs uppercase transition-all duration-300">
+                    <span id="btnText">ДОБАВИТЬ В КОРЗИНУ</span>
+                </button>
+            </div>
+        </div>
+        {% endif %}
 
-                    {# Basic characteristics #}
-                    {% if product.color %}{% set _ = specs.append(('Цвет', product.color)) %}{% endif %}
-                    {% if product.material %}{% set _ = specs.append(('Основной материал', product.material)) %}{% endif
-                    %}
+        <!-- Parent Product Link -->
+        {% if product.parent %}
+        <div class="parent-product-section">
+            <div class="parent-product-card">
+                <p>Этот товар входит в:</p>
+                <a href="/product/{{ product.parent.slug }}">
+                    {{ product.parent.name }}
+                </a>
+            </div>
+        </div>
+        {% endif %}
 
-                    {# Furniture-specific characteristics #}
-                    {% if product.frame_material %}{% set _ = specs.append(('Материал каркаса', product.frame_material))
-                    %}{% endif %}
-                    {% if product.fabric_material %}{% set _ = specs.append(('Материал обивки',
-                    product.fabric_material)) %}{% endif %}
-                    {% if product.fabric_density %}{% set _ = specs.append(('Плотность ткани, г/м²',
-                    product.fabric_density)) %}{% endif %}
-                    {% if product.cushion_filling %}{% set _ = specs.append(('Наполнение подушек',
-                    product.cushion_filling)) %}{% endif %}
-
-                    {# Set information #}
-                    {% if product.set_piece_count %}{% set _ = specs.append(('Количество предметов в комплекте',
-                    product.set_piece_count)) %}{% endif %}
-
-                    {# Product identification #}
-                    {% if product.sku %}{% set _ = specs.append(('Артикул', product.sku)) %}{% endif %}
-
-                    <!-- Specifications -->
-                    {% if specs %}
-                    <div class="product-info-section">
-                        <h3 class="text-lg sm:text-xl font-light text-brand-dark mb-4 uppercase tracking-[0.1em] text-center lg:text-left">
-                            Характеристики
-                        </h3>
-                        <div>
-                            {% for label, value in specs %}
-                            <div class="spec-item">
-                                <span class="label">{{ label }}</span>
-                                <span class="value">{{ value }}</span>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endif %}
+        <!-- 3. Description -->
+        {% if product.description %}
+        <div class="description-section">
+            <div class="content-section">
+                <h3>Описание</h3>
+                <div class="description-content">
+                    {{ product.description|format_desc|safe }}
                 </div>
             </div>
         </div>
+        {% endif %}
 
-        <!-- Full Description (for longer descriptions) -->
-        {% if product.description %}
-        <div class="mt-12 sm:mt-16 max-w-4xl mx-auto">
-            <h3 class="text-xl sm:text-2xl font-light text-brand-dark mb-6 text-center uppercase tracking-[0.1em]">
-                Описание
-            </h3>
-            <div class="prose prose-gray max-w-none text-sm sm:text-base font-light leading-relaxed">
-                {{ product.description|format_desc|safe }}
+        <!-- 4. Specifications -->
+        {% set specs = [] %}
+        {# Dimensions #}
+        {% if product.width %}{% set _ = specs.append(('Ширина, см', product.width)) %}{% endif %}
+        {% if product.height %}{% set _ = specs.append(('Высота, см', product.height)) %}{% endif %}
+        {% if product.depth %}{% set _ = specs.append(('Глубина, см', product.depth)) %}{% endif %}
+        {% if product.weight %}{% set _ = specs.append(('Вес, кг', product.weight)) %}{% endif %}
+        {# Basic characteristics #}
+        {% if product.color %}{% set _ = specs.append(('Цвет', product.color)) %}{% endif %}
+        {% if product.material %}{% set _ = specs.append(('Основной материал', product.material)) %}{% endif %}
+        {# Furniture-specific characteristics #}
+        {% if product.frame_material %}{% set _ = specs.append(('Материал каркаса', product.frame_material)) %}{% endif %}
+        {% if product.fabric_material %}{% set _ = specs.append(('Материал обивки', product.fabric_material)) %}{% endif %}
+        {% if product.fabric_density %}{% set _ = specs.append(('Плотность ткани, г/м²', product.fabric_density)) %}{% endif %}
+        {% if product.cushion_filling %}{% set _ = specs.append(('Наполнение подушек', product.cushion_filling)) %}{% endif %}
+        {# Set information #}
+        {% if product.set_piece_count %}{% set _ = specs.append(('Количество предметов в комплекте', product.set_piece_count)) %}{% endif %}
+        {# Product identification #}
+        {% if product.sku %}{% set _ = specs.append(('Артикул', product.sku)) %}{% endif %}
+
+        {% if specs %}
+        <div class="specs-section">
+            <div class="content-section">
+                <h3>Характеристики</h3>
+                <div class="specs-grid">
+                    {% for label, value in specs %}
+                    <div class="spec-item">
+                        <span class="label">{{ label }}</span>
+                        <span class="value">{{ value }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
         {% endif %}
 
         <!-- Set Components -->
         {% if product.is_set and product.children %}
-        <div class="mt-12 sm:mt-16">
-            <h2 class="text-xl sm:text-2xl font-light text-brand-dark mb-6 sm:mb-8 text-center uppercase tracking-[0.1em]">
-                Комплект включает
-            </h2>
+        <div class="content-section">
+            <h3>Комплект включает</h3>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
                 {% for child in product.children %}
                 <div class="group text-center">
