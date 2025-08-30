@@ -504,16 +504,16 @@
                     <div class="f-carousel" id="productCarousel">
                         {% if product.main_image_url %}
                         <div class="f-carousel__slide" data-thumb-src="{{ product.main_image_url }}">
-                            <a href="{{ product.main_image_url }}" data-fancybox="gallery" data-caption="{{ product.name }}" class="block w-full h-full">
-                                <img src="{{ product.main_image_url }}" alt="{{ product.name }}">
+                            <a href="/uploads/media/{{ product.media[0].filename_large }}" data-fancybox="gallery" data-caption="{{ product.name }}" class="block w-full h-full">
+                                <img src="/uploads/media/{{ product.media[0].filename_large }}" alt="{{ product.name }}">
                             </a>
                         </div>
                         {% endif %}
 
                         {% for image in product.images[1:] %}
                         <div class="f-carousel__slide" data-thumb-src="/{{ image.file_path }}">
-                            <a href="/{{ image.file_path }}" data-fancybox="gallery" data-caption="{{ product.name }} - дополнительное фото" class="block w-full h-full">
-                                <img src="/{{ image.file_path }}" alt="{{ product.name }}">
+                            <a href="/uploads/media/{{ image.filename_large }}" data-fancybox="gallery" data-caption="{{ product.name }} - дополнительное фото" class="block w-full h-full">
+                                <img src="/uploads/media/{{ image.filename_large }}" alt="{{ product.name }}">
                             </a>
                         </div>
                         {% endfor %}
@@ -523,8 +523,8 @@
                 <!-- Single Image -->
                 <div class="aspect-[3/2] bg-white overflow-hidden rounded-lg max-w-3xl mx-auto">
                     {% if product.main_image_url %}
-                    <a href="{{ product.main_image_url }}" data-fancybox="gallery" data-caption="{{ product.name }}" class="block w-full h-full">
-                        <img src="{{ product.main_image_url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                    <a href="/uploads/media/{{ product.media[0].filename_large }}" data-fancybox="gallery" data-caption="{{ product.name }}" class="block w-full h-full">
+                        <img src="/uploads/media/{{ product.media[0].filename_large }}" alt="{{ product.name }}" class="w-full h-full object-cover">
                     </a>
                     {% endif %}
                 </div>
