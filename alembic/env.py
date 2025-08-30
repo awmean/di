@@ -7,6 +7,11 @@ from sqlalchemy import pool
 from app.core.config import settings
 from app.models import Base
 
+from app.products.models import Product
+from app.admin_users.models import AdminUser
+from app.media.models import Media
+from app.orders.models import Order
+
 config = context.config
 
 if config.config_file_name is not None:
