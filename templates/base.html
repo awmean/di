@@ -5,6 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Luce di Villa - Уникальная мебель для вашего пространства{% endblock %}</title>
 
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{% block meta_description %}Luce di Villa - современная дизайнерская мебель высокого качества. Диваны, столы, стулья и аксессуары с доставкой по России. Откройте для себя безграничные возможности современного дизайна.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}мебель, дизайнерская мебель, диваны, столы, стулья, современный дизайн, Luce di Villa, качественная мебель{% endblock %}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}{{ request.url }}{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}Luce di Villa - Уникальная мебель для вашего пространства{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Откройте для себя безграничные возможности современного дизайна — от винтажной классики до передовых инноваций. Мебель высокого качества с индивидуальным подходом.{% endblock %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Luce di Villa">
+    <meta property="og:locale" content="ru_RU">
+
+    <!-- Twitter Card -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{% block twitter_url %}{{ request.url }}{% endblock %}">
+    <meta property="twitter:title" content="{% block twitter_title %}Luce di Villa - Уникальная мебель для вашего пространства{% endblock %}">
+    <meta property="twitter:description" content="{% block twitter_description %}Откройте для себя безграничные возможности современного дизайна — от винтажной классики до передовых инноваций.{% endblock %}">
+
+    <!-- Favicon -->
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{% block canonical %}{{ request.url }}{% endblock %}">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
