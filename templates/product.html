@@ -289,31 +289,50 @@
     padding-bottom: 0;
 }
 
-.spec-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-@media (max-width: 640px) {
-    .spec-grid {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-    }
-}
-
 .spec-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) 2fr;
+    gap: 1rem;
     padding: 0.75rem 0;
     border-bottom: 1px solid #f3f4f6;
+    font-size: 0.875rem; /* Уменьшили размер шрифта */
+    align-items: start;
 }
 
 .spec-item:last-child {
     border-bottom: none;
+}
+
+.spec-item .label {
+    color: #6b7280;
+    font-weight: 300;
+    font-size: 0.8rem; /* Еще меньше для лейблов */
+}
+
+.spec-item .value {
+    color: #374151;
+    font-weight: 400;
+    line-height: 1.4;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 640px) {
+    .spec-item {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+        font-size: 0.8125rem; /* Еще меньше на мобильных */
+    }
+
+    .spec-item .label {
+        font-size: 0.75rem;
+        margin-bottom: 0.125rem;
+    }
+
+    .spec-item .value {
+        font-size: 0.8125rem;
+    }
 }
 </style>
 {% endblock %}
@@ -445,16 +464,18 @@
                     {# Product identification #}
                     {% if product.sku %}{% set _ = specs.append(('Артикул', product.sku)) %}{% endif %}
 
+                    <!-- Specifications -->
                     {% if specs %}
                     <div class="product-info-section">
                         <h3 class="text-lg sm:text-xl font-light text-brand-dark mb-4 uppercase tracking-[0.1em] text-center lg:text-left">
                             Характеристики
                         </h3>
-                        <div class="space-y-3">
+                        <!-- Убираем div с классом spec-grid и space-y-3 -->
+                        <div>
                             {% for label, value in specs %}
                             <div class="spec-item">
-                                <span class="text-brand-gray font-light text-sm sm:text-base">{{ label }}</span>
-                                <span class="text-brand-dark font-normal text-sm sm:text-base">{{ value }}</span>
+                                <span class="label">{{ label }}</span>
+                                <span class="value">{{ value }}</span>
                             </div>
                             {% endfor %}
                         </div>
