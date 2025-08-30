@@ -112,7 +112,7 @@
                             <h3 class="font-medium text-lg text-brand-dark">{{ product.name }}</h3>
                             <div class="flex items-center justify-between">
                                 <p class="font-medium text-brand-dark text-base">{{
-                                    "{:,}".format(product.price).replace(",", " ") }} ₽</p>
+                                    "{:,}".format(product.price).replace(",", " ")[:-3] }} ₽</p>
                             </div>
                         </div>
                     </div>
