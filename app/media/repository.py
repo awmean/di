@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from sqlalchemy.orm import Session
 
@@ -8,17 +8,19 @@ from app.media.models import Media
 class MediaRepository:
     @staticmethod
     def create(
-        db: Session,
-        product_id: int,
-        type: str,
-        filename: str,
-        file_path: str,
-        original_filename: Optional[str] = None,
-        file_size: Optional[int] = None,
-        mime_type: Optional[str] = None,
-        alt_text: Optional[str] = None,
+            db: Session,
+            product_id: int,
+            type: str,
+            filename: str,
+            file_path: str,
+            original_filename: Optional[str] = None,
+            file_size: Optional[int] = None,
+            mime_type: Optional[str] = None,
+            alt_text: Optional[str] = None,
+            # Новые параметры для разных размеров
+            filename_variants: Optional[Dict[str, str]] = None,
     ) -> Media:
-        """Create new media"""
+        """Create new media with optional size variants"""
         media = Media(
             product_id=product_id,
             type=type,
@@ -30,6 +32,14 @@ class MediaRepository:
             alt_text=alt_text,
             sort_order=MediaRepository.get_next_sort_order(db, product_id),
         )
+
+        # Заполняем поля с вариантами размеров для изображений
+        if filename_variants and type == 'photo':
+            media.filename_thumb = filename_variants.get('thumb')
+            media.filename_medium = filename_variants.get('medium')
+            media.filename_large = filename_variants.get('large')
+            media.filename_original = filename_variants.get('original')
+
         db.add(media)
         db.commit()
         db.refresh(media)
@@ -58,7 +68,7 @@ class MediaRepository:
 
     @staticmethod
     def get_by_product(
-        db: Session, product_id: int, type: Optional[str] = None
+            db: Session, product_id: int, type: Optional[str] = None
     ) -> List[Media]:
         """Get media by product ID"""
         query = db.query(Media).filter(Media.product_id == product_id)
