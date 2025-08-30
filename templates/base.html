@@ -37,47 +37,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Prata&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
           rel="stylesheet">
 
-    <script src="/static/js/tailwind.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-brown': '#7E7670',
-                        'brand-dark': '#111111',
-                        'brand-gray': '#909090',
-                        'brand-light-gray': '#F4F4F4',
-                        'brand-accent': '#FFBAA0'
-                    },
-                    fontFamily: {
-                        'raleway': ['Raleway', 'system-ui', 'sans-serif'],
-                        'prata': ['Prata', 'serif'],
-                        'sans': ['Raleway', 'system-ui', 'sans-serif'],
-                        'serif': ['Prata', 'serif']
-                    },
-                    animation: {
-                        'slide-in': 'slideIn 0.4s ease-out',
-                        'fade-in': 'fadeIn 0.8s ease-out',
-                        'fade-in-up': 'fadeInUp 1s ease-out',
-                    },
-                    keyframes: {
-                        slideIn: {
-                            '0%': {transform: 'translateX(100%)'},
-                            '100%': {transform: 'translateX(0)'}
-                        },
-                        fadeIn: {
-                            '0%': {opacity: '0'},
-                            '100%': {opacity: '1'}
-                        },
-                        fadeInUp: {
-                            '0%': {opacity: '0', transform: 'translateY(40px)'},
-                            '100%': {opacity: '1', transform: 'translateY(0)'}
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="/static/css/tailwind.css" rel="stylesheet">
 
     <!-- Sticky Footer Styles -->
     <style>
