@@ -1,9 +1,12 @@
 import re
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional, List
+from decimal import InvalidOperation
+from typing import List
+from typing import Optional
 
-from pydantic import BaseModel, Field, validator, field_validator
+from pydantic import BaseModel, Field, field_validator
+from pydantic import validator
 
 from app.categories.schemas import CategoryResponse
 from app.media.schemas import MediaResponse
@@ -76,7 +79,44 @@ class ProductBase(BaseModel):
     is_featured: bool = Field(default=False, description="Whether product is featured")
     sort_order: int = Field(default=0, description="Sort order")
 
+    # Field validators to handle empty strings from forms
+    @field_validator('price', 'old_price', 'weight', mode='before')
+    @classmethod
+    def parse_decimal_or_none(cls, v):
+        if v == '' or v is None:
+            return None
+        try:
+            return Decimal(str(v))
+        except (ValueError, TypeError, InvalidOperation):
+            raise ValueError('Must be a valid decimal number or empty')
+
+    @field_validator(
+        'parent_id', 'width', 'height', 'depth', 'fabric_density',
+        'set_piece_count', 'piece_quantity', 'content_photos_count',
+        'sort_order', mode='before'
+    )
+    @classmethod
+    def parse_int_or_none(cls, v):
+        if v == '' or v is None:
+            return None
+        try:
+            return int(v)
+        except (ValueError, TypeError):
+            raise ValueError('Must be a valid integer or empty')
+
+    @field_validator(
+        'description', 'short_description', 'sku', 'material', 'color',
+        'frame_material', 'fabric_material', 'cushion_filling',
+        'meta_title', 'meta_description', mode='before'
+    )
+    @classmethod
+    def empty_str_to_none(cls, v):
+        if v == '':
+            return None
+        return v
+
     @field_validator("slug")
+    @classmethod
     def validate_slug(cls, v):
         if not re.match(r"^[a-z0-9-]+$", v):
             raise ValueError(
@@ -85,9 +125,10 @@ class ProductBase(BaseModel):
         return v
 
     @field_validator("old_price")
-    def validate_old_price(cls, v, values):
-        if v is not None and "price" in values and values["price"] is not None:
-            if v <= values["price"]:
+    @classmethod
+    def validate_old_price(cls, v, info):
+        if v is not None and info.data.get("price") is not None:
+            if v <= info.data["price"]:
                 raise ValueError("Old price must be greater than current price")
         return v
 

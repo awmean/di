@@ -4,12 +4,24 @@
 
 {% block extra_head %}
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+<script src="https://unpkg.com/htmx.org@1.9.10/dist/ext/json-enc.js"></script>
+<!-- FilePond CSS -->
+<link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
+<!-- FilePond JS -->
+<script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.min.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.min.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.js"></script>
 <style>
     .media-preview img {
         max-width: 150px;
         max-height: 150px;
         object-fit: cover;
+    }
+
+    .hidden {
+        display: none;
     }
 </style>
 {% endblock %}
@@ -26,495 +38,304 @@
     </a>
 </div>
 
-    <!-- Область ответа формы -->
-    <div id="form-response" class="mb-4"></div>
-
-    <form id="product-form"
-      hx-post="/api/products/"
-      hx-headers='{"Content-Type": "application/json"}'
-      hx-target="#form-response"
-      hx-swap="innerHTML"
-      class="space-y-8">
-    <!-- Основная информация -->
-    <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Основная информация</h3>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label for="name" class="block text-sm font-medium text-gray-700">Название товара *</label>
-                <input type="text"
-                       id="name"
-                       name="name"
-                       required
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            </div>
-
-            <div>
-                <label for="slug" class="block text-sm font-medium text-gray-700">URL-адрес *</label>
-                <input type="text"
-                       id="slug"
-                       name="slug"
-                       required
-                       placeholder=""
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            </div>
-        </div>
-
-        <div class="mt-6">
-            <label for="short_description" class="block text-sm font-medium text-gray-700">Краткое описание</label>
-            <input type="text"
-                   id="short_description"
-                   name="short_description"
-                   maxlength="500"
-                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-        </div>
-
-        <div class="mt-6">
-            <label for="description" class="block text-sm font-medium text-gray-700">Полное описание</label>
-            <textarea id="description"
-                      name="description"
-                      rows="4"
-                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
-        </div>
+<!-- Success message area (initially hidden) -->
+<div id="success-message" class="mb-4 hidden">
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+        <strong>Успешно!</strong> Товар создан. Теперь вы можете загрузить медиафайлы.
     </div>
+</div>
 
-    <!-- Категория и иерархия -->
-    <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Категория и иерархия</h3>
+<!-- Error message area -->
+<div id="error-message" class="mb-4"></div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label for="category_id" class="block text-sm font-medium text-gray-700">Категория *</label>
-                <select id="category_id"
-                        name="category_id"
-                        required
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Выберите категорию</option>
-                    {% for category in categories %}
+<!-- Main form -->
+<div id="main-form">
+    <form id="product-form"
+          hx-post="/api/products/"
+          hx-headers='{"Content-Type": "application/json"}'
+          hx-target="#error-message"
+          hx-swap="innerHTML"
+          hx-ext="json-enc"
+          class="space-y-8">
+
+        <!-- Основная информация -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-6">Основная информация</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Название товара *</label>
+                    <input type="text"
+                           id="name"
+                           name="name"
+                           required
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label for="slug" class="block text-sm font-medium text-gray-700">URL-адрес *</label>
+                    <input type="text"
+                           id="slug"
+                           name="slug"
+                           required
+                           placeholder=""
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <label for="short_description" class="block text-sm font-medium text-gray-700">Краткое описание</label>
+                <input type="text"
+                       id="short_description"
+                       name="short_description"
+                       maxlength="500"
+                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div class="mt-6">
+                <label for="description" class="block text-sm font-medium text-gray-700">Полное описание</label>
+                <textarea id="description"
+                          name="description"
+                          rows="4"
+                          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
+            </div>
+        </div>
+
+        <!-- Категория и иерархия -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-6">Категория и иерархия</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="category_id" class="block text-sm font-medium text-gray-700">Категория *</label>
+                    <select id="category_id"
+                            name="category_id"
+                            required
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Выберите категорию</option>
+                        {% for category in categories %}
                         {% if category.is_active %}
                         <option value="{{ category.id }}">
                             {% if category.parent %}{{ category.parent.name }} → {% endif %}{{ category.name }}
                         </option>
                         {% endif %}
-                    {% endfor %}
-                </select>
-            </div>
+                        {% endfor %}
+                    </select>
+                </div>
 
-            <div>
-                <label for="parent_id" class="block text-sm font-medium text-gray-700">Родительский товар</label>
-                <select id="parent_id"
-                        name="parent_id"
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Нет (Отдельный/Набор)</option>
-                    {% for product in products %}
+                <div>
+                    <label for="parent_id" class="block text-sm font-medium text-gray-700">Родительский товар</label>
+                    <select id="parent_id"
+                            name="parent_id"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Нет (Отдельный/Набор)</option>
+                        {% for product in products %}
                         {% if product.is_active and (product.is_set or product.is_standalone_product) %}
                         <option value="{{ product.id }}">
                             {{ product.name }}
                             {% if product.is_set %}
-                                (Набор - {{ product.set_piece_count or product.children|length }} шт.)
+                            (Набор - {{ product.set_piece_count or product.children|length }} шт.)
                             {% endif %}
                         </option>
                         {% endif %}
-                    {% endfor %}
-                </select>
-                <p class="mt-1 text-sm text-gray-500">Выберите родительский товар, если это отдельная часть набора</p>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <div>
-                <label for="set_piece_count" class="block text-sm font-medium text-gray-700">Количество частей в наборе</label>
-                <input type="number"
-                       id="set_piece_count"
-                       name="set_piece_count"
-                       min="1"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                <p class="mt-1 text-sm text-gray-500">Общее количество частей, если это набор</p>
-            </div>
-
-            <div>
-                <label for="piece_quantity" class="block text-sm font-medium text-gray-700">Количество частей</label>
-                <input type="number"
-                       id="piece_quantity"
-                       name="piece_quantity"
-                       min="1"
-                       value="1"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                <p class="mt-1 text-sm text-gray-500">Сколько таких частей в наборе</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Цены -->
-    <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Цены и артикул</h3>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-                <label for="price" class="block text-sm font-medium text-gray-700">Цена</label>
-                <div class="mt-1 relative rounded-md shadow-sm">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span class="text-gray-500 sm:text-sm">₽</span>
-                    </div>
-                    <input type="number"
-                           id="price"
-                           name="price"
-                           step="0.01"
-                           min="0"
-                           class="pl-7 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        {% endfor %}
+                    </select>
+                    <p class="mt-1 text-sm text-gray-500">Выберите родительский товар, если это отдельная часть
+                        набора</p>
                 </div>
             </div>
 
-            <div>
-                <label for="old_price" class="block text-sm font-medium text-gray-700">Старая цена</label>
-                <div class="mt-1 relative rounded-md shadow-sm">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span class="text-gray-500 sm:text-sm">₽</span>
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div>
+                    <label for="set_piece_count" class="block text-sm font-medium text-gray-700">Количество частей в
+                        наборе</label>
                     <input type="number"
-                           id="old_price"
-                           name="old_price"
-                           step="0.01"
-                           min="0"
-                           class="pl-7 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                           id="set_piece_count"
+                           name="set_piece_count"
+                           min="1"
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <p class="mt-1 text-sm text-gray-500">Общее количество частей, если это набор</p>
+                </div>
+
+                <div>
+                    <label for="piece_quantity" class="block text-sm font-medium text-gray-700">Количество
+                        частей</label>
+                    <input type="number"
+                           id="piece_quantity"
+                           name="piece_quantity"
+                           min="1"
+                           value="1"
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <p class="mt-1 text-sm text-gray-500">Сколько таких частей в наборе</p>
                 </div>
             </div>
+        </div>
 
-            <div>
-                <label for="sku" class="block text-sm font-medium text-gray-700">Артикул</label>
-                <input type="text"
-                       id="sku"
-                       name="sku"
-                       maxlength="50"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        <!-- Цены -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-6">Цены и артикул</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label for="price" class="block text-sm font-medium text-gray-700">Цена</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">₽</span>
+                        </div>
+                        <input type="number"
+                               id="price"
+                               name="price"
+                               step="0.01"
+                               min="0"
+                               class="pl-7 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="old_price" class="block text-sm font-medium text-gray-700">Старая цена</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">₽</span>
+                        </div>
+                        <input type="number"
+                               id="old_price"
+                               name="old_price"
+                               step="0.01"
+                               min="0"
+                               class="pl-7 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="sku" class="block text-sm font-medium text-gray-700">Артикул</label>
+                    <input type="text"
+                           id="sku"
+                           name="sku"
+                           maxlength="50"
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Физические характеристики -->
+        <!-- SEO -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-6">SEO</h3>
+
+            <div class="space-y-6">
+                <div>
+                    <label for="meta_title" class="block text-sm font-medium text-gray-700">Мета-заголовок</label>
+                    <input type="text"
+                           id="meta_title"
+                           name="meta_title"
+                           maxlength="200"
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <p class="mt-1 text-sm text-gray-500">Оставьте пустым для автоматической генерации из названия
+                        товара</p>
+                </div>
+
+                <div>
+                    <label for="meta_description" class="block text-sm font-medium text-gray-700">Мета-описание</label>
+                    <textarea id="meta_description"
+                              name="meta_description"
+                              maxlength="300"
+                              rows="3"
+                              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Действия формы -->
+        <div class="flex justify-end space-x-4">
+            <a href="/admin/products"
+               class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-md text-sm font-medium">
+                Отмена
+            </a>
+            <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-sm font-medium">
+                Создать товар
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Media upload section (initially hidden) -->
+<div id="media-upload-section" class="hidden space-y-8">
     <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Физические характеристики</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-6">Загрузить медиафайлы</h3>
+        <p class="text-sm text-gray-500 mb-4">Загрузите фотографии и видео для товара (максимум 100 МБ на файл)</p>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label for="material" class="block text-sm font-medium text-gray-700">Материал</label>
-                <input type="text"
-                       id="material"
-                       name="material"
-                       maxlength="100"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            </div>
-
-            <div>
-                <label for="color" class="block text-sm font-medium text-gray-700">Цвет</label>
-                <input type="text"
-                       id="color"
-                       name="color"
-                       maxlength="50"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-            <div>
-                <label for="width" class="block text-sm font-medium text-gray-700">Ширина (см)</label>
-                <input type="number"
-                       id="width"
-                       name="width"
-                       min="0"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            </div>
-
-            <div>
-                <label for="height" class="block text-sm font-medium text-gray-700">Высота (см)</label>
-                <input type="number"
-                       id="height"
-                       name="height"
-                       min="0"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            </div>
-
-            <div>
-                <label for="depth" class="block text-sm font-medium text-gray-700">Глубина (см)</label>
-                <input type="number"
-                       id="depth"
-                       name="depth"
-                       min="0"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            </div>
-
-            <div>
-                <label for="weight" class="block text-sm font-medium text-gray-700">Вес (кг)</label>
-                <input type="number"
-                       id="weight"
-                       name="weight"
-                       step="0.01"
-                       min="0"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            </div>
-        </div>
+        <!-- FilePond input -->
+        <input type="file"
+               class="filepond"
+               name="file"
+               multiple
+               data-allow-reorder="true"
+               data-max-file-size="100MB"
+               data-max-files="20">
     </div>
 
-    <!-- Характеристики мебели -->
-    <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Характеристики мебели</h3>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label for="frame_material" class="block text-sm font-medium text-gray-700">Материал каркаса</label>
-                <input type="text"
-                       id="frame_material"
-                       name="frame_material"
-                       maxlength="200"
-                       placeholder="например, Высококачественный литой алюминий + алюминиевый профиль"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            </div>
-
-            <div>
-                <label for="fabric_material" class="block text-sm font-medium text-gray-700">Материал ткани</label>
-                <input type="text"
-                       id="fabric_material"
-                       name="fabric_material"
-                       maxlength="200"
-                       placeholder="например, 100% полиэстер, 70% олефин 30% полиэстер"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            </div>
-        </div>
-
-        <div class="mt-6">
-            <label for="fabric_density" class="block text-sm font-medium text-gray-700">Плотность ткани (г/м²)</label>
-            <input type="number"
-                   id="fabric_density"
-                   name="fabric_density"
-                   min="0"
-                   placeholder="например, 435"
-                   class="mt-1 block w-full md:w-1/2 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-        </div>
-
-        <div class="mt-6">
-            <label for="cushion_filling" class="block text-sm font-medium text-gray-700">Наполнение подушек</label>
-            <textarea id="cushion_filling"
-                      name="cushion_filling"
-                      rows="3"
-                      placeholder="например, Спинка: полипропиленовый хлопок + нетканый материал..."
-                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
-        </div>
-    </div>
-
-    <!-- Настройки -->
-    <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Настройки</h3>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-                <label for="sort_order" class="block text-sm font-medium text-gray-700">Порядок сортировки</label>
-                <input type="number"
-                       id="sort_order"
-                       name="sort_order"
-                       value="0"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-            </div>
-
-            <div class="flex items-center">
-                <input type="checkbox"
-                       id="is_active"
-                       name="is_active"
-                       value="true"
-                       checked
-                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                <label for="is_active" class="ml-2 block text-sm text-gray-900">Активный</label>
-            </div>
-
-            <div class="flex items-center">
-                <input type="checkbox"
-                       id="is_featured"
-                       name="is_featured"
-                       value="true"
-                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                <label for="is_featured" class="ml-2 block text-sm text-gray-900">Рекомендуемый</label>
-            </div>
-        </div>
-    </div>
-
-    <!-- SEO -->
-    <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">SEO</h3>
-
-        <div class="space-y-6">
-            <div>
-                <label for="meta_title" class="block text-sm font-medium text-gray-700">Мета-заголовок</label>
-                <input type="text"
-                       id="meta_title"
-                       name="meta_title"
-                       maxlength="200"
-                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                <p class="mt-1 text-sm text-gray-500">Оставьте пустым для автоматической генерации из названия товара</p>
-            </div>
-
-            <div>
-                <label for="meta_description" class="block text-sm font-medium text-gray-700">Мета-описание</label>
-                <textarea id="meta_description"
-                          name="meta_description"
-                          maxlength="300"
-                          rows="3"
-                          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
-            </div>
-        </div>
-    </div>
-
-    <!-- Действия формы -->
     <div class="flex justify-end space-x-4">
         <a href="/admin/products"
-           class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-md text-sm font-medium">
-            Отмена
+           class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md text-sm font-medium">
+            Завершить и перейти к товарам
         </a>
-        <button type="submit"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-sm font-medium">
-            Создать товар
-        </button>
-    </div>
-</form>
-
-<!-- Секция загрузки медиа (показывается после создания товара) -->
-<div id="media-upload-section" class="mt-8" style="display: none;">
-    <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-6">Медиа товара</h3>
-
-        <!-- Dropzone для загрузки медиа -->
-        <form action="/api/media/upload/multiple" class="dropzone" id="media-dropzone">
-            <input type="hidden" id="upload-product-id" name="product_id" value="">
-            <input type="hidden" name="media_type" value="photo">
-        </form>
-
-        <!-- Предпросмотр медиа -->
-        <div id="media-preview" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-6">
-            <!-- Загруженные медиа появятся здесь -->
-        </div>
     </div>
 </div>
 
-<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
 <script>
+    // Register FilePond plugins
+    FilePond.registerPlugin(
+        FilePondPluginImagePreview,
+        FilePondPluginFileValidateSize,
+        FilePondPluginFileValidateType
+    );
 
-Dropzone.autoDiscover = false;
+    let createdProductId = null;
 
+    // Handle successful product creation
+    document.addEventListener('htmx:afterRequest', function (event) {
+        if (event.detail.requestConfig.verb === 'post' &&
+            event.detail.requestConfig.path === '/api/products/' &&
+            event.detail.xhr.status >= 200 && event.detail.xhr.status < 300) {
 
-let myDropzone = null;
+            // Parse the response to get product ID
+            try {
+                const response = JSON.parse(event.detail.xhr.responseText);
+                createdProductId = response.id;
 
+                // Hide the main form and show success message
+                document.getElementById('main-form').classList.add('hidden');
+                document.getElementById('success-message').classList.remove('hidden');
+                document.getElementById('media-upload-section').classList.remove('hidden');
 
-document.getElementById('product-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+                // Clear any error messages
+                document.getElementById('error-message').innerHTML = '';
 
-    const formData = new FormData(this);
-    const jsonData = {};
-
-
-    for (let [key, value] of formData.entries()) {
-
-        if (['price', 'old_price', 'weight'].includes(key) && value) {
-            jsonData[key] = parseFloat(value);
-        } else if (['width', 'height', 'depth', 'fabric_density', 'set_piece_count', 'piece_quantity', 'sort_order', 'category_id', 'parent_id'].includes(key) && value) {
-            jsonData[key] = parseInt(value);
-        } else if (['is_active', 'is_featured'].includes(key)) {
-            jsonData[key] = true;
-        } else if (value) {
-            jsonData[key] = value;
-        }
-    }
-
-
-    if (!jsonData.is_active) jsonData.is_active = false;
-    if (!jsonData.is_featured) jsonData.is_featured = false;
-
-
-    fetch('/api/products/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(jsonData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.id) {
-
-            document.getElementById('upload-product-id').value = data.id;
-            document.getElementById('media-upload-section').style.display = 'block';
-            document.getElementById('product-form').style.display = 'none';
-
-
-            document.getElementById('form-response').innerHTML = `
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                    <strong>Product created successfully!</strong> Product ID: ${data.id}. Now you can upload media files.
-                </div>
-            `;
-
-
-            myDropzone = new Dropzone("#media-dropzone", {
-                paramName: "files",
-                maxFilesize: 100,
-                acceptedFiles: "image/*,video/*",
-                maxFiles: 10,
-                addRemoveLinks: true,
-                sending: function(file, xhr, formData) {
-                    formData.append("product_id", document.getElementById('upload-product-id').value);
-                },
-                success: function(file, response) {
-
-                    const mediaPreview = document.getElementById('media-preview');
-                    const media = response[0];
-                    const mediaDiv = document.createElement('div');
-                    mediaDiv.className = 'relative bg-gray-100 rounded-lg overflow-hidden';
-                    mediaDiv.innerHTML = `
-                        <img src="/uploads/media/${media.filename}" alt="${media.original_filename}"
-                             class="w-full h-32 object-cover">
-                        <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2 truncate">
-                            ${media.original_filename}
-                        </div>
-                        <div class="absolute top-2 right-2">
-                            <button onclick="removeMedia(${media.id})"
-                                    class="bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
-                                ×
-                            </button>
-                        </div>
-                    `;
-                    mediaPreview.appendChild(mediaDiv);
-                }
-            });
-        } else {
-            throw new Error('Product creation failed');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('form-response').innerHTML = `
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                <strong>Error:</strong> Failed to create product. Please check the form data and try again.
-            </div>
-        `;
-    });
-});
-
-
-function removeMedia(mediaId) {
-    if (confirm('Are you sure you want to delete this media?')) {
-        fetch(`/api/media/${mediaId}`, {
-            method: 'DELETE'
-        })
-        .then(response => {
-            if (response.ok) {
-
-                event.target.closest('.relative').remove();
-            } else {
-                alert('Failed to delete media');
+                // Initialize FilePond
+                initializeFilePond();
+            } catch (e) {
+                console.error('Error parsing response:', e);
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to delete media');
-        });
-    }
-}
+        }
+    });
 
+    function initializeFilePond() {
+        // Create FilePond instance
+        FilePond.create(
+            document.querySelector('.filepond'), {
+                server: {
+                    process: {
+                        url: '/api/media/upload',
+                        ondata: (formData) => {
+                            formData.append('product_id', createdProductId);
+                            formData.append('alt_text', '');
+                            return formData;
+                        }
+                    }
+                }
+            }
+        );
+    }
 </script>
+
 {% endblock %}
