@@ -506,8 +506,7 @@ const pond = FilePond.create(
                     return formData;
                 },
                 onload: (response) => {
-                    // Reload page to show new media
-                    location.reload();
+                    console.log('File uploaded successfully');
                     return response;
                 }
             }
