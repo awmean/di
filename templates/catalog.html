@@ -83,44 +83,7 @@
             </div>
         </div>
     </section>
-
-    <!-- Products Grid -->
-    <section>
-        <div class="max-w-7xl mx-auto px-8">
-            <div id="products-grid">
-                <div id="products-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
-                    {% for product in products %}
-                    <div class="furniture-card cursor-pointer" data-category="{{ product.category.slug }}">
-                        <a href="/product/{{ product.slug }}" class="block">
-                            <div class="aspect-[3/2] bg-white mb-8 overflow-hidden relative group">
-                                {% if product.main_image %}
-                                <!-- Main image - always visible -->
-                                <img src="/uploads/media/{{ product.media[0].filename_medium }}"
-                                     alt="{{ product.name }}"
-                                     class="w-full h-full object-cover absolute inset-0 transition-opacity duration-300">
-
-                                <!-- Secondary image - shows on hover if available -->
-<!--                                {% if product.secondary_image_url %}-->
-<!--                                <img src="{{ product.secondary_image_url }}"-->
-<!--                                     alt="{{ product.name }}"-->
-<!--                                     class="w-full h-full object-cover absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">-->
-<!--                                {% endif %}-->
-                                {% endif %}
-                            </div>
-                        </a>
-                        <div class="space-y-4">
-                            <h3 class="font-medium text-lg text-brand-dark">{{ product.name }}</h3>
-                            <div class="flex items-center justify-between">
-                                <p class="font-medium text-brand-dark text-base">{{
-                                    "{:,}".format(product.price).replace(",", " ")[:-3] }} ₽</p>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </section>
+    {% include 'partials/products_grid.html' %}
 </main>
 {% endblock %}
 
@@ -138,7 +101,7 @@
                 if (category === 'all' || productCategory === category) {
                     product.classList.remove('hidden');
                     product.style.animation = 'none';
-                    product.offsetHeight; 
+                    product.offsetHeight;
                     product.style.animation = 'fadeIn 0.3s ease-out';
                 } else {
                     product.classList.add('hidden');
@@ -154,20 +117,20 @@
             activeButton.classList.add('active');
         }
 
-        
+
         filterButtons.forEach(button => {
             button.addEventListener('click', function (e) {
                 e.preventDefault();
 
                 const filter = this.getAttribute('data-filter');
 
-                
+
                 updateActiveButton(this);
 
-                
+
                 filterProducts(filter);
 
-                
+
                 const url = new URL(window.location);
                 if (filter === 'all') {
                     url.searchParams.delete('category');
@@ -178,11 +141,11 @@
             });
         });
 
-        
+
         const urlParams = new URLSearchParams(window.location.search);
         const currentCategory = urlParams.get('category') || 'all';
 
-        
+
         const activeButton = document.querySelector(`[data-filter="${currentCategory}"]`);
         if (activeButton) {
             updateActiveButton(activeButton);

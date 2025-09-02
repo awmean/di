@@ -31,71 +31,21 @@
     <div class="w-full h-screen bg-black"></div>
 </video>
 
+{% include 'partials/products_grid.html' %}
+
 <!-- Hero Section after video -->
 <section class="py-12 lg:py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-8 text-center">
         <p class="text-base text-gray-700 leading-relaxed font-light mb-6 max-w-2xl mx-auto">
-            Откройте для себя безграничные возможности современного дизайна — от винтажной классики до передовых инноваций.
+            Откройте для себя безграничные возможности современного дизайна — от винтажной классики до передовых
+            инноваций.
         </p>
-        <a href="/catalog" class="inline-flex items-center text-sm uppercase tracking-[0.15em] text-gray-600 font-light border-b border-gray-400 pb-1 hover:text-gray-800 hover:border-gray-600 transition-colors">
+        <a href="/catalog"
+           class="inline-flex items-center text-sm uppercase tracking-[0.15em] text-gray-600 font-light border-b border-gray-400 pb-1 hover:text-gray-800 hover:border-gray-600 transition-colors">
             Перейти в каталог
         </a>
     </div>
 </section>
 
-<main class="w-full">
-    <!-- About Section -->
-    <section class="py-8 lg:py-12">
-    <div class="max-w-7xl mx-auto px-8">
-        <div class="mb-8 lg:mb-12">
-            <h2 class="text-3xl lg:text-4xl font-light text-brand-dark uppercase tracking-[0.15em]">О бренде</h2>
-        </div>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-16 items-center">
-            <div class="space-y-4 lg:space-y-8 order-2 lg:order-1">
-                <p class="text-lg text-gray-700 leading-tight font-light">
-                    Мы создаём мебель, которая сочетает в себе современный дизайн и функциональность.
-                </p>
-                <p class="text-lg text-gray-700 leading-tight font-light">
-                    Каждое изделие — результат тщательной работы с материалами и внимания к деталям.
-                </p>
-            </div>
-            <div class="h-48 lg:h-96 bg-white overflow-hidden order-1 lg:order-2 mb-2 lg:mb-0">
-                <img src="/static/about.png"
-                     alt="О бренде"
-                     class="w-full h-full object-cover">
-            </div>
-        </div>
-    </div>
-</section>
 
-    <!-- Reviews Section -->
-    <section class="py-8 lg:py-12">
-        <div class="max-w-7xl mx-auto px-8">
-            <div class="mb-8 lg:mb-12">
-                <h2 class="text-3xl lg:text-4xl font-light text-brand-dark uppercase tracking-[0.15em]">Отзывы</h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
-                <div class="bg-white p-6 lg:p-8 border border-gray-100">
-                    <p class="italic mb-4 lg:mb-6 text-gray-700 leading-tight text-base font-light">"Мебель превзошла
-                        все ожидания.
-                        Качество на высшем уровне."</p>
-                    <p class="font-medium text-brand-dark text-sm tracking-wide">— АННА, МОСКВА</p>
-                </div>
-                <div class="bg-white p-6 lg:p-8 border border-gray-100">
-                    <p class="italic mb-4 lg:mb-6 text-gray-700 leading-tight text-base font-light">"Отличное
-                        обслуживание и быстрая
-                        доставка. Рекомендую!"</p>
-                    <p class="font-medium text-brand-dark text-sm tracking-wide">— ДМИТРИЙ, СПБ</p>
-                </div>
-                <div class="bg-white p-6 lg:p-8 border border-gray-100">
-                    <p class="italic mb-4 lg:mb-6 text-gray-700 leading-tight text-base font-light">"Идеальное сочетание
-                        стиля и
-                        комфорта. Очень довольны покупкой."</p>
-                    <p class="font-medium text-brand-dark text-sm tracking-wide">— ЕКАТЕРИНА, КАЗАНЬ</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-</main>
 {% endblock %}

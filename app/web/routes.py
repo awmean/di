@@ -25,8 +25,9 @@ PRODUCTS_PER_PAGE = 36
 async def index(request: Request, db: Session = Depends(get_db)):
     """Homepage with categories"""
     categories = CategoryRepository.get_root_categories(db, active_only=True)[:8]
+    products = ProductRepository.get_all(db, category_id=CategoryRepository.get_by_slug(db, 'sets').id)
     return templates.TemplateResponse(
-        "index.html", {"request": request, "categories": categories}
+        "index.html", {"request": request, "categories": categories, 'products': products}
     )
 
 

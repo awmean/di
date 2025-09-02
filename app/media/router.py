@@ -1,7 +1,7 @@
 import os
 import uuid
 from pathlib import Path
-from typing import List, Optional, Dict, Tuple
+from typing import Optional, Dict, Tuple
 
 from PIL import Image
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
@@ -228,105 +228,6 @@ async def upload_media(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to create media record: {str(e)}",
-        )
-
-
-@router.post(
-    "/upload/multiple",
-    response_model=List[MediaResponse],
-    status_code=status.HTTP_201_CREATED,
-)
-async def upload_multiple_media(
-        product_id: int = Form(...),
-        files: List[UploadFile] = File(...),
-        db: Session = Depends(get_db),
-):
-    """Upload multiple media files for a product"""
-    # Validate product exists
-    product = ProductRepository.get_by_id(db, product_id)
-    if not product:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Product not found"
-        )
-
-    if len(files) > 10:  # Limit number of files
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Maximum 10 files allowed per upload",
-        )
-
-    created_media = []
-    created_files = []  # Track created files for cleanup on error
-
-    try:
-        for i, file in enumerate(files):
-            # Validate file
-            media_type = validate_file(file)
-
-            # Generate unique filename
-            base_filename, file_extension = generate_filename(file.filename)
-            temp_filename = f"{base_filename}_temp{file_extension}"
-
-            # Save temporary file
-            temp_file_path = await save_file(file, temp_filename)
-            created_files.append(temp_file_path)
-
-            filename_variants = None
-
-            if media_type == 'photo':
-                # Создаем варианты размеров для изображений
-                variants = create_image_variants(temp_file_path, base_filename, file_extension)
-                filename = variants['medium']
-                file_path = os.path.join(UPLOAD_DIR, filename)
-                filename_variants = variants
-
-                # Добавляем все варианты в список для очистки
-                for variant_file in variants.values():
-                    created_files.append(os.path.join(UPLOAD_DIR, variant_file))
-
-                # Удаляем временный файл
-                if os.path.exists(temp_file_path):
-                    os.remove(temp_file_path)
-                    created_files.remove(temp_file_path)  # Убираем из списка для очистки
-            else:
-                filename = f"{base_filename}{file_extension}"
-                file_path = os.path.join(UPLOAD_DIR, filename)
-                os.rename(temp_file_path, file_path)
-                # Обновляем путь в списке для очистки
-                created_files[created_files.index(temp_file_path)] = file_path
-
-            # Create media record
-            media = MediaRepository.create(
-                db=db,
-                product_id=product_id,
-                type=media_type,
-                filename=filename,
-                original_filename=file.filename,
-                file_path=file_path,
-                file_size=file.size,
-                mime_type=file.content_type,
-                filename_variants=filename_variants,
-            )
-            created_media.append(media)
-
-        return created_media
-
-    except Exception as e:
-        # Clean up all created files on error
-        for file_path in created_files:
-            if os.path.exists(file_path):
-                os.remove(file_path)
-
-        # Clean up any created database records
-        for media in created_media:
-            try:
-                MediaRepository.delete(db, media.id)
-            except:
-                pass
-
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to upload files: {str(e)}",
         )
 
 
