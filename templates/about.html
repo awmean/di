@@ -2,32 +2,24 @@
 
 {% block extra_styles %}
 <style>
-    .hero-bg {
-        background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
+    .hero-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 40vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
-<section class="relative min-h-[60vh] flex items-center overflow-hidden w-full animate-fade-in">
-    <!-- Background with overlay -->
-    <div class="absolute inset-0 bg-black">
-        <div class="absolute inset-0 hero-bg"></div>
-    </div>
-
-    <div class="relative z-10 w-full max-w-7xl mx-auto px-8 py-16">
-        <div class="text-center text-white space-y-12 animate-fade-in-up">
-            <div class="text-xs uppercase tracking-[0.3em] text-gray-300 font-light">
-                УЗНАЙТЕ БОЛЬШЕ О НАС
-            </div>
-            <h1 class="text-4xl lg:text-5xl font-light leading-tight tracking-wide">
-                О нашей компании
-            </h1>
-            <p class="text-gray-300 text-base lg:text-lg font-light max-w-2xl mx-auto leading-loose">
-                Мы создаём мебель, которая становится частью вашего дома и отражает ваш стиль жизни
-            </p>
-        </div>
+<section class="hero-section">
+    <div class="max-w-7xl mx-auto px-8 text-center">
+        <h1 class="text-4xl lg:text-5xl font-light text-gray-900 mb-4">О нашей компании</h1>
+        <p class="text-lg text-gray-600 font-light max-w-2xl mx-auto">
+            Мы создаём мебель, которая становится частью вашей жизни
+        </p>
     </div>
 </section>
 
