@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% block header %}
+{% include 'partials/header.html' %}
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 40vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .content-section {
+        background-color: #ffffff;
+    }
+
+    .info-card {
+        background: #fdfdfd;
+        border: 1px solid #f0f0f0;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+        border-color: #e0e0e0;
+        background: #fafafa;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+    .contact-highlight {
+        background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+        color: white;
+        border-radius: 12px;
+    }
+
+    .section-divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e9ecef, transparent);
+        margin: 4rem 0;
+    }
+
+    @media (max-width: 768px) {
+        .hero-section {
+            min-height: 25vh;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="max-w-7xl mx-auto px-8 text-center">
+        <h1 class="text-4xl lg:text-5xl font-light text-gray-900 mb-4">Оплата и доставка</h1>
+        <p class="text-lg text-gray-600 font-light max-w-2xl mx-auto">
+            Удобные способы оплаты и быстрая доставка для вашего комфорта
+        </p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="content-section py-20 lg:py-28">
+    <div class="max-w-6xl mx-auto px-8">
+
+        <!-- Оплата -->
+        <div class="mb-20">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-light text-gray-900 mb-4">Способы оплаты</h2>
+                <p class="text-gray-600 font-light text-lg">Выберите удобный для вас способ расчета</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="info-card p-8">
+                    <h3 class="text-xl font-medium text-gray-900 mb-4">Наличные</h3>
+                    <p class="text-gray-600 leading-relaxed font-light">
+                        Оплата наличными в нашем шоуруме при получении товара или оформлении заказа
+                    </p>
+                </div>
+
+                <div class="info-card p-8">
+                    <h3 class="text-xl font-medium text-gray-900 mb-4">Безналичный расчет</h3>
+                    <div class="text-gray-600 leading-relaxed font-light space-y-2">
+                        <p>Банковской картой в шоуруме</p>
+                        <p>По счету для физических лиц</p>
+                        <p>По счету для юридических лиц</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- Доставка -->
+        <div class="mb-16">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-light text-gray-900 mb-4">Доставка</h2>
+                <p class="text-gray-600 font-light text-lg">Быстро, надежно и бережно</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto space-y-8">
+                <div class="info-card p-8">
+                    <h3 class="text-xl font-medium text-gray-900 mb-4">Собственная служба логистики</h3>
+                    <p class="text-gray-600 leading-relaxed font-light">
+                        Компания «Luce di Villa» осуществляет быструю, надёжную и бережную доставку по Москве
+                        и Московской области в удобное для вас время, без выходных дней
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="info-card p-8">
+                        <h3 class="text-xl font-medium text-gray-900 mb-4">Сроки</h3>
+                        <p class="text-gray-600 leading-relaxed font-light">
+                            При заказе до 18:00 — доставка в течение 1-2 дней
+                        </p>
+                    </div>
+
+                    <div class="info-card p-8">
+                        <h3 class="text-xl font-medium text-gray-900 mb-4">Стоимость</h3>
+                        <p class="text-gray-600 leading-relaxed font-light">
+                            От 50 рублей за км в обе стороны для заказов от 500 000 рублей
+                        </p>
+                    </div>
+                </div>
+
+                <div class="info-card p-8">
+                    <h3 class="text-xl font-medium text-gray-900 mb-6">Дополнительные услуги</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-2">Сборка мебели</h4>
+                            <p class="text-gray-600 font-light text-sm">
+                                5% от стоимости собираемой мебели
+                            </p>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-2">Доставка по России</h4>
+                            <p class="text-gray-600 font-light text-sm">
+                                Отправка через ПЭК или СДЭК — 1500 рублей
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Block -->
+        <div class="contact-highlight p-8 text-center max-w-2xl mx-auto">
+            <p class="text-white leading-relaxed mb-6 text-lg font-light">
+                Дополнительную информацию можно получить у наших менеджеров
+            </p>
+            <div class="space-y-3">
+                <a href="tel:+79154015754" class="block text-white text-xl font-medium hover:text-gray-200 transition-colors">
+                    +7 (915) 401-57-54
+                </a>
+            </div>
+            <p class="text-gray-200 text-sm mt-6 font-light">
+                Желаем вам приятных приобретений!
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

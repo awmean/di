@@ -50,6 +50,18 @@ async def catalog(request: Request, db: Session = Depends(get_db)):
     )
 
 
+@router.get("/payment-delivery", response_class=HTMLResponse)
+async def catalog(request: Request, db: Session = Depends(get_db)):
+    """Catalog page with filtering and pagination"""
+
+    return templates.TemplateResponse(
+        "payment_delivery.html",
+        {
+            "request": request,
+        },
+    )
+
+
 @router.get("/product/{slug}", response_class=HTMLResponse)
 async def catalog(request: Request, slug: str, db: Session = Depends(get_db)):
     """Catalog page with filtering and pagination"""
