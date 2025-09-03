@@ -1,23 +1,79 @@
 <!-- Footer -->
-<footer class="bg-brand-dark text-white py-12">
+<footer class="bg-brand-dark text-white py-16">
     <div class="max-w-7xl mx-auto px-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <div>
-                <h3 class="font-medium mb-6 text-sm uppercase tracking-[0.2em]">КОНТАКТЫ</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+            <!-- Brand Info -->
+            <div class="md:col-span-1">
+                <h2 class="text-xl font-bold mb-6 tracking-tight">Luce di Villa</h2>
+                <p class="text-brand-gray text-sm font-light leading-relaxed">
+                    Элегантные свечи и предметы декора для создания уютной атмосферы в вашем доме.
+                </p>
+            </div>
+
+            <!-- Navigation -->
+            <div class="md:col-span-1">
+                <h3 class="font-medium mb-6 text-sm uppercase tracking-[0.2em]">НАВИГАЦИЯ</h3>
                 <div class="space-y-3">
-                    <a href="tel:+79154015754"><p class="text-lg font-light">+7 (915) 401-57-54</p></a>
+                    <a href="/" class="block text-brand-gray text-sm font-light hover:text-white transition-colors">Главная</a>
+                    <a href="/catalog" class="block text-brand-gray text-sm font-light hover:text-white transition-colors">Каталог</a>
+                    <a href="/about" class="block text-brand-gray text-sm font-light hover:text-white transition-colors">О бренде</a>
+                    <a href="/contacts" class="block text-brand-gray text-sm font-light hover:text-white transition-colors">Контакты</a>
+                    <a href="/payment-delivery" class="block text-brand-gray text-sm font-light hover:text-white transition-colors">Оплата и доставка</a>
+                    <a href="/partnership" class="block text-brand-gray text-sm font-light hover:text-white transition-colors">Сотрудничество</a>
+                </div>
+            </div>
+
+            <!-- Information -->
+            <div class="md:col-span-1">
+                <h3 class="font-medium mb-6 text-sm uppercase tracking-[0.2em]">ИНФОРМАЦИЯ</h3>
+                <div class="space-y-3">
+                    <a href="/privacy" class="block text-brand-gray text-sm font-light hover:text-white transition-colors">Политика конфиденциальности</a>
+<!--                    <a href="/terms" class="block text-brand-gray text-sm font-light hover:text-white transition-colors">Пользовательское соглашение</a>-->
+<!--                    <a href="/faq" class="block text-brand-gray text-sm font-light hover:text-white transition-colors">Часто задаваемые вопросы</a>-->
+<!--                    <a href="/care-instructions" class="block text-brand-gray text-sm font-light hover:text-white transition-colors">Уход за изделиями</a>-->
+                </div>
+            </div>
+
+            <!-- Contacts -->
+            <div class="md:col-span-1">
+                <h3 class="font-medium mb-6 text-sm uppercase tracking-[0.2em]">КОНТАКТЫ</h3>
+                <div class="space-y-4">
+                    <a href="tel:+79154015754" class="block text-lg font-light hover:text-brand-brown transition-colors">
+                        +7 (915) 401-57-54
+                    </a>
                     <button
                         onclick="openCtaModal()"
-                        class="text-brand-gray text-sm font-light hover:underline transition-colors cursor-pointer"
+                        class="block text-brand-gray text-sm font-light hover:text-white transition-colors cursor-pointer text-left"
                     >
                         Позвоните мне
                     </button>
-                    <!--                    <p class="text-brand-gray font-light">info@lucedivilla.com</p>-->
+                    <a href="https://wa.me/79154015754" target="_blank"
+                       class="flex items-center text-brand-gray text-sm font-light hover:text-white transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                        </svg>
+                        WhatsApp
+                    </a>
                 </div>
             </div>
         </div>
-        <div class="border-t border-gray-800 pt-6 text-center">
-            <p class="text-brand-gray text-sm font-light">© 2025 Luce di Villa</p>
+
+        <!-- Bottom Section -->
+        <div class="border-t border-gray-800 pt-8">
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <p class="text-brand-gray text-sm font-light">© 2025 Luce di Villa. Все права защищены.</p>
+                <div class="flex space-x-6">
+<!--                    <a href="/privacy" class="text-brand-gray text-xs font-light hover:text-white transition-colors uppercase tracking-[0.15em]">-->
+<!--                        Конфиденциальность-->
+<!--                    </a>-->
+<!--                    <a href="/terms" class="text-brand-gray text-xs font-light hover:text-white transition-colors uppercase tracking-[0.15em]">-->
+<!--                        Условия-->
+<!--                    </a>-->
+<!--                    <a href="/sitemap" class="text-brand-gray text-xs font-light hover:text-white transition-colors uppercase tracking-[0.15em]">-->
+<!--                        Карта сайта-->
+<!--                    </a>-->
+                </div>
+            </div>
         </div>
     </div>
 </footer>
