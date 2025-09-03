@@ -1,0 +1,261 @@
+<!-- CTA Modal styles -->
+<style>
+    /* CTA Modal specific styles */
+    .cta-modal-overlay {
+        backdrop-filter: blur(4px);
+        transition: all 0.3s ease;
+    }
+
+    .cta-modal-content {
+        transform: scale(0.9);
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .cta-modal-overlay.show .cta-modal-content {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    .cta-modal-overlay.show {
+        opacity: 1;
+    }
+
+    /* CTA Button loading state */
+    .cta-btn-loading {
+        position: relative;
+    }
+
+    .cta-btn-loading::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: cta-spin 1s ease-in-out infinite;
+    }
+
+    @keyframes cta-spin {
+        to {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
+    }
+</style>
+
+<!-- CTA Modal -->
+<div id="ctaModal"
+     class="cta-modal-overlay fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+    <div class="cta-modal-content bg-white max-w-md w-full mx-4 rounded-lg shadow-2xl relative">
+        <!-- Close button -->
+        <button id="closeCtaModal"
+                class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <!-- Modal Content -->
+        <div id="ctaModalForm" class="p-8 text-center">
+            <h2 class="text-2xl font-light text-gray-800 mb-4">Свяжемся с вами</h2>
+
+            <div class="mb-6">
+                <div class="text-lg font-light text-gray-700 mb-2">Персональная консультация</div>
+            </div>
+
+            <p class="text-gray-600 font-light mb-6 text-sm leading-relaxed">
+                Оставьте контакты и наш менеджер свяжется с вами для подбора мебели
+            </p>
+
+            <!-- Form -->
+            <form id="ctaForm" class="space-y-4">
+                <div>
+                    <input
+                            type="text"
+                            id="ctaCustomerName"
+                            name="name"
+                            placeholder="Ваше имя"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 font-light text-gray-800"
+                    >
+                </div>
+
+                <div>
+                    <input
+                            type="tel"
+                            id="ctaCustomerPhone"
+                            name="phone"
+                            placeholder="Ваш телефон"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 font-light text-gray-800"
+                    >
+                </div>
+
+                <button
+                        type="submit"
+                        id="ctaSubmitBtn"
+                        class="w-full bg-gray-800 text-white py-3 px-6 rounded font-light uppercase tracking-wider text-sm hover:bg-gray-700 transition-colors"
+                >
+                    Получить консультацию
+                </button>
+            </form>
+
+            <p class="text-xs text-gray-500 mt-4 font-light">
+                Нажимая кнопку, вы соглашаетесь с обработкой персональных данных
+            </p>
+        </div>
+
+        <!-- Success state (hidden by default) -->
+        <div id="ctaSuccessState" class="p-8 text-center hidden">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+
+            <h3 class="text-xl font-light text-gray-800 mb-3">Спасибо за заявку!</h3>
+            <p class="text-gray-600 font-light mb-6 text-sm">
+                Наш менеджер свяжется с вами в ближайшее время.
+            </p>
+
+            <button id="ctaContinueBtn"
+                    class="text-gray-600 font-light text-sm uppercase tracking-wider border-b border-gray-400 pb-1 hover:text-gray-800 hover:border-gray-600 transition-colors">
+                Закрыть
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Modal Scripts -->
+<script>
+    // CTA Modal functionality
+    const ctaModal = document.getElementById('ctaModal');
+    const closeCtaModalBtn = document.getElementById('closeCtaModal');
+    const ctaForm = document.getElementById('ctaForm');
+    const ctaSubmitBtn = document.getElementById('ctaSubmitBtn');
+    const ctaSuccessState = document.getElementById('ctaSuccessState');
+    const ctaModalForm = document.getElementById('ctaModalForm');
+    const ctaContinueBtn = document.getElementById('ctaContinueBtn');
+
+    // Переменная для хранения позиции скролла
+    let scrollPosition = 0;
+
+    // Show CTA modal
+    function showCtaModal() {
+        if (ctaModal) {
+            // Сохраняем текущую позицию скролла
+            scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+            // Блокируем скролл, сохраняя позицию
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${scrollPosition}px`;
+            document.body.style.width = '100%';
+
+            ctaModal.classList.remove('pointer-events-none');
+            setTimeout(() => {
+                ctaModal.classList.add('show');
+            }, 100);
+        }
+    }
+
+    // Close CTA modal
+    function closeCtaModal() {
+        if (ctaModal) {
+            ctaModal.classList.remove('show');
+            setTimeout(() => {
+                ctaModal.classList.add('pointer-events-none');
+
+                // Восстанавливаем скролл
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.top = '';
+                document.body.style.width = '';
+
+                // Возвращаемся к сохраненной позиции
+                window.scrollTo(0, scrollPosition);
+            }, 300);
+        }
+    }
+
+    // Event listeners for CTA modal
+    if (ctaModal) {
+        // Close on overlay click
+        ctaModal.addEventListener('click', (e) => {
+            if (e.target === ctaModal) {
+                closeCtaModal();
+            }
+        });
+    }
+
+    if (closeCtaModalBtn) {
+        closeCtaModalBtn.addEventListener('click', closeCtaModal);
+    }
+
+    if (ctaContinueBtn) {
+        ctaContinueBtn.addEventListener('click', closeCtaModal);
+    }
+
+    // Close on Escape key (only if CTA modal is open)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && ctaModal && ctaModal.classList.contains('show')) {
+            closeCtaModal();
+        }
+    });
+
+    // CTA Form submission
+    if (ctaForm) {
+        ctaForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(ctaForm);
+            const data = {
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                action_type: 'cta'
+            };
+
+            // Show loading state
+            if (ctaSubmitBtn) {
+                ctaSubmitBtn.disabled = true;
+                ctaSubmitBtn.classList.add('cta-btn-loading');
+                ctaSubmitBtn.textContent = '';
+            }
+
+            try {
+                const response = await fetch('/customer-create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    // Hide form, show success
+                    if (ctaModalForm) ctaModalForm.style.display = 'none';
+                    if (ctaSuccessState) ctaSuccessState.classList.remove('hidden');
+                } else {
+                    throw new Error('Network response was not ok');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Произошла ошибка. Попробуйте еще раз.');
+            } finally {
+                // Reset button state
+                if (ctaSubmitBtn) {
+                    ctaSubmitBtn.disabled = false;
+                    ctaSubmitBtn.classList.remove('cta-btn-loading');
+                    ctaSubmitBtn.textContent = 'Получить консультацию';
+                }
+            }
+        });
+    }
+
+    // Global function to open CTA modal (can be called from anywhere)
+    window.openCtaModal = showCtaModal;
+</script>
