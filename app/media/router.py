@@ -3,6 +3,7 @@ import uuid
 from pathlib import Path
 from typing import Optional, Dict, Tuple
 
+import cv2
 from PIL import Image
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
 from sqlalchemy.orm import Session
@@ -151,6 +152,111 @@ async def save_file(file: UploadFile, filename: str) -> str:
         )
 
 
+def create_video_thumbnail_variants(video_path: str, base_filename: str) -> Dict[str, str]:
+    """Create thumbnail variants from video file"""
+    variants = {}
+    temp_thumbnail_path = None
+
+    try:
+        # Открываем видео
+        cap = cv2.VideoCapture(video_path)
+
+        if not cap.isOpened():
+            raise Exception("Cannot open video file")
+
+        # Получаем общее количество кадров
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+        if total_frames == 0:
+            raise Exception("Video has no frames")
+
+        # Находим кадр из середины видео
+        middle_frame = total_frames // 2
+        cap.set(cv2.CAP_PROP_POS_FRAMES, middle_frame)
+
+        # Читаем кадр
+        ret, frame = cap.read()
+        cap.release()
+
+        if not ret:
+            raise Exception("Cannot read frame from video")
+
+        # Конвертируем BGR в RGB (OpenCV использует BGR)
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        # Создаем PIL Image из кадра
+        pil_image = Image.fromarray(frame_rgb)
+
+        # Сохраняем временный thumbnail
+        temp_thumbnail_path = f"{base_filename}_temp_thumbnail.jpg"
+        temp_full_path = os.path.join(UPLOAD_DIR, temp_thumbnail_path)
+        pil_image.save(temp_full_path, format='JPEG', quality=90, optimize=True)
+
+        # Создаем варианты размеров для thumbnail (используя ту же логику что и для изображений)
+        variants = create_thumbnail_variants(temp_full_path, base_filename)
+
+        # Удаляем временный файл
+        if os.path.exists(temp_full_path):
+            os.remove(temp_full_path)
+
+        return variants
+
+    except Exception as e:
+        # Очищаем временные файлы при ошибке
+        if temp_thumbnail_path:
+            temp_full_path = os.path.join(UPLOAD_DIR, temp_thumbnail_path)
+            if os.path.exists(temp_full_path):
+                os.remove(temp_full_path)
+
+        # Очищаем созданные варианты
+        for variant_file in variants.values():
+            variant_path = os.path.join(UPLOAD_DIR, variant_file)
+            if os.path.exists(variant_path):
+                os.remove(variant_path)
+
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to create video thumbnail: {str(e)}"
+        )
+
+
+def create_thumbnail_variants(thumbnail_path: str, base_filename: str) -> Dict[str, str]:
+    """Create different sized variants of a thumbnail"""
+    variants = {}
+
+    try:
+        # Создаем варианты разных размеров для thumbnail
+        for size_name, dimensions in IMAGE_SIZES.items():
+            variant_filename = f"{base_filename}_thumbnail_{size_name}.jpg"
+            variant_path = os.path.join(UPLOAD_DIR, variant_filename)
+
+            if size_name == 'original':
+                # Для оригинального размера просто копируем
+                with open(thumbnail_path, 'rb') as src:
+                    with open(variant_path, 'wb') as dst:
+                        dst.write(src.read())
+            else:
+                # Изменяем размер и сохраняем
+                resized_img = resize_image(thumbnail_path, dimensions)
+                resized_img.save(variant_path, format='JPEG', quality=85, optimize=True)
+
+            variants[size_name] = variant_filename
+
+        return variants
+
+    except Exception as e:
+        # Очищаем созданные файлы при ошибке
+        for variant_file in variants.values():
+            variant_path = os.path.join(UPLOAD_DIR, variant_file)
+            if os.path.exists(variant_path):
+                os.remove(variant_path)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to create thumbnail variants: {str(e)}"
+        )
+
+
+# Обновленный обработчик загрузки
 @router.post(
     "/upload", response_model=MediaResponse, status_code=status.HTTP_201_CREATED
 )
@@ -180,6 +286,7 @@ async def upload_media(
 
     try:
         filename_variants = None
+        thumbnail_variants = None
 
         if media_type == 'photo':
             # Создаем варианты размеров для изображений
@@ -191,13 +298,17 @@ async def upload_media(
             # Удаляем временный файл
             if os.path.exists(temp_file_path):
                 os.remove(temp_file_path)
-        else:
-            # Для видео просто переименовываем
+
+        elif media_type == 'video':
+            # Для видео сохраняем оригинал и создаем thumbnail'ы
             filename = f"{base_filename}{file_extension}"
             file_path = os.path.join(UPLOAD_DIR, filename)
             os.rename(temp_file_path, file_path)
 
-        # Create media record с вариантами размеров
+            # Создаем thumbnail'ы из видео
+            filename_variants = create_video_thumbnail_variants(file_path, base_filename)
+        print(filename_variants)
+        # Create media record с вариантами размеров и thumbnail'ами
         media = MediaRepository.create(
             db=db,
             product_id=product_id,
@@ -217,11 +328,14 @@ async def upload_media(
         # Clean up files if database operation fails
         if os.path.exists(temp_file_path):
             os.remove(temp_file_path)
-        if 'variants' in locals():
-            for variant_file in variants.values():
+
+        # Очищаем варианты при ошибке
+        if 'filename_variants' in locals() and filename_variants:
+            for variant_file in filename_variants.values():
                 variant_path = os.path.join(UPLOAD_DIR, variant_file)
                 if os.path.exists(variant_path):
                     os.remove(variant_path)
+
         elif 'file_path' in locals() and os.path.exists(file_path):
             os.remove(file_path)
 

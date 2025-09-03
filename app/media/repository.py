@@ -34,7 +34,7 @@ class MediaRepository:
         )
 
         # Заполняем поля с вариантами размеров для изображений
-        if filename_variants and type == 'photo':
+        if filename_variants:
             media.filename_thumb = filename_variants.get('thumb')
             media.filename_medium = filename_variants.get('medium')
             media.filename_large = filename_variants.get('large')

@@ -497,47 +497,55 @@
 
         <!-- 1. Product Images -->
         <div class="mb-8 sm:mb-12">
-            {% if product.images %}
-                {% if product.images|length > 1 %}
-                <!-- Multiple Images - Carousel -->
-                <div class="product-carousel max-w-4xl mx-auto">
-                    <div class="f-carousel" id="productCarousel">
-                        {% if product.main_image_url %}
-                        <div class="f-carousel__slide" data-thumb-src="{{ product.main_image_url }}">
-                            <a href="/uploads/media/{{ product.media[0].filename_large }}" data-fancybox="gallery" data-caption="{{ product.name }}" class="block w-full h-full">
-                                <img src="/uploads/media/{{ product.media[0].filename_large }}" alt="{{ product.name }}">
-                            </a>
-                        </div>
-                        {% endif %}
-
-                        {% for image in product.images[1:] %}
-                        <div class="f-carousel__slide" data-thumb-src="/{{ image.file_path }}">
-                            <a href="/uploads/media/{{ image.filename_large }}" data-fancybox="gallery" data-caption="{{ product.name }} - дополнительное фото" class="block w-full h-full">
-                                <img src="/uploads/media/{{ image.filename_large }}" alt="{{ product.name }}">
-                            </a>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% else %}
-                <!-- Single Image -->
-                <div class="aspect-[3/2] bg-white overflow-hidden rounded-lg max-w-3xl mx-auto">
-                    {% if product.main_image_url %}
-                    <a href="/uploads/media/{{ product.media[0].filename_large }}" data-fancybox="gallery" data-caption="{{ product.name }}" class="block w-full h-full">
-                        <img src="/uploads/media/{{ product.media[0].filename_large }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+    {% set all_media = product.images + product.videos %}
+    {% if all_media %}
+        {% if all_media|length > 1 %}
+        <!-- Multiple Media Items - Carousel -->
+        <div class="product-carousel max-w-4xl mx-auto">
+            <div class="f-carousel" id="productCarousel">
+                {% for media_item in all_media %}
+                <div class="f-carousel__slide" data-thumb-src="/uploads/media/{{ media_item.filename_large }}">
+                    {% if media_item.type == 'photo' %}
+                    <!-- Image slide -->
+                    <a href="/uploads/media/{{ media_item.filename_large }}" data-fancybox="gallery"
+                       data-caption="{{ product.name }}" class="block w-full h-full">
+                        <img src="/uploads/media/{{ media_item.filename_large }}" alt="{{ product.name }}"
+                             class="w-full h-full object-cover">
                     </a>
+                    {% elif media_item.type == 'video' %}
+                    <!-- Video slide -->
+                    <div class="relative w-full h-full bg-black rounded-lg overflow-hidden">
+                        <video
+                                class="w-full h-full object-cover"
+                                muted
+                                controls
+                                autoplay
+                                preload="metadata"
+                                poster="/uploads/media/{{ media_item.filename_thumb }}"
+                        >
+                            <source src="/uploads/media/{{ media_item.filename }}" type="video/mp4">
+                            <source src="/uploads/media/{{ media_item.filename }}" type="video/webm">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
                     {% endif %}
                 </div>
-                {% endif %}
-            {% else %}
-            <!-- No Image Placeholder -->
-            <div class="relative flex items-center justify-center text-gray-300 bg-brand-light-gray aspect-[3/2] rounded-lg max-w-3xl mx-auto">
-                <svg class="w-16 h-16 sm:w-24 sm:h-24" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
-                </svg>
+                {% endfor %}
             </div>
-            {% endif %}
         </div>
+        {% else %}
+        <!-- Single Media Item -->
+        <!-- Add your single media item code here if needed -->
+        {% endif %}
+    {% else %}
+    <!-- No Image Placeholder -->
+    <div class="relative flex items-center justify-center text-gray-300 bg-brand-light-gray aspect-[3/2] rounded-lg max-w-3xl mx-auto">
+        <svg class="w-16 h-16 sm:w-24 sm:h-24" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+        </svg>
+    </div>
+    {% endif %}
+</div>
 
         <!-- 2. Price and Add to Cart -->
         {% if product.price %}
