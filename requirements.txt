@@ -13,3 +13,4 @@ starlette
 python-telegram-bot
 redis
 Pillow
+pydantic[email]

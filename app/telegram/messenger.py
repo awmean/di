@@ -1,6 +1,7 @@
 from telegram import Bot
 
 from app.core.config import settings
+from app.customers.models import Customer
 from app.orders.models import Order
 
 
@@ -62,3 +63,41 @@ class TelegramMessenger:
             return await TelegramMessenger.send_message(message)
         except Exception as e:
             return {"ok": False, "error": f"Failed to send order: {str(e)}"}
+
+    @staticmethod
+    async def send_customer(customer: Customer):
+        try:
+            message = TelegramMessenger._format_customer_message(customer)
+            return await TelegramMessenger.send_message(message)
+        except Exception as e:
+            return {"ok": False, "error": f"Failed to send customer: {str(e)}"}
+
+    @staticmethod
+    def _format_customer_message(customer: Customer) -> str:
+        customer_types = {
+            'first-time': 'скидка',
+            'cta': 'обратный звонок',
+            'coop': 'сотрудничество',
+        }
+
+        message = f"<b>Клиент — {customer_types[customer.action_type]}</b>\n\n"
+
+        # Основная информация
+        if customer.name:
+            message += f"<b>Имя:</b> {customer.name}\n"
+
+        if customer.phone:
+            message += f"<b>Телефон:</b> {customer.phone}\n"
+
+        if customer.email:
+            message += f"<b>Email:</b> {customer.email}\n"
+
+        # Дополнительная информация для сотрудничества
+        if customer.city:
+            message += f"<b>Город:</b> {customer.company_name}\n"
+        if customer.company_name:
+            message += f"<b>Компания:</b> {customer.company_name}\n"
+        if customer.website:
+            message += f"<b>Сайт:</b> {customer.company_name}\n"
+
+        return message

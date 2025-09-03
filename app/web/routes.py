@@ -9,6 +9,8 @@ from starlette import status
 from app.categories.repository import CategoryRepository
 from app.core.database import get_db
 from app.core.formatters import format_text
+from app.customers.repository import CustomersRepository
+from app.customers.schemas import CustomerCreate
 from app.orders.repository import OrderRepository, OrderItemRepository
 from app.orders.schemas import OrderResponse, OrderCreate
 from app.products.repository import ProductRepository
@@ -80,6 +82,16 @@ async def category_detail(
             "products": category.products,
         },
     )
+
+
+@router.post(
+    '/customer-create', status_code=status.HTTP_201_CREATED
+)
+async def create_customer(customer_data: CustomerCreate, db: Session = Depends(get_db)):
+    customer = CustomersRepository.create(db, **customer_data.model_dump())
+    asyncio.create_task(TelegramMessenger.send_customer(customer))
+
+    return {'success': True}
 
 
 @router.post(
