@@ -33,7 +33,6 @@
 
 {% include 'partials/products_grid.html' %}
 
-<!-- Hero Section after video -->
 <section class="py-12 lg:py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-8 text-center">
         <p class="text-base text-gray-700 leading-relaxed font-light mb-6 max-w-2xl mx-auto">
@@ -47,5 +46,40 @@
     </div>
 </section>
 
+<!-- Наш шоурум -->
+<section class="py-16 lg:py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-8">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="text-3xl lg:text-4xl font-light text-gray-900 mb-6">Наш шоурум</h2>
+                <p class="text-lg text-gray-600 leading-relaxed font-light mb-8">
+                    Посетите наш шоурум, чтобы увидеть и почувствовать качество нашей продукции вживую.
+                    Наши специалисты помогут подобрать идеальное решение для вашего интерьера.
+                </p>
+
+                <div class="mb-8">
+                    <h3 class="text-xl font-medium text-gray-900 mb-3">Торговый центр «Элитстрой»</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Торговая ул., с2<br>
+                        Павильоны К-2; F-3
+                    </p>
+                </div>
+
+                <a href="https://yandex.ru/navi/?whatshere%5Bzoom%5D=18&whatshere%5Bpoint%5D=37.412792%2C55.684183&lang=ru&from=navi"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="inline-flex items-center text-sm uppercase tracking-[0.15em] text-gray-700 font-medium border border-gray-300 px-4 py-2 hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-all duration-300">
+                    Проложить маршрут
+                </a>
+            </div>
+
+            <div class="bg-white p-8 lg:p-12 rounded-lg shadow-sm">
+                <p class="text-sm text-gray-500 text-center">
+                    Современное пространство для демонстрации наших коллекций в удобном торговом центре
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
 
 {% endblock %}
