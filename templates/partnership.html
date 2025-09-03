@@ -1,0 +1,332 @@
+{% extends 'base.html' %}
+{% block header %}
+{% include 'partials/header.html' %}
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 40vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .content-section {
+        background-color: #ffffff;
+    }
+
+    .info-card {
+        background: #fdfdfd;
+        border: 1px solid #f0f0f0;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+        border-color: #e0e0e0;
+        background: #fafafa;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+    .partner-highlight {
+        background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+        color: white;
+        border-radius: 12px;
+    }
+
+    .form-section {
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+
+    .form-input {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #6c757d;
+        box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.1);
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 14px 28px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(73, 80, 87, 0.3);
+    }
+
+    .section-divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e9ecef, transparent);
+        margin: 4rem 0;
+    }
+
+    .benefit-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .benefit-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px 0;
+    }
+
+    .benefit-icon {
+        width: 8px;
+        height: 8px;
+        background: #6c757d;
+        border-radius: 50%;
+        margin-top: 8px;
+        flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+        .hero-section {
+            min-height: 25vh;
+            text-align: center;
+        }
+        
+        .benefit-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="max-w-7xl mx-auto px-8 text-center">
+        <h1 class="text-4xl lg:text-5xl font-light text-gray-900 mb-4">Сотрудничество</h1>
+        <p class="text-lg text-gray-600 font-light max-w-2xl mx-auto">
+            Приглашаем к взаимовыгодному сотрудничеству профессионалов рынка
+        </p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="content-section py-20 lg:py-28">
+    <div class="max-w-6xl mx-auto px-8">
+        
+        <!-- Intro -->
+        <div class="mb-20">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-light text-gray-900 mb-6">Приглашаем к сотрудничеству</h2>
+                <p class="text-gray-600 font-light text-lg max-w-4xl mx-auto leading-relaxed">
+                    «Luce di Villa» — успешная и стабильная компания на мебельном рынке России в сфере outdoor и indoor мебели. 
+                    Мы предлагаем профессиональное сотрудничество и готовы стать вашим надежным партнером.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                <div class="info-card p-8 text-center">
+                    <h3 class="text-xl font-medium text-gray-900 mb-4">Архитекторы и дизайнеры</h3>
+                    <p class="text-gray-600 leading-relaxed font-light">
+                        Консультации по ассортименту и подбор мебели под ваши проекты
+                    </p>
+                </div>
+
+                <div class="info-card p-8 text-center">
+                    <h3 class="text-xl font-medium text-gray-900 mb-4">HoReCa поставщики</h3>
+                    <p class="text-gray-600 leading-relaxed font-light">
+                        Специальные условия для поставщиков ресторанного бизнеса
+                    </p>
+                </div>
+
+                <div class="info-card p-8 text-center">
+                    <h3 class="text-xl font-medium text-gray-900 mb-4">Кафе, рестораны, отели</h3>
+                    <p class="text-gray-600 leading-relaxed font-light">
+                        Прямое сотрудничество с выгодными условиями
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- Benefits -->
+        <div class="mb-20">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-light text-gray-900 mb-4">Условия сотрудничества</h2>
+                <p class="text-gray-600 font-light text-lg">Мы создали особые преимущества для наших партнеров</p>
+            </div>
+
+            <div class="info-card p-8 lg:p-12">
+                <div class="benefit-grid">
+                    <div class="benefit-item">
+                        <div class="benefit-icon"></div>
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-1">Складская программа</h4>
+                            <p class="text-gray-600 font-light text-sm">Большой ассортимент на складе</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-item">
+                        <div class="benefit-icon"></div>
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-1">Система скидок</h4>
+                            <p class="text-gray-600 font-light text-sm">Гибкие скидки и бонусная программа</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-item">
+                        <div class="benefit-icon"></div>
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-1">Быстрая доставка</h4>
+                            <p class="text-gray-600 font-light text-sm">Короткие сроки доставки по всей России</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-item">
+                        <div class="benefit-icon"></div>
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-1">Удобная оплата</h4>
+                            <p class="text-gray-600 font-light text-sm">Различные формы расчетов</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-item">
+                        <div class="benefit-icon"></div>
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-1">Обучение</h4>
+                            <p class="text-gray-600 font-light text-sm">Семинары по продукции и монтажу</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-item">
+                        <div class="benefit-icon"></div>
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-1">Маркетинг</h4>
+                            <p class="text-gray-600 font-light text-sm">Рекламные и презентационные материалы</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- Partnership Form -->
+        <div class="mb-16">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-light text-gray-900 mb-4">Стать партнером</h2>
+                <p class="text-gray-600 font-light text-lg">Отправим коммерческое предложение для сотрудничества</p>
+            </div>
+
+            <div class="form-section p-8 lg:p-12 max-w-4xl mx-auto">
+                <form id="partnershipForm" class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Город *</label>
+                            <input type="text" name="city" required class="form-input w-full" placeholder="Москва">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Название компании *</label>
+                            <input type="text" name="company_name" required class="form-input w-full" placeholder="ООО Компания">
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Сайт</label>
+                            <input type="url" name="website" class="form-input w-full" placeholder="https://example.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                            <input type="email" name="email" required class="form-input w-full" placeholder="info@company.com">
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Телефон *</label>
+                            <input type="tel" name="phone" required class="form-input w-full" placeholder="+7 (999) 123-45-67">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Контактное лицо *</label>
+                            <input type="text" name="name" required class="form-input w-full" placeholder="Иван Иванов">
+                        </div>
+                    </div>
+
+                    <div class="text-center pt-4">
+                        <button type="submit" class="submit-btn">
+                            Отправить заявку
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Contact Block -->
+        <div class="partner-highlight p-8 text-center max-w-2xl mx-auto">
+            <p class="text-white leading-relaxed mb-6 text-lg font-light">
+                Готовы ответить на ваши вопросы и обсудить условия сотрудничества
+            </p>
+            <div class="space-y-3">
+                <a href="tel:+79154015754" class="block text-white text-xl font-medium hover:text-gray-200 transition-colors">
+                    +7 (915) 401-57-54
+                </a>
+            </div>
+            <p class="text-gray-200 text-sm mt-6 font-light">
+                Вместе к процветанию и успеху!
+            </p>
+        </div>
+    </div>
+</section>
+
+<script>
+document.getElementById('partnershipForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {};
+    
+    for (let [key, value] of formData.entries()) {
+        data[key] = value;
+    }
+    
+    data.action_type = 'coop';
+    
+    try {
+        const response = await fetch('/customer-create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+            alert('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.');
+            this.reset();
+        } else {
+            throw new Error('Ошибка отправки');
+        }
+    } catch (error) {
+        alert('Произошла ошибка при отправке заявки. Попробуйте еще раз.');
+    }
+});
+</script>
+
+{% endblock %}
