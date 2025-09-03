@@ -28,13 +28,14 @@
         border-color: #e0e0e0;
         background: #fafafa;
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
     }
 
     .partner-highlight {
-        background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
-        color: white;
-        border-radius: 12px;
+        background: transparent;
+        border: 1px solid #495057;
+        color: #495057;
+        border-radius: 0;
     }
 
     .form-section {
@@ -57,10 +58,10 @@
     }
 
     .submit-btn {
-        background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
-        color: white;
-        border: none;
-        border-radius: 8px;
+        background: transparent;
+        color: #495057;
+        border: 1px solid #495057;
+        border-radius: 0;
         padding: 14px 28px;
         font-size: 16px;
         font-weight: 500;
@@ -69,8 +70,10 @@
     }
 
     .submit-btn:hover {
+        background: #495057;
+        color: white;
         transform: translateY(-1px);
-        box-shadow: 0 6px 20px rgba(73, 80, 87, 0.3);
+        box-shadow: 0 6px 20px rgba(73, 80, 87, 0.2);
     }
 
     .section-divider {
@@ -106,7 +109,7 @@
             min-height: 25vh;
             text-align: center;
         }
-        
+
         .benefit-grid {
             grid-template-columns: 1fr;
         }
@@ -128,13 +131,14 @@
 <!-- Main Content -->
 <section class="content-section py-20 lg:py-28">
     <div class="max-w-6xl mx-auto px-8">
-        
+
         <!-- Intro -->
         <div class="mb-20">
             <div class="text-center mb-16">
                 <h2 class="text-3xl lg:text-4xl font-light text-gray-900 mb-6">Приглашаем к сотрудничеству</h2>
                 <p class="text-gray-600 font-light text-lg max-w-4xl mx-auto leading-relaxed">
-                    «Luce di Villa» — успешная и стабильная компания на мебельном рынке России в сфере outdoor и indoor мебели. 
+                    «Luce di Villa» — успешная и стабильная компания на мебельном рынке России в сфере outdoor и indoor
+                    мебели.
                     Мы предлагаем профессиональное сотрудничество и готовы стать вашим надежным партнером.
                 </p>
             </div>
@@ -243,25 +247,29 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Название компании *</label>
-                            <input type="text" name="company_name" required class="form-input w-full" placeholder="ООО Компания">
+                            <input type="text" name="company_name" required class="form-input w-full"
+                                   placeholder="ООО Компания">
                         </div>
                     </div>
 
                     <div class="grid md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Сайт</label>
-                            <input type="text" name="website" class="form-input w-full" placeholder="https://example.com">
+                            <input type="text" name="website" class="form-input w-full"
+                                   placeholder="https://example.com">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
-                            <input type="email" name="email" required class="form-input w-full" placeholder="info@company.com">
+                            <input type="email" name="email" required class="form-input w-full"
+                                   placeholder="info@company.com">
                         </div>
                     </div>
 
                     <div class="grid md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Телефон *</label>
-                            <input type="tel" name="phone" required class="form-input w-full" placeholder="+7 (999) 123-45-67">
+                            <input type="tel" name="phone" required class="form-input w-full"
+                                   placeholder="+7 (999) 123-45-67">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Контактное лицо *</label>
@@ -277,56 +285,41 @@
                 </form>
             </div>
         </div>
-
-        <!-- Contact Block -->
-        <div class="partner-highlight p-8 text-center max-w-2xl mx-auto">
-            <p class="text-white leading-relaxed mb-6 text-lg font-light">
-                Готовы ответить на ваши вопросы и обсудить условия сотрудничества
-            </p>
-            <div class="space-y-3">
-                <a href="tel:+79154015754" class="block text-white text-xl font-medium hover:text-gray-200 transition-colors">
-                    +7 (915) 401-57-54
-                </a>
-            </div>
-            <p class="text-gray-200 text-sm mt-6 font-light">
-                Вместе к процветанию и успеху!
-            </p>
-        </div>
     </div>
 </section>
 
 <script>
-document.getElementById('partnershipForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    const data = {};
-    
-    for (let [key, value] of formData.entries()) {
-        data[key] = value;
-    }
-    
-    data.action_type = 'coop';
-    
-    try {
-        const response = await fetch('/customer-create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-        
-        if (response.ok) {
-            alert('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.');
-            this.reset();
-        } else {
-            throw new Error('Ошибка отправки');
+    document.getElementById('partnershipForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const data = {};
+
+        for (let [key, value] of formData.entries()) {
+            data[key] = value;
         }
-    } catch (error) {
-        alert('Произошла ошибка при отправке заявки. Попробуйте еще раз.');
-    }
-});
+
+        data.action_type = 'coop';
+
+        try {
+            const response = await fetch('/customer-create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.');
+                this.reset();
+            } else {
+                throw new Error('Ошибка отправки');
+            }
+        } catch (error) {
+            alert('Произошла ошибка при отправке заявки. Попробуйте еще раз.');
+        }
+    });
 </script>
 
 {% endblock %}
