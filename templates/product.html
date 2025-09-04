@@ -13,6 +13,136 @@
 {% if product.main_image_url %}
 <meta property="og:image" content="{{ request.base_url }}{{ product.main_image_url[1:] }}">
 {% endif %}
+
+<!-- Product Schema Markup -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "{{ product.name }}",
+  "description": "{{ product.meta_description or product.description|striptags|truncate(160) }}",
+  {% if product.main_image_url %}
+  "image": [
+    "{{ request.base_url }}{{ product.main_image_url[1:] }}"{% if product.images %},
+    {% for image in product.images[:4] %}"{{ request.base_url }}/uploads/media/{{ image.filename_large }}"{% if not loop.last %},{% endif %}{% endfor %}
+    {% endif %}
+  ],
+  {% endif %}
+  {% if product.sku %}
+  "sku": "{{ product.sku }}",
+  "mpn": "{{ product.sku }}",
+  {% endif %}
+  {% if product.category and product.category.name %}
+  "category": "{{ product.category.name }}",
+  {% endif %}
+  "brand": {
+    "@type": "Brand",
+    "name": "Luce di Villa"
+  },
+  {% if product.price %}
+  "offers": {
+    "@type": "Offer",
+    "url": "{{ request.url }}",
+    "priceCurrency": "RUB",
+    "price": "{{ product.price | round(0) }}",
+    {% if product.old_price and product.old_price > product.price %}
+    "priceValidUntil": "2025-12-31",
+    {% endif %}
+    "availability": "https://schema.org/InStock",
+    "seller": {
+      "@type": "Organization",
+      "name": "Luce di Villa"
+    }
+  },
+  {% endif %}
+  "additionalProperty": [
+    {% if product.material %}
+    {
+      "@type": "PropertyValue",
+      "name": "Материал",
+      "value": "{{ product.material }}"
+    }{% if product.color or product.width or product.height or product.depth or product.weight %},{% endif %}
+    {% endif %}
+    {% if product.color %}
+    {
+      "@type": "PropertyValue",
+      "name": "Цвет",
+      "value": "{{ product.color }}"
+    }{% if product.width or product.height or product.depth or product.weight %},{% endif %}
+    {% endif %}
+    {% if product.width %}
+    {
+      "@type": "PropertyValue",
+      "name": "Ширина",
+      "value": "{{ product.width }} см"
+    }{% if product.height or product.depth or product.weight %},{% endif %}
+    {% endif %}
+    {% if product.height %}
+    {
+      "@type": "PropertyValue",
+      "name": "Высота",
+      "value": "{{ product.height }} см"
+    }{% if product.depth or product.weight %},{% endif %}
+    {% endif %}
+    {% if product.depth %}
+    {
+      "@type": "PropertyValue",
+      "name": "Глубина",
+      "value": "{{ product.depth }} см"
+    }{% if product.weight %},{% endif %}
+    {% endif %}
+    {% if product.weight %}
+    {
+      "@type": "PropertyValue",
+      "name": "Вес",
+      "value": "{{ product.weight }} кг"
+    }
+    {% endif %}
+  ]
+}
+</script>
+
+<!-- BreadcrumbList Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Главная",
+      "item": "{{ request.base_url }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Каталог",
+      "item": "{{ request.base_url }}catalog"
+    }{% if product.category %},
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ product.category.name }}",
+      "item": "{{ request.base_url }}catalog/{{ product.category.slug }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "{{ product.name }}",
+      "item": "{{ request.url }}"
+    }
+    {% else %},
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ product.name }}",
+      "item": "{{ request.url }}"
+    }
+    {% endif %}
+  ]
+}
+</script>
 {% endblock %}
 
 {% block extra_styles %}
