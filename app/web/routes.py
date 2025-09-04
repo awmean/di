@@ -50,6 +50,25 @@ async def catalog(request: Request, db: Session = Depends(get_db)):
     )
 
 
+@router.get("/catalog/{category_slug}", response_class=HTMLResponse)
+async def catalog_category(request: Request, category_slug: str, db: Session = Depends(get_db)):
+    """Catalog page with filtering and pagination"""
+    current_category = CategoryRepository.get_by_slug(db, category_slug)
+    products = ProductRepository.get_all(db=db, category_id=current_category.id)
+    categories = CategoryRepository.get_all(db=db)
+
+    return templates.TemplateResponse(
+        "catalog.html",
+        {
+            "request": request,
+            "categories": categories,
+            "products": products,
+            'current_category': current_category,
+            "current_page": 1,
+        },
+    )
+
+
 @router.get("/payment-delivery", response_class=HTMLResponse)
 async def payment_delivery(request: Request, db: Session = Depends(get_db)):
     """Catalog page with filtering and pagination"""
@@ -60,6 +79,7 @@ async def payment_delivery(request: Request, db: Session = Depends(get_db)):
             "request": request,
         },
     )
+
 
 @router.get("/partnership", response_class=HTMLResponse)
 async def partnership(request: Request, db: Session = Depends(get_db)):

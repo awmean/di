@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Luce di Villa - Каталог мебели{% endblock %}
+{% block title %}Luce di Villa - {% if current_category %}{{ current_category.name }}{% else %}Каталог мебели{% endif %}{% endblock %}
 
 {% block extra_styles %}
 <style>
@@ -8,37 +8,25 @@
         transition: all 0.3s ease;
     }
 
-    .furniture-card.hidden {
-        display: none !important;
-    }
-
     .filter-btn {
         transition: all 0.3s ease;
         background-color: white;
         color: #7E7670;
         border: 1px solid #7E7670;
+        text-decoration: none;
+        display: inline-block;
     }
 
     .filter-btn:hover {
         background-color: #7E7670;
         color: white;
+        text-decoration: none;
     }
 
     .filter-btn.active {
         background-color: #7E7670 !important;
         color: white !important;
         border-color: #7E7670 !important;
-    }
-
-    @keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
     }
 
     @keyframes fadeIn {
@@ -62,7 +50,12 @@
     <!-- Page Title -->
     <section class="mb-12">
         <div class="max-w-7xl mx-auto px-8">
-            <h1 class="text-3xl lg:text-4xl text-brand-dark uppercase tracking-[0.15em]">Каталог</h1>
+            <h1 class="text-3xl lg:text-4xl text-brand-dark uppercase tracking-[0.15em]">
+                {% if current_category %}{{ current_category.name }}{% else %}Каталог{% endif %}
+            </h1>
+            {% if current_category and current_category.description %}
+            <p class="mt-4 text-brand-dark/70 max-w-2xl">{{ current_category.description }}</p>
+            {% endif %}
         </div>
     </section>
 
@@ -70,87 +63,26 @@
     <section class="mb-16">
         <div class="max-w-7xl mx-auto px-8">
             <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
-                <button class="filter-btn active px-5 py-2 text-xs uppercase tracking-[0.15em] font-light transition-all"
-                        data-filter="all">
+                <a href="{{ url_for('catalog') }}"
+                   class="filter-btn {% if not current_category %}active{% endif %} px-5 py-2 text-xs uppercase tracking-[0.15em] font-light">
                     Все
-                </button>
+                </a>
                 {% for category in categories %}
-                <button class="filter-btn px-5 py-2 text-xs uppercase tracking-[0.15em] font-light transition-all"
-                        data-filter="{{ category.slug }}">
+                <a href="{{ url_for('catalog_category', category_slug=category.slug) }}"
+                   class="filter-btn {% if current_category and current_category.slug == category.slug %}active{% endif %} px-5 py-2 text-xs uppercase tracking-[0.15em] font-light">
                     {{ category.name }}
-                </button>
+                </a>
                 {% endfor %}
             </div>
         </div>
     </section>
+
+    <!-- Products Grid -->
     {% include 'partials/products_grid.html' %}
 </main>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        const products = document.querySelectorAll('.furniture-card');
-
-        function filterProducts(category) {
-            products.forEach(product => {
-                const productCategory = product.getAttribute('data-category');
-
-                if (category === 'all' || productCategory === category) {
-                    product.classList.remove('hidden');
-                    product.style.animation = 'none';
-                    product.offsetHeight;
-                    product.style.animation = 'fadeIn 0.3s ease-out';
-                } else {
-                    product.classList.add('hidden');
-                }
-            });
-        }
-
-        function updateActiveButton(activeButton) {
-            filterButtons.forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            activeButton.classList.add('active');
-        }
-
-
-        filterButtons.forEach(button => {
-            button.addEventListener('click', function (e) {
-                e.preventDefault();
-
-                const filter = this.getAttribute('data-filter');
-
-
-                updateActiveButton(this);
-
-
-                filterProducts(filter);
-
-
-                const url = new URL(window.location);
-                if (filter === 'all') {
-                    url.searchParams.delete('category');
-                } else {
-                    url.searchParams.set('category', filter);
-                }
-                window.history.pushState({}, '', url);
-            });
-        });
-
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentCategory = urlParams.get('category') || 'all';
-
-
-        const activeButton = document.querySelector(`[data-filter="${currentCategory}"]`);
-        if (activeButton) {
-            updateActiveButton(activeButton);
-            filterProducts(currentCategory);
-        }
-    });
-</script>
+<!-- Убираем JavaScript фильтрацию, так как теперь используем серверную маршрутизацию -->
 {% endblock %}
