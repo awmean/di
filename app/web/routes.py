@@ -1,9 +1,8 @@
 import asyncio
 
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
 from starlette import status
 
 from app.categories.repository import CategoryRepository
@@ -21,6 +20,137 @@ templates = Jinja2Templates(directory="templates")
 templates.env.filters['format_desc'] = format_text
 
 PRODUCTS_PER_PAGE = 36
+
+from fastapi import Response, Depends
+from sqlalchemy.orm import Session
+from datetime import datetime
+
+
+@router.get("/sitemap.xml")
+def sitemap_index():
+    """Основной sitemap-индекс"""
+    xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml_content += '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+
+    # Статичные страницы
+    xml_content += '  <sitemap>\n'
+    xml_content += '    <loc>https://luce-di-villa.ru/sitemap-static.xml</loc>\n'
+    xml_content += f'    <lastmod>{datetime.now().strftime("%Y-%m-%d")}</lastmod>\n'
+    xml_content += '  </sitemap>\n'
+
+    # Товары и категории
+    xml_content += '  <sitemap>\n'
+    xml_content += '    <loc>https://luce-di-villa.ru/sitemap-store.xml</loc>\n'
+    xml_content += f'    <lastmod>{datetime.now().strftime("%Y-%m-%d")}</lastmod>\n'
+    xml_content += '  </sitemap>\n'
+
+    xml_content += '</sitemapindex>'
+
+    return Response(content=xml_content, media_type='application/xml')
+
+
+@router.get("/sitemap-static.xml")
+def sitemap_static():
+    """Статичные страницы"""
+    pages = []
+
+    static_pages = [
+        {'url': '/', 'priority': '1.0', 'changefreq': 'weekly'},
+        {'url': '/about', 'priority': '0.7', 'changefreq': 'monthly'},
+        {'url': '/contacts', 'priority': '0.8', 'changefreq': 'monthly'},
+        {'url': '/payment-delivery', 'priority': '0.6', 'changefreq': 'monthly'},
+        {'url': '/partnership', 'priority': '0.6', 'changefreq': 'monthly'},
+        {'url': '/privacy', 'priority': '0.5', 'changefreq': 'annually'},
+    ]
+
+    for page in static_pages:
+        pages.append({
+            'url': f"https://luce-di-villa.ru{page['url']}",
+            'lastmod': datetime.now().strftime('%Y-%m-%d'),
+            'priority': page['priority'],
+            'changefreq': page['changefreq']
+        })
+
+    # Генерируем XML
+    xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml_content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+
+    for page in pages:
+        xml_content += '  <url>\n'
+        xml_content += f'    <loc>{page["url"]}</loc>\n'
+        xml_content += f'    <lastmod>{page["lastmod"]}</lastmod>\n'
+        xml_content += f'    <changefreq>{page["changefreq"]}</changefreq>\n'
+        xml_content += f'    <priority>{page["priority"]}</priority>\n'
+        xml_content += '  </url>\n'
+
+    xml_content += '</urlset>'
+
+    return Response(content=xml_content, media_type='application/xml')
+
+
+@router.get("/sitemap-store.xml")
+def sitemap_store(db: Session = Depends(get_db)):
+    """Товары и категории"""
+    pages = []
+
+    # Каталог
+    pages.append({
+        'url': "https://luce-di-villa.ru/catalog",
+        'lastmod': datetime.now().strftime('%Y-%m-%d'),
+        'priority': '0.9',
+        'changefreq': 'weekly'
+    })
+
+    # Категории
+    categories = CategoryRepository.get_all(db)
+    for category in categories:
+        pages.append({
+            'url': f"https://luce-di-villa.ru/catalog/{category.slug}",
+            'lastmod': datetime.now().strftime('%Y-%m-%d'),
+            'priority': '0.8',
+            'changefreq': 'weekly'
+        })
+
+    # Товары
+    products = ProductRepository.get_all(db)
+    for product in products:
+        lastmod = product.updated_at.strftime('%Y-%m-%d') if hasattr(product,
+                                                                     'updated_at') and product.updated_at else datetime.now().strftime(
+            '%Y-%m-%d')
+        pages.append({
+            'url': f"https://luce-di-villa.ru/product/{product.slug}",
+            'lastmod': lastmod,
+            'priority': '0.7',
+            'changefreq': 'monthly'
+        })
+
+    # Генерируем XML
+    xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml_content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+
+    for page in pages:
+        xml_content += '  <url>\n'
+        xml_content += f'    <loc>{page["url"]}</loc>\n'
+        xml_content += f'    <lastmod>{page["lastmod"]}</lastmod>\n'
+        xml_content += f'    <changefreq>{page["changefreq"]}</changefreq>\n'
+        xml_content += f'    <priority>{page["priority"]}</priority>\n'
+        xml_content += '  </url>\n'
+
+    xml_content += '</urlset>'
+
+    return Response(content=xml_content, media_type='application/xml')
+
+
+@router.get("/robots.txt")
+def robots():
+    content = """User-agent: *
+Allow: /
+
+Sitemap: https://luce-di-villa.ru/sitemap.xml
+Sitemap: https://luce-di-villa.ru/sitemap-static.xml
+Sitemap: https://luce-di-villa.ru/sitemap-store.xml"""
+
+    return Response(content=content, media_type='text/plain')
 
 
 @router.get("/", response_class=HTMLResponse)
