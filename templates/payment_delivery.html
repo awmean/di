@@ -1,6 +1,163 @@
 {% extends 'base.html' %}
+
+{% block title %}Luce di Villa - Оплата и доставка{% endblock %}
+
 {% block header %}
 {% include 'partials/header.html' %}
+{% endblock %}
+
+{% block meta %}
+<!-- Service Schema - Доставка -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Доставка мебели Luce di Villa",
+  "description": "Быстрая, надёжная и бережная доставка мебели по Москве и Московской области в удобное для вас время, без выходных дней",
+  "provider": {
+    "@type": "Organization",
+    "name": "Luce di Villa",
+    "url": "https://luce-di-villa.ru",
+    "telephone": "+7-915-401-57-54"
+  },
+  "areaServed": [
+    {
+      "@type": "City",
+      "name": "Москва"
+    },
+    {
+      "@type": "State",
+      "name": "Московская область"
+    },
+    {
+      "@type": "Country",
+      "name": "Россия"
+    }
+  ],
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Доставка по Москве и МО",
+      "description": "Собственная служба логистики",
+      "priceSpecification": {
+        "@type": "PriceSpecification",
+        "price": "50",
+        "priceCurrency": "RUB",
+        "unitText": "за км в обе стороны"
+      },
+      "eligibilityRequirement": {
+        "@type": "PriceSpecification",
+        "minPrice": "500000",
+        "priceCurrency": "RUB"
+      }
+    },
+    {
+      "@type": "Offer",
+      "name": "Доставка по России",
+      "description": "Отправка через ПЭК или СДЭК",
+      "price": "1500",
+      "priceCurrency": "RUB"
+    }
+  ],
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Время доставки",
+      "value": "1-2 дня при заказе до 18:00"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "График работы",
+      "value": "Без выходных дней"
+    }
+  ]
+}
+</script>
+
+<!-- Service Schema - Сборка мебели -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Сборка мебели",
+  "description": "Профессиональная сборка мебели нашими специалистами",
+  "provider": {
+    "@type": "Organization",
+    "name": "Luce di Villa"
+  },
+  "offers": {
+    "@type": "Offer",
+    "priceSpecification": {
+      "@type": "PriceSpecification",
+      "price": "5",
+      "priceCurrency": "RUB",
+      "unitText": "% от стоимости собираемой мебели"
+    }
+  }
+}
+</script>
+
+<!-- WebPage Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Оплата и доставка",
+  "description": "Удобные способы оплаты и быстрая доставка мебели Luce di Villa. Наличные, безналичный расчет, доставка по Москве и России.",
+  "url": "https://luce-di-villa.ru/payment-delivery",
+  "mainEntity": {
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Какие способы оплаты доступны?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Наличные в шоуруме, банковской картой, по счету для физических и юридических лиц"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Сколько стоит доставка?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "От 50 рублей за км в обе стороны для заказов от 500 000 рублей. Доставка по России через ПЭК или СДЭК - 1500 рублей"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Сколько времени занимает доставка?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "При заказе до 18:00 — доставка в течение 1-2 дней по Москве и Московской области"
+        }
+      }
+    ]
+  }
+}
+</script>
+
+<!-- BreadcrumbList Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Главная",
+      "item": "https://luce-di-villa.ru"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Оплата и доставка",
+      "item": "https://luce-di-villa.ru/payment-delivery"
+    }
+  ]
+}
+</script>
 {% endblock %}
 
 {% block extra_styles %}

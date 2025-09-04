@@ -1,5 +1,135 @@
 {% extends 'base.html' %}
 
+{% block title %}Luce di Villa - О компании{% endblock %}
+
+{% block meta %}
+<!-- Organization Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Luce di Villa",
+  "alternateName": "Луче ди Вилла",
+  "description": "Создаём качественную мебель, которая делает жизнь людей комфортнее и красивее. Каждое изделие проходит тщательную проработку — от эскиза до финальной отделки.",
+  "url": "https://luce-di-villa.ru",
+  "telephone": "+7-915-401-57-54",
+  "email": "info@lucedivilla.com",
+  "industry": "Мебельное производство и дизайн",
+  "foundingDate": "2010",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Торговая ул., с2, ТЦ «Элитстрой», Павильоны К-2; F-3",
+    "addressLocality": "Москва",
+    "addressRegion": "Москва",
+    "addressCountry": "RU"
+  },
+  "areaServed": {
+    "@type": "Country",
+    "name": "Россия"
+  },
+  "knowsAbout": [
+    "Дизайнерская мебель",
+    "Outdoor мебель",
+    "Indoor мебель",
+    "Натуральные материалы",
+    "Экологичные покрытия",
+    "Индивидуальный дизайн"
+  ],
+  "slogan": "Мебель, которая становится частью вашей жизни",
+  "mission": "Создавать качественную мебель, которая делает жизнь людей комфортнее и красивее. Мы верим, что хорошая мебель — это инвестиция в качество жизни.",
+  "values": [
+    "Качество материалов — используем только отборную древесину и экологичные покрытия",
+    "Индивидуальный подход — каждый проект прорабатываем с учетом потребностей клиента",
+    "Внимание к деталям — тщательная проработка каждого элемента конструкции",
+    "Долговечность — мебель, которая прослужит не одно поколение"
+  ],
+  "makesOffer": [
+    {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "Product",
+        "name": "Дизайнерская мебель",
+        "category": "Мебель"
+      },
+      "description": "Создание качественной мебели с использованием натуральных материалов и современных технологий"
+    }
+  ],
+  "hasCredential": [
+    {
+      "@type": "EducationalOccupationalCredential",
+      "credentialCategory": "Качество материалов",
+      "description": "Использование только отборной древесины и экологичных покрытий"
+    },
+    {
+      "@type": "EducationalOccupationalCredential",
+      "credentialCategory": "Индивидуальный подход",
+      "description": "Проработка каждого проекта с учетом потребностей клиента"
+    }
+  ]
+}
+</script>
+
+<!-- WebPage Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://luce-di-villa.ru/about",
+  "name": "О компании Luce di Villa",
+  "description": "История, миссия и принципы работы компании Luce di Villa. Создаём мебель, которая становится частью вашей жизни.",
+  "url": "https://luce-di-villa.ru/about",
+  "mainEntity": {
+    "@type": "AboutPage",
+    "name": "О компании",
+    "description": "Информация о компании Luce di Villa, её истории, миссии и ценностях"
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://luce-di-villa.ru"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "О компании",
+        "item": "https://luce-di-villa.ru/about"
+      }
+    ]
+  }
+}
+</script>
+
+<!-- Article Schema for Company Story -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "История компании Luce di Villa",
+  "description": "Мы начали свой путь с простой идеи: создавать мебель, которая сочетает в себе функциональность, красоту и качество.",
+  "author": {
+    "@type": "Organization",
+    "name": "Luce di Villa"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Luce di Villa"
+  },
+  "datePublished": "2024-01-01",
+  "dateModified": "2024-01-01",
+  "articleSection": "О компании",
+  "keywords": ["история компании", "мебель", "дизайн", "качество", "натуральные материалы"],
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://luce-di-villa.ru/about"
+  }
+}
+</script>
+{% endblock %}
+
 {% block extra_styles %}
 <style>
     .hero-section {

@@ -2,6 +2,70 @@
 
 {% block title %}Luce di Villa - {% if current_category %}{{ current_category.name }}{% else %}Каталог мебели{% endif %}{% endblock %}
 
+{% block meta %}
+<!-- ItemList Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "{% if current_category %}{{ current_category.name }}{% else %}Каталог мебели Luce di Villa{% endif %}",
+  "description": "{% if current_category and current_category.description %}{{ current_category.description }}{% else %}Современная дизайнерская мебель высокого качества. Диваны, столы, стулья и аксессуары с доставкой по России.{% endif %}",
+  "url": "{{ request.url }}",
+  "numberOfItems": {{ products|length }},
+  "itemListElement": [
+    {% for product in products %}
+    {
+      "@type": "ListItem",
+      "position": {{ loop.index }},
+      "item": {
+        "@type": "Product",
+        "name": "{{ product.name }}",
+        "url": "{{ request.base_url }}product/{{ product.slug }}",
+        {% if product.main_image_url %}
+        "image": "{{ request.base_url }}{{ product.main_image_url[1:] }}",
+        {% endif %}
+        {% if product.price %}
+        "offers": {
+          "@type": "Offer",
+          "price": "{{ product.price | round(0) }}",
+          "priceCurrency": "RUB",
+          "availability": "https://schema.org/InStock"
+        },
+        {% endif %}
+        "brand": {
+          "@type": "Brand",
+          "name": "Luce di Villa"
+        }
+      }
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+
+<!-- BreadcrumbList Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Главная",
+      "item": "{{ request.base_url }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{% if current_category %}{{ current_category.name }}{% else %}Каталог{% endif %}",
+      "item": "{{ request.url }}"
+    }
+  ]
+}
+</script>
+{% endblock %}
+
 {% block extra_styles %}
 <style>
     .furniture-card {
@@ -84,5 +148,4 @@
 
 {% block scripts %}
 {{ super() }}
-<!-- Убираем JavaScript фильтрацию, так как теперь используем серверную маршрутизацию -->
 {% endblock %}

@@ -1,6 +1,143 @@
 {% extends 'base.html' %}
+
+{% block title %}Luce di Villa - Сотрудничество{% endblock %}
 {% block header %}
 {% include 'partials/header.html' %}
+{% endblock %}
+
+{% block meta %}
+<!-- Organization Schema with Partner Program -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Luce di Villa",
+  "description": "Успешная и стабильная компания на мебельном рынке России в сфере outdoor и indoor мебели. Предлагаем профессиональное сотрудничество партнерам.",
+  "url": "https://luce-di-villa.ru",
+  "telephone": "+7-915-401-57-54",
+  "email": "info@lucedivilla.com",
+  "industry": "Мебельная индустрия",
+  "seeks": [
+    {
+      "@type": "Demand",
+      "name": "Архитекторы и дизайнеры",
+      "description": "Консультации по ассортименту и подбор мебели под проекты"
+    },
+    {
+      "@type": "Demand",
+      "name": "HoReCa поставщики",
+      "description": "Специальные условия для поставщиков ресторанного бизнеса"
+    },
+    {
+      "@type": "Demand",
+      "name": "Кафе, рестораны, отели",
+      "description": "Прямое сотрудничество с выгодными условиями"
+    }
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Партнерские условия",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "name": "Складская программа",
+        "description": "Большой ассортимент на складе"
+      },
+      {
+        "@type": "Offer",
+        "name": "Система скидок",
+        "description": "Гибкие скидки и бонусная программа"
+      },
+      {
+        "@type": "Offer",
+        "name": "Быстрая доставка",
+        "description": "Короткие сроки доставки по всей России"
+      },
+      {
+        "@type": "Offer",
+        "name": "Обучение",
+        "description": "Семинары по продукции и монтажу"
+      },
+      {
+        "@type": "Offer",
+        "name": "Маркетинговая поддержка",
+        "description": "Рекламные и презентационные материалы"
+      }
+    ]
+  }
+}
+</script>
+
+<!-- WebPage Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Сотрудничество с Luce di Villa",
+  "description": "Приглашаем к взаимовыгодному сотрудничеству профессионалов рынка. Партнерские программы для архитекторов, дизайнеров, HoReCa поставщиков.",
+  "url": "https://luce-di-villa.ru/partnership",
+  "mainEntity": {
+    "@type": "ContactPage",
+    "name": "Форма заявки на сотрудничество"
+  }
+}
+</script>
+
+<!-- FAQPage Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Кто может стать партнером Luce di Villa?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Мы приглашаем к сотрудничеству архитекторов, дизайнеров, HoReCa поставщиков, владельцев кафе, ресторанов и отелей."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Какие преимущества получают партнеры?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Складская программа, гибкая система скидок, быстрая доставка по России, обучающие семинары, маркетинговая поддержка и различные формы расчетов."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Как стать партнером?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Заполните форму на странице сотрудничества, указав информацию о вашей компании. Мы отправим коммерческое предложение и свяжемся для обсуждения условий."
+      }
+    }
+  ]
+}
+</script>
+
+<!-- BreadcrumbList Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Главная",
+      "item": "https://luce-di-villa.ru"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Сотрудничество",
+      "item": "https://luce-di-villa.ru/partnership"
+    }
+  ]
+}
+</script>
 {% endblock %}
 
 {% block extra_styles %}

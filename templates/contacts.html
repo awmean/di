@@ -2,6 +2,76 @@
 
 {% block title %}Luce di Villa - Контакты{% endblock %}
 
+{% block meta %}
+<!-- LocalBusiness Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Luce di Villa",
+  "description": "Современная дизайнерская мебель высокого качества. Диваны, столы, стулья и аксессуары с доставкой по России.",
+  "url": "https://luce-di-villa.ru",
+  "telephone": "+7-915-401-57-54",
+  "email": "info@lucedivilla.com",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Торговая ул., с2, ТЦ «Элитстрой», Павильоны К-2; F-3",
+    "addressLocality": "Москва",
+    "addressRegion": "Москва",
+    "addressCountry": "RU"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "55.684183",
+    "longitude": "37.412792"
+  },
+  "hasMap": "https://yandex.ru/maps/?ll=37.412792%2C55.684183&z=16&pt=37.412792%2C55.684183",
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "telephone": "+7-915-401-57-54",
+      "contactType": "customer service",
+      "availableLanguage": "Russian"
+    },
+    {
+      "@type": "ContactPoint",
+      "email": "info@lucedivilla.com",
+      "contactType": "customer service",
+      "availableLanguage": "Russian"
+    }
+  ],
+  "sameAs": [
+    "https://wa.me/79154015754"
+  ],
+  "priceRange": "$$-$$$",
+  "currenciesAccepted": "RUB",
+  "paymentAccepted": "Cash, Credit Card, Bank Transfer"
+}
+</script>
+
+<!-- BreadcrumbList Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Главная",
+      "item": "https://luce-di-villa.ru"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Контакты",
+      "item": "https://luce-di-villa.ru/contacts"
+    }
+  ]
+}
+</script>
+{% endblock %}
+
 {% block extra_styles %}
 <style>
     .contact-card {

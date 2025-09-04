@@ -3,6 +3,66 @@
 {% include 'partials/index_header.html' %}
 {% endblock %}
 
+{% block meta %}
+<!-- Organization Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Luce di Villa",
+  "url": "https://luce-di-villa.ru",
+  "description": "Современная дизайнерская мебель высокого качества. Диваны, столы, стулья и аксессуары с доставкой по России.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Торговая ул., с2, Павильоны К-2; F-3",
+    "addressLocality": "Москва",
+    "addressCountry": "RU"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+7-915-401-57-54",
+    "contactType": "customer service",
+    "availableLanguage": "Russian"
+  },
+  "sameAs": [
+    "https://wa.me/79154015754"
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Каталог мебели Luce di Villa",
+    "itemListElement": [
+      {
+        "@type": "OfferCatalog",
+        "name": "Столы",
+        "url": "https://luce-di-villa.ru/catalog/tables"
+      },
+      {
+        "@type": "OfferCatalog",
+        "name": "Кресла",
+        "url": "https://luce-di-villa.ru/catalog/chairs"
+      },
+      {
+        "@type": "OfferCatalog",
+        "name": "Комплекты",
+        "url": "https://luce-di-villa.ru/catalog/sets"
+      }
+    ]
+  }
+}
+</script>
+
+<!-- WebSite Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Luce di Villa",
+  "url": "https://luce-di-villa.ru",
+  "description": "Уникальная мебель для вашего пространства. Современный дизайн от винтажной классики до передовых инноваций."
+}
+</script>
+{% endblock %}
+
 {% block extra_styles %}
 <style>
     .video-hero {
