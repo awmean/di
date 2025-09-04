@@ -25,6 +25,10 @@ from fastapi import Response, Depends
 from sqlalchemy.orm import Session
 from datetime import datetime
 
+@router.get("/google499dfa213097e5a0.html")
+def google_verification():
+    content = "google-site-verification: google499dfa213097e5a0.html"
+    return Response(content=content, media_type='text/plain')
 
 @router.get("/sitemap.xml")
 def sitemap_index():
